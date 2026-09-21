@@ -1,0 +1,18 @@
+{
+  "head_before_mean_sum_rates": 24.79,
+  "head_after_mean_sum_rates": 24.1185,
+  "head_change_pct": -2.708753529649044,
+  "dense_before_mean_sum_rates": 24.6355,
+  "dense_change_pct": 0.627143755961912,
+  "inflight176_change_pct": -4.601759496277991,
+  "mtp_fleet_original": 0.6680642907058001,
+  "mtp_fleet_deployment": 0.6436058700209644,
+  "mtp_positions": 5724,
+  "mtp_sequences": 36,
+  "mtp_vocab65k": 0.6453529000698812,
+  "mtp_incremental_quantization_loss_pp": 0.17470300489168533,
+  "phase_rows": 125,
+  "experiment_directories": 49,
+  "telemetry_archives": 34,
+  "evidence_files": 357
+}

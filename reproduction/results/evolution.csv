@@ -1,0 +1,6 @@
+experiment,streams,output_cap,phase_tok_s,sum_rates,completed
+005_short_steps,176,48,19.414,29.566,176
+007_fused_f16_all,176,32,26.839,44.624,176
+008b_all_fused,176,32,32.651,55.609,176
+009_dense_igpu,176,32,34.847,57.917,176
+011_parallel_attention,176,32,37.024,64.175,176

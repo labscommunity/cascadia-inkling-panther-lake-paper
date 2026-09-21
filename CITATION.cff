@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "Private author-review manuscript; cite the version reviewed, not an assumed accepted publication."
+title: "A 975B Mixture-of-Experts Model on Eleven AI PCs: Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference"
+authors:
+  - family-names: Berenbaum
+    given-names: Tate
+    affiliation: Community Labs
+    email: tb@communitylabs.com
+  - family-names: Parij
+    given-names: Matias
+    affiliation: Community Labs
+    email: mparij@communitylabs.com
+  - family-names: Venkatachalam
+    given-names: Muthaiah
+    affiliation: Intel Corporation
+    email: muthaiah.venkatachalam@intel.com
+version: 0.1.0
+date-released: 2026-09-21
+repository-code: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
+url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
+keywords:
+  - mixture of experts
+  - distributed inference
+  - integrated GPU
+  - Panther Lake
+  - performance measurement
+preferred-citation:
+  type: unpublished
+  title: "A 975B Mixture-of-Experts Model on Eleven AI PCs: Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference"
+  authors:
+    - family-names: Berenbaum
+      given-names: Tate
+    - family-names: Parij
+      given-names: Matias
+    - family-names: Venkatachalam
+      given-names: Muthaiah
+  year: 2026
+  month: 9
+  url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
+  notes: "Private author-review draft, version 0.1.0; not an accepted publication."

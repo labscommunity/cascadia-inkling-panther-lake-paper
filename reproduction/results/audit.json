@@ -1,0 +1,83 @@
+{
+  "source_commit": "d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651",
+  "evidence_hashes_verified": 357,
+  "phase_rows": 125,
+  "aggregate_mismatches": [],
+  "incomplete_or_failed_phases": [
+    {
+      "experiment": "006_admit_while_waiting",
+      "source": "phases.json",
+      "phase": "s264",
+      "completed": 251,
+      "requested": 264,
+      "errors": [
+        "<urlopen error [Errno 32] Broken pipe>",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer"
+      ]
+    },
+    {
+      "experiment": "007_fused_f16_all",
+      "source": "phases.json",
+      "phase": "s264",
+      "completed": 251,
+      "requested": 264,
+      "errors": [
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer"
+      ]
+    },
+    {
+      "experiment": "008b_all_fused",
+      "source": "phases.json",
+      "phase": "s352",
+      "completed": 251,
+      "requested": 352,
+      "errors": [
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer",
+        "[Errno 54] Connection reset by peer"
+      ]
+    },
+    {
+      "experiment": "021_moe_decode_kernel",
+      "source": "phases.json",
+      "phase": "mix11a",
+      "completed": 0,
+      "requested": 11,
+      "errors": [
+        "server error: {'message': 'send_stream_open: io error: Connection reset by peer (os error 104)', 'type': 'engine_error'}",
+        "server error: {'message': 'send_stream_open_batch: not connected; call connect()/accept() first', 'type': 'engine_error'}",
+        "server error: {'message': 'send_stream_open_batch: not connected; call connect()/accept() first', 'type': 'engine_error'}",
+        "server error: {'message': 'send_stream_open_batch: not connected; call connect()/accept() first', 'type': 'engine_error'}",
+        "server error: {'message': 'send_stream_open_batch: not connected; call connect()/accept() first', 'type': 'engine_error'}"
+      ]
+    },
+    {
+      "experiment": "021_moe_decode_kernel",
+      "source": "phases.json",
+      "phase": "mix15a",
+      "completed": 0,
+      "requested": 15,
+      "errors": [
+        "server error: {'message': 'downstream closed before StreamTokens', 'type': 'engine_error'}",
+        "server error: {'message': 'downstream closed before StreamTokens', 'type': 'engine_error'}",
+        "server error: {'message': 'downstream closed before StreamTokens', 'type': 'engine_error'}",
+        "server error: {'message': 'downstream closed before StreamTokens', 'type': 'engine_error'}",
+        "server error: {'message': 'downstream closed before StreamTokens', 'type': 'engine_error'}"
+      ]
+    }
+  ],
+  "caveats": [
+    "Sum of individual decode rates is not a simultaneous aggregate counter.",
+    "No per-request timing traces in phase summaries; no invented confidence intervals.",
+    "Archived verdicts can be superseded; CLAIMS.md and AUDIT.md govern paper wording."
+  ]
+}

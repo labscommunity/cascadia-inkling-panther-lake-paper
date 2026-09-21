@@ -1,0 +1,3588 @@
+{
+  "source_repository": "https://github.com/labscommunity/cascadia",
+  "source_commit": "d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651",
+  "evidence_cutoff": "2026-09-21",
+  "transformations": [
+    "Drop host/IP/MAC/serial identity fields; replace private addresses and home paths.",
+    "Replace observed telemetry host names and MAC-derived interface names.",
+    "Normalize nonfinite JSON numbers to null; preserve scientific values otherwise.",
+    "Compress telemetry deterministically; original hashes refer to uncompressed originals."
+  ],
+  "exclusions": [
+    "Model weights and binary residual captures (not present in this checkout).",
+    "External Dolly corpus, deployment logs, credentials and release-channel files.",
+    "Live fleet actions: no new inference, deployment or hardware changes."
+  ],
+  "files": [
+    {
+      "path": "reproduction/evidence/source/autolab/.autolab/state.json",
+      "source": "autolab/.autolab/state.json",
+      "kind": "git-blob",
+      "original_sha256": "d053b1c05d8c6d114aad6c549817a1c615eddd44e6eb6447615bbd10bcf87c5f",
+      "sha256": "810d01c35e444dbf0980cb68dcf56170cd6488ca90dc12e5c9bc4f7509927a97",
+      "original_bytes": 224,
+      "bytes": 256,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/DISCOVERIES.md",
+      "source": "autolab/DISCOVERIES.md",
+      "kind": "git-blob",
+      "original_sha256": "0c67389afd8e4e3bc02b80028044b0f6a99115e2f263c9d1225427c6e9ffdfd4",
+      "sha256": "0c67389afd8e4e3bc02b80028044b0f6a99115e2f263c9d1225427c6e9ffdfd4",
+      "original_bytes": 3744,
+      "bytes": 3744,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/JOURNAL.md",
+      "source": "autolab/JOURNAL.md",
+      "kind": "git-blob",
+      "original_sha256": "23d91ce4b3dc05b094648147ae2a23bf6f0d11b85f285c4e05ea52002cab0f1e",
+      "sha256": "23d91ce4b3dc05b094648147ae2a23bf6f0d11b85f285c4e05ea52002cab0f1e",
+      "original_bytes": 30465,
+      "bytes": 30465,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/LEADERBOARD.md",
+      "source": "autolab/LEADERBOARD.md",
+      "kind": "git-blob",
+      "original_sha256": "294c1c602b2e03f6c12a9c643cf9ab9fc3984bca876c483816c86e282a9b4d1b",
+      "sha256": "294c1c602b2e03f6c12a9c643cf9ab9fc3984bca876c483816c86e282a9b4d1b",
+      "original_bytes": 7815,
+      "bytes": 7815,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/MOONSHOTS.md",
+      "source": "autolab/MOONSHOTS.md",
+      "kind": "git-blob",
+      "original_sha256": "a58432e760edfc6fa2b8648be6392272d81bfc36f15048af9004991d5135d31b",
+      "sha256": "a58432e760edfc6fa2b8648be6392272d81bfc36f15048af9004991d5135d31b",
+      "original_bytes": 13518,
+      "bytes": 13518,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/OPERATING.md",
+      "source": "autolab/OPERATING.md",
+      "kind": "git-blob",
+      "original_sha256": "020be6ab11beb7089e4e94d61311259a07aea98ed5d8af3a49fb80615606759f",
+      "sha256": "020be6ab11beb7089e4e94d61311259a07aea98ed5d8af3a49fb80615606759f",
+      "original_bytes": 20222,
+      "bytes": 20222,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/PHYSICS.md",
+      "source": "autolab/PHYSICS.md",
+      "kind": "git-blob",
+      "original_sha256": "afb80850990575c219617d877558780db32f4f739451dec0c2082450eba16a27",
+      "sha256": "83574a679a874f5beda681ecaf646d7da7d0dbcac0c3eea40721010af7a9e54d",
+      "original_bytes": 23055,
+      "bytes": 23069,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/PRIOR_ART.md",
+      "source": "autolab/PRIOR_ART.md",
+      "kind": "git-blob",
+      "original_sha256": "2b7748550710188b9ac804eb370861a990018243a65232d282463642eb64da73",
+      "sha256": "2b7748550710188b9ac804eb370861a990018243a65232d282463642eb64da73",
+      "original_bytes": 2154,
+      "bytes": 2154,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/QUEUE.md",
+      "source": "autolab/QUEUE.md",
+      "kind": "git-blob",
+      "original_sha256": "b9675e9b996b8c75d0bb985d8155e627f41085d6e7d67057eb60a1ee93bab344",
+      "sha256": "b9675e9b996b8c75d0bb985d8155e627f41085d6e7d67057eb60a1ee93bab344",
+      "original_bytes": 16092,
+      "bytes": 16092,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/README.md",
+      "source": "autolab/README.md",
+      "kind": "git-blob",
+      "original_sha256": "e5d5ff647581b83162b2711c9cd33908165101370aea23f61cb49c179d859dcc",
+      "sha256": "e5d5ff647581b83162b2711c9cd33908165101370aea23f61cb49c179d859dcc",
+      "original_bytes": 6426,
+      "bytes": 6426,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/analyze.py",
+      "source": "autolab/bench/analyze.py",
+      "kind": "git-blob",
+      "original_sha256": "f669f8ce6ac1b1cbcb8feb92041a40ded3566080b8c8046f0b7e7168cef871fb",
+      "sha256": "f669f8ce6ac1b1cbcb8feb92041a40ded3566080b8c8046f0b7e7168cef871fb",
+      "original_bytes": 6248,
+      "bytes": 6248,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/analyze_record.py",
+      "source": "autolab/bench/analyze_record.py",
+      "kind": "git-blob",
+      "original_sha256": "2ca7d71f778198fbdbbd8e90513645240ca1f0f2ac88c33226d9cfccd1ba16c4",
+      "sha256": "2ca7d71f778198fbdbbd8e90513645240ca1f0f2ac88c33226d9cfccd1ba16c4",
+      "original_bytes": 6988,
+      "bytes": 6988,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/asset_capsule.py",
+      "source": "autolab/bench/asset_capsule.py",
+      "kind": "git-blob",
+      "original_sha256": "fffc83f1ca8ce072f87b2e760183f49c4658ab5ad8ae080c81cc6bc22a3b2483",
+      "sha256": "fffc83f1ca8ce072f87b2e760183f49c4658ab5ad8ae080c81cc6bc22a3b2483",
+      "original_bytes": 6107,
+      "bytes": 6107,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/attention_quant_bench.py",
+      "source": "autolab/bench/attention_quant_bench.py",
+      "kind": "git-blob",
+      "original_sha256": "451acb354153d7f3a74ed17e5f79942799af0fa1b92d2823ad091317af79d0bf",
+      "sha256": "451acb354153d7f3a74ed17e5f79942799af0fa1b92d2823ad091317af79d0bf",
+      "original_bytes": 3532,
+      "bytes": 3532,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_attention_bench_release.py",
+      "source": "autolab/bench/build_attention_bench_release.py",
+      "kind": "git-blob",
+      "original_sha256": "631f73613dda9ead07b9bca31fec64aa01a082e69272c4077b9e65c2b64cbad8",
+      "sha256": "631f73613dda9ead07b9bca31fec64aa01a082e69272c4077b9e65c2b64cbad8",
+      "original_bytes": 1917,
+      "bytes": 1917,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_attention_canary_release.py",
+      "source": "autolab/bench/build_attention_canary_release.py",
+      "kind": "git-blob",
+      "original_sha256": "0919b3d24ace82b486d9d20f811c7bd54f40ce045f644684b264a4951593c17f",
+      "sha256": "0919b3d24ace82b486d9d20f811c7bd54f40ce045f644684b264a4951593c17f",
+      "original_bytes": 2699,
+      "bytes": 2699,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_capture_release.py",
+      "source": "autolab/bench/build_capture_release.py",
+      "kind": "git-blob",
+      "original_sha256": "d590602e0314d398089579cc72328ca900095b678b0f9dbbd1b5b16cdf5512b0",
+      "sha256": "d590602e0314d398089579cc72328ca900095b678b0f9dbbd1b5b16cdf5512b0",
+      "original_bytes": 2607,
+      "bytes": 2607,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_cpu_overlap_release.py",
+      "source": "autolab/bench/build_cpu_overlap_release.py",
+      "kind": "git-blob",
+      "original_sha256": "6da2dceebd097a252a11c9f6ee2c6807c13ae3efd818f65d2db5a1d43ae9202c",
+      "sha256": "6da2dceebd097a252a11c9f6ee2c6807c13ae3efd818f65d2db5a1d43ae9202c",
+      "original_bytes": 1583,
+      "bytes": 1583,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_phrase_release.py",
+      "source": "autolab/bench/build_phrase_release.py",
+      "kind": "git-blob",
+      "original_sha256": "312e503eb2d0a2eca0eea27f133856aa52b4db3c2f6dcf4daa54520e6d0ac345",
+      "sha256": "312e503eb2d0a2eca0eea27f133856aa52b4db3c2f6dcf4daa54520e6d0ac345",
+      "original_bytes": 1664,
+      "bytes": 1664,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/build_role_swap.py",
+      "source": "autolab/bench/build_role_swap.py",
+      "kind": "git-blob",
+      "original_sha256": "0ac430ea10622dcff474db1292e928ca76cfe3a8d4cfcf98081c75154e375c3d",
+      "sha256": "0ac430ea10622dcff474db1292e928ca76cfe3a8d4cfcf98081c75154e375c3d",
+      "original_bytes": 6086,
+      "bytes": 6086,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/capture_collect.py",
+      "source": "autolab/bench/capture_collect.py",
+      "kind": "git-blob",
+      "original_sha256": "c296050fb1a557706c6dc85a240699ae8919a155843853835e37b97aaf363885",
+      "sha256": "c296050fb1a557706c6dc85a240699ae8919a155843853835e37b97aaf363885",
+      "original_bytes": 5367,
+      "bytes": 5367,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/capture_read.py",
+      "source": "autolab/bench/capture_read.py",
+      "kind": "git-blob",
+      "original_sha256": "af225b464913be91fa27123db2e3a237f52e8c508e4155d489fe55fff63fe801",
+      "sha256": "af225b464913be91fa27123db2e3a237f52e8c508e4155d489fe55fff63fe801",
+      "original_bytes": 1333,
+      "bytes": 1333,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/collect.py",
+      "source": "autolab/bench/collect.py",
+      "kind": "git-blob",
+      "original_sha256": "bed0f0009d3428de1df9f8063ad22ee0738bf1f70baafb7d744a6a8955eeb0de",
+      "sha256": "bed0f0009d3428de1df9f8063ad22ee0738bf1f70baafb7d744a6a8955eeb0de",
+      "original_bytes": 6028,
+      "bytes": 6028,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/collect_pages.py",
+      "source": "autolab/bench/collect_pages.py",
+      "kind": "git-blob",
+      "original_sha256": "df342154bc5e39218bcddc9387c00a2116ba2f0dfb084d8ddc97754b700556b3",
+      "sha256": "df342154bc5e39218bcddc9387c00a2116ba2f0dfb084d8ddc97754b700556b3",
+      "original_bytes": 1417,
+      "bytes": 1417,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/drafter_study.py",
+      "source": "autolab/bench/drafter_study.py",
+      "kind": "git-blob",
+      "original_sha256": "663f7bcfbc31f8654df144a710bc8dbfa34c226d20e9612863f827406ff0e25e",
+      "sha256": "663f7bcfbc31f8654df144a710bc8dbfa34c226d20e9612863f827406ff0e25e",
+      "original_bytes": 8795,
+      "bytes": 8795,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/equeue.py",
+      "source": "autolab/bench/equeue.py",
+      "kind": "git-blob",
+      "original_sha256": "8f8cb5b97a0701679a5d4d219f7f421baa994a56bdaf76fb293de6ae7217a854",
+      "sha256": "8f8cb5b97a0701679a5d4d219f7f421baa994a56bdaf76fb293de6ae7217a854",
+      "original_bytes": 11207,
+      "bytes": 11207,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/expert_counts_analysis.py",
+      "source": "autolab/bench/expert_counts_analysis.py",
+      "kind": "git-blob",
+      "original_sha256": "d9da28d0a6e8627969ece45d15353fdbbd09d73b5f3316835b2894060c567599",
+      "sha256": "d9da28d0a6e8627969ece45d15353fdbbd09d73b5f3316835b2894060c567599",
+      "original_bytes": 1662,
+      "bytes": 1662,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/lab.py",
+      "source": "autolab/bench/lab.py",
+      "kind": "git-blob",
+      "original_sha256": "e83e275ab690a2600761669190d9fcf7431ba041d1bf50d3ddc2e3feec3905dd",
+      "sha256": "e83e275ab690a2600761669190d9fcf7431ba041d1bf50d3ddc2e3feec3905dd",
+      "original_bytes": 32798,
+      "bytes": 32798,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/nettest.py",
+      "source": "autolab/bench/nettest.py",
+      "kind": "git-blob",
+      "original_sha256": "277938f1186ddbb034ce3fafb1565275de832acd14105a1a22de9c4ee2f0d2a3",
+      "sha256": "277938f1186ddbb034ce3fafb1565275de832acd14105a1a22de9c4ee2f0d2a3",
+      "original_bytes": 8198,
+      "bytes": 8198,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/ngram_merge.py",
+      "source": "autolab/bench/ngram_merge.py",
+      "kind": "git-blob",
+      "original_sha256": "9542435ec9b84c55f13943d51e6db1a2b31d4640e47d8585a8a4d0d87176874e",
+      "sha256": "9542435ec9b84c55f13943d51e6db1a2b31d4640e47d8585a8a4d0d87176874e",
+      "original_bytes": 2503,
+      "bytes": 2503,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/patch_gpu_plugin.py",
+      "source": "autolab/bench/patch_gpu_plugin.py",
+      "kind": "git-blob",
+      "original_sha256": "abddfc7bdd156b2b14eb1c2a8922deb2f1649130684c93336322380db5cdb792",
+      "sha256": "abddfc7bdd156b2b14eb1c2a8922deb2f1649130684c93336322380db5cdb792",
+      "original_bytes": 1223,
+      "bytes": 1223,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/patch_gpu_plugin_sg16.py",
+      "source": "autolab/bench/patch_gpu_plugin_sg16.py",
+      "kind": "git-blob",
+      "original_sha256": "f8ff5772555864bf2ab92932d0b7c19e9929dc5e34f179084d26813df61bb11b",
+      "sha256": "f8ff5772555864bf2ab92932d0b7c19e9929dc5e34f179084d26813df61bb11b",
+      "original_bytes": 2414,
+      "bytes": 2414,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/phrase_transfer.py",
+      "source": "autolab/bench/phrase_transfer.py",
+      "kind": "git-blob",
+      "original_sha256": "f5f0edbf42e4d16b904236a51b2697b50bfd2011ab062a08e8be0b0b98ed16ee",
+      "sha256": "f5f0edbf42e4d16b904236a51b2697b50bfd2011ab062a08e8be0b0b98ed16ee",
+      "original_bytes": 4023,
+      "bytes": 4023,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/probe_read.py",
+      "source": "autolab/bench/probe_read.py",
+      "kind": "git-blob",
+      "original_sha256": "b89dfc7421b938e01b9545de03afc8373e039e025456afa75f23c2aa0f988153",
+      "sha256": "b89dfc7421b938e01b9545de03afc8373e039e025456afa75f23c2aa0f988153",
+      "original_bytes": 1037,
+      "bytes": 1037,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/reference.json",
+      "source": "autolab/bench/reference.json",
+      "kind": "git-blob",
+      "original_sha256": "14c0296402201fdd9a42d43be5be7af3aed28a6cf60e34b0797471c080c65c97",
+      "sha256": "d01f6a51300b032320b237bf43f7660149f9a3703c661e5d2a5e5ec90468a144",
+      "original_bytes": 452,
+      "bytes": 452,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/telemetry_analysis.py",
+      "source": "autolab/bench/telemetry_analysis.py",
+      "kind": "git-blob",
+      "original_sha256": "c9b179c6995c059d7786d40604d5b0b7032a0c77bf207a65e21a98c86686b235",
+      "sha256": "c9b179c6995c059d7786d40604d5b0b7032a0c77bf207a65e21a98c86686b235",
+      "original_bytes": 1734,
+      "bytes": 1734,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_asset_capsule.py",
+      "source": "autolab/bench/test_asset_capsule.py",
+      "kind": "git-blob",
+      "original_sha256": "2ade04297c750b637e2a80187f5ed27eb62081c114585cd8916ac8d8efa9e8c4",
+      "sha256": "2ade04297c750b637e2a80187f5ed27eb62081c114585cd8916ac8d8efa9e8c4",
+      "original_bytes": 2627,
+      "bytes": 2627,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_capture_read.py",
+      "source": "autolab/bench/test_capture_read.py",
+      "kind": "git-blob",
+      "original_sha256": "55072669476d6911905b4e1a9644802f580d8db4f0dd33c02f77dfb0dcfba771",
+      "sha256": "55072669476d6911905b4e1a9644802f580d8db4f0dd33c02f77dfb0dcfba771",
+      "original_bytes": 1110,
+      "bytes": 1110,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_capture_relay.py",
+      "source": "autolab/bench/test_capture_relay.py",
+      "kind": "git-blob",
+      "original_sha256": "cddb1fcf35ac4a60c6012182c8f2a1a5874b00faf027a73253e0daba2974f96a",
+      "sha256": "cddb1fcf35ac4a60c6012182c8f2a1a5874b00faf027a73253e0daba2974f96a",
+      "original_bytes": 4520,
+      "bytes": 4520,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_failed_run.py",
+      "source": "autolab/bench/test_failed_run.py",
+      "kind": "git-blob",
+      "original_sha256": "fa6bc13e96fe5a3599433af730ddc2c42179dffb45ac2286da2d79321517c049",
+      "sha256": "fa6bc13e96fe5a3599433af730ddc2c42179dffb45ac2286da2d79321517c049",
+      "original_bytes": 2056,
+      "bytes": 2056,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_ngram_merge.py",
+      "source": "autolab/bench/test_ngram_merge.py",
+      "kind": "git-blob",
+      "original_sha256": "c44cff5dfae88929432be1aebf741757fdc831183e19f4d29e07cb5ecba0fb7e",
+      "sha256": "c44cff5dfae88929432be1aebf741757fdc831183e19f4d29e07cb5ecba0fb7e",
+      "original_bytes": 994,
+      "bytes": 994,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_settle.py",
+      "source": "autolab/bench/test_settle.py",
+      "kind": "git-blob",
+      "original_sha256": "92fa3f30e3d1034edcc3bd3d23ddead1299e0aced99500cab6cc4f0548d6b25b",
+      "sha256": "92fa3f30e3d1034edcc3bd3d23ddead1299e0aced99500cab6cc4f0548d6b25b",
+      "original_bytes": 1859,
+      "bytes": 1859,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/test_telemetry_analysis.py",
+      "source": "autolab/bench/test_telemetry_analysis.py",
+      "kind": "git-blob",
+      "original_sha256": "8f81d6f8fa95994eccab5ae689c6a62918d9d9b4cdebdd2c4e3a4b5bb7b5a218",
+      "sha256": "8f81d6f8fa95994eccab5ae689c6a62918d9d9b4cdebdd2c4e3a4b5bb7b5a218",
+      "original_bytes": 1576,
+      "bytes": 1576,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/tokenizer_probe.py",
+      "source": "autolab/bench/tokenizer_probe.py",
+      "kind": "git-blob",
+      "original_sha256": "df4c91fbc05d9052e4ecd48e6d3a04bb6fc369ec60d488476537516c4aa963bb",
+      "sha256": "df4c91fbc05d9052e4ecd48e6d3a04bb6fc369ec60d488476537516c4aa963bb",
+      "original_bytes": 1661,
+      "bytes": 1661,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/001_balanced_groups/fleet-overrides.env",
+      "source": "autolab/experiments/001_balanced_groups/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "3dbce6c6cf190a4589e348654cb3ee24b18829cb4905fda9e5a8bba3102866af",
+      "sha256": "3dbce6c6cf190a4589e348654cb3ee24b18829cb4905fda9e5a8bba3102866af",
+      "original_bytes": 936,
+      "bytes": 936,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/001_balanced_groups/gate.json",
+      "source": "autolab/experiments/001_balanced_groups/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "aec8e5d8f53896f796561bfc866037fc83f1eb694d32b00635d8f01d20543d20",
+      "sha256": "4c4ce372fb19f332c4e0754c636d439a8e332819e95caa944c4eb11a8bcf4308",
+      "original_bytes": 888,
+      "bytes": 981,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/001_balanced_groups/hypothesis.md",
+      "source": "autolab/experiments/001_balanced_groups/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "7cc59a53853993440612e2e5bd050a78fb29faf863f8c7e248dfb22657db315e",
+      "sha256": "7cc59a53853993440612e2e5bd050a78fb29faf863f8c7e248dfb22657db315e",
+      "original_bytes": 696,
+      "bytes": 696,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/001_balanced_groups/phases.json",
+      "source": "autolab/experiments/001_balanced_groups/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "a939c7406dbba9d314fb0c7123c2cc2b46725655edfef031b50b70050e812843",
+      "sha256": "ecd554a1b9d55867ea5d21186e0116723a61760b5b554218bc9ece869cd8abef",
+      "original_bytes": 2091,
+      "bytes": 2252,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/001_balanced_groups/verdict.md",
+      "source": "autolab/experiments/001_balanced_groups/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "9a351376f03b0902e32db43d6059ef65f47b9419ade165e0b4cbd1850f5bc41c",
+      "sha256": "9a351376f03b0902e32db43d6059ef65f47b9419ade165e0b4cbd1850f5bc41c",
+      "original_bytes": 1319,
+      "bytes": 1319,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/analysis.json",
+      "source": "autolab/experiments/002a_return_link/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "155548ccb04f6d9aa0442122b2d7ebb3b85e6f9ab0d4f6eabb6610f429cea66c",
+      "sha256": "014a36d9888c80b20430e4da9969a22f2484df73c28f9243c369102cc988850e",
+      "original_bytes": 26800,
+      "bytes": 36523,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/fleet-overrides.env",
+      "source": "autolab/experiments/002a_return_link/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "c40da784efa60dcd297bc4e61a2285e47e52c2944d5d53fb9d1ca5c0a5f76d6e",
+      "sha256": "c40da784efa60dcd297bc4e61a2285e47e52c2944d5d53fb9d1ca5c0a5f76d6e",
+      "original_bytes": 1125,
+      "bytes": 1125,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/gate.json",
+      "source": "autolab/experiments/002a_return_link/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "c1b0cb801981391cc6e23ee2ae90ade604210eb9f58001ea75185823116b0270",
+      "sha256": "7481e40b2b31352f82fa3817a3cdc08dd4eb0d28b8736fd20047c63c6472cc5e",
+      "original_bytes": 885,
+      "bytes": 978,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/hypothesis.md",
+      "source": "autolab/experiments/002a_return_link/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "6149b2339db8caa1a9462910af380a3accfc551705ebf3b936f2ddd63c4b2d54",
+      "sha256": "6149b2339db8caa1a9462910af380a3accfc551705ebf3b936f2ddd63c4b2d54",
+      "original_bytes": 914,
+      "bytes": 914,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/phases.json",
+      "source": "autolab/experiments/002a_return_link/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "d72acbbd67f81ddae42eb6d58bd805cb6aab9dc905ed62f2197ba847dc1ccfd5",
+      "sha256": "ba1c9516eb8657cc635db5674a33f86102c2bfbff2e84ae15b4db8f22822323b",
+      "original_bytes": 1298,
+      "bytes": 1395,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002a_return_link/verdict.md",
+      "source": "autolab/experiments/002a_return_link/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "7c7fced5fe4baeeb76134bc04aecbec46e4d9625d3c665d769f18ba1ce32ff7a",
+      "sha256": "7c7fced5fe4baeeb76134bc04aecbec46e4d9625d3c665d769f18ba1ce32ff7a",
+      "original_bytes": 1543,
+      "bytes": 1543,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/analysis.json",
+      "source": "autolab/experiments/002b_speculation/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "63947348868668034c04078ded654391926d4d139d3aa6f27f59302d565e4a85",
+      "sha256": "e7ee757a4961c94082bb6933b61eca0ec54da802b53c89a4de4d981b4751f286",
+      "original_bytes": 26741,
+      "bytes": 36464,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/fleet-overrides.env",
+      "source": "autolab/experiments/002b_speculation/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "0240567ddf90bba8a4755a8285ce0a0809ffda121a1ba7ef8cc65114ca4336fb",
+      "sha256": "0240567ddf90bba8a4755a8285ce0a0809ffda121a1ba7ef8cc65114ca4336fb",
+      "original_bytes": 1245,
+      "bytes": 1245,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/gate.json",
+      "source": "autolab/experiments/002b_speculation/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "9e291eccd2e871c859a8280d3e48bc8128fca6bd00cb83e80dd41cd0bbbed418",
+      "sha256": "047f17f14d286c2ba398588552313c09d25c8fffea1c7e7c548884d4b816b9f0",
+      "original_bytes": 886,
+      "bytes": 979,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/hypothesis.md",
+      "source": "autolab/experiments/002b_speculation/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "530116451bf918552717f3dd52a878bc5aa587efdcc1a8fa068c40ed5173e61e",
+      "sha256": "530116451bf918552717f3dd52a878bc5aa587efdcc1a8fa068c40ed5173e61e",
+      "original_bytes": 734,
+      "bytes": 734,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/phases.json",
+      "source": "autolab/experiments/002b_speculation/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "2ff69b6873348b44cbcc792869b5f2efa0fefc60b39904945b59bbc5494761af",
+      "sha256": "b818b27197ccea5a3d58d066cede432a1bf153ebee3dc97fded4c14179d3f218",
+      "original_bytes": 1291,
+      "bytes": 1388,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/002b_speculation/verdict.md",
+      "source": "autolab/experiments/002b_speculation/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "7db6b0960bb27946653c7dd47c2dc0bedaeb345e8c396fe2e264806de1d9ebb3",
+      "sha256": "7db6b0960bb27946653c7dd47c2dc0bedaeb345e8c396fe2e264806de1d9ebb3",
+      "original_bytes": 1121,
+      "bytes": 1121,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/analysis.json",
+      "source": "autolab/experiments/003_per_rank_ab/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "ba24b204d73e909d20cff95e2a38ebb71d65e980a3d8859dcc70ee03b9f0d436",
+      "sha256": "2239e6859ef7fbb0f3083e26780dfc8f0d2988fd0d4e21f7806ac34450a88017",
+      "original_bytes": 26665,
+      "bytes": 36388,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/fleet-overrides.env",
+      "source": "autolab/experiments/003_per_rank_ab/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "852650da719e0d5bad5d3f65a2459399f958cc521d73f030fba542133f51398c",
+      "sha256": "852650da719e0d5bad5d3f65a2459399f958cc521d73f030fba542133f51398c",
+      "original_bytes": 2332,
+      "bytes": 2332,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/gate.json",
+      "source": "autolab/experiments/003_per_rank_ab/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "9796c7e56aede863ec1e506988126c6f6f0c55c64addd83c7080bfed4b54b68a",
+      "sha256": "443767031ede2c2b2f8b7621a432742f39fc9d7c91c6c586c9e8a80b1c872497",
+      "original_bytes": 2287,
+      "bytes": 2535,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/hypothesis.md",
+      "source": "autolab/experiments/003_per_rank_ab/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "c16ade83abcef17980781518231607017beedeca4edcac69e48aadf32742b815",
+      "sha256": "c16ade83abcef17980781518231607017beedeca4edcac69e48aadf32742b815",
+      "original_bytes": 1058,
+      "bytes": 1058,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/phases.json",
+      "source": "autolab/experiments/003_per_rank_ab/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "d1c4789e656df68c63a265516ba6e82c3544c66ff015c38b62c725e7da8cd3ff",
+      "sha256": "178ec16d67841a75b4efecb6691b08c12c18f4a65f956de3d6c813297f62c717",
+      "original_bytes": 1301,
+      "bytes": 1398,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/003_per_rank_ab/verdict.md",
+      "source": "autolab/experiments/003_per_rank_ab/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "c00bfd3f7b4c3f516e92b8f24e43edd6d8dffdf468f796a05c1ee997e0d98c93",
+      "sha256": "c00bfd3f7b4c3f516e92b8f24e43edd6d8dffdf468f796a05c1ee997e0d98c93",
+      "original_bytes": 1743,
+      "bytes": 1743,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/analysis.json",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "6b9cc6f259eee7001e7e351fcae1b568d99a21926563fa75df6e6099dbd94638",
+      "sha256": "1f6037cfb520bf875d03aa5a295d24232ec50a56f9f1a502f1b0529a3c99b854",
+      "original_bytes": 34749,
+      "bytes": 47712,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/fleet-overrides.env",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "9c028e8b4075eaa3775619fccff4acd559a44c6185905b3918347295225add1c",
+      "sha256": "9c028e8b4075eaa3775619fccff4acd559a44c6185905b3918347295225add1c",
+      "original_bytes": 1354,
+      "bytes": 1354,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/gate.json",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "ae97a92090cc0eee20a8d97ddc6d11f54e2842c1b5e059d1112a2e1af79b4a6b",
+      "sha256": "db8bc05315cb5dcd283fc66f49cf5ada56dc8ed37a3f2ecf7e8aaf83f7b0dff2",
+      "original_bytes": 2287,
+      "bytes": 2535,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/hypothesis.md",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "4a76d0bde3fc513286b1469993f52900c4535360c883976e71cac6214a1af4b4",
+      "sha256": "4a76d0bde3fc513286b1469993f52900c4535360c883976e71cac6214a1af4b4",
+      "original_bytes": 1283,
+      "bytes": 1283,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/phases.json",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "167b0027f8ba2600178d44bf408b3919babf0ffc25d280f0233d33c3dc82aaee",
+      "sha256": "31c3c1e6381a52119bdd7e73ede6fa54cbb767cda82a297d90223110961274b7",
+      "original_bytes": 1733,
+      "bytes": 1862,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/004_row_gemm_prewarm_batchadmit/verdict.md",
+      "source": "autolab/experiments/004_row_gemm_prewarm_batchadmit/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "ba6ebbf70f1d9be937989c2692b352bee80495e6eafaf8ab696185bc72bfc8a9",
+      "sha256": "ba6ebbf70f1d9be937989c2692b352bee80495e6eafaf8ab696185bc72bfc8a9",
+      "original_bytes": 2147,
+      "bytes": 2147,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/analysis.json",
+      "source": "autolab/experiments/005_short_steps/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "89785150d5a21d37166fe625368f99194322183129c2b79be35b2c94e3c043dd",
+      "sha256": "0c9013ae679b0df5a5515b5242000ea736de8a815441cab578d06ab81192483d",
+      "original_bytes": 44708,
+      "bytes": 60911,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/fleet-overrides.env",
+      "source": "autolab/experiments/005_short_steps/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "ea499b03270e0800a737f2ff74968544684fd95ca15f4981fbff6ca58cb5210c",
+      "sha256": "ea499b03270e0800a737f2ff74968544684fd95ca15f4981fbff6ca58cb5210c",
+      "original_bytes": 1521,
+      "bytes": 1521,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/gate.json",
+      "source": "autolab/experiments/005_short_steps/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "c21a538da53025fa52f9696d9f504709f078cad7862af803817e4993f0809eb1",
+      "sha256": "be4014ec82485670aeca21ce7f1fc88a0ade79f48f006015a0749389d7a9bf6d",
+      "original_bytes": 2288,
+      "bytes": 2536,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/hypothesis.md",
+      "source": "autolab/experiments/005_short_steps/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "f7fc738297da75a8c261a81ffaec8fb4fc663f13652d5b1754b9cd1719090bf1",
+      "sha256": "f7fc738297da75a8c261a81ffaec8fb4fc663f13652d5b1754b9cd1719090bf1",
+      "original_bytes": 793,
+      "bytes": 793,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/phases.json",
+      "source": "autolab/experiments/005_short_steps/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "71feae8f3fd5e05234e5678ce5e289fac91eb8f7c989e5cd84f56593663f6bee",
+      "sha256": "6cbc3b5e316fbbc20eff3ab9c41551e9dc7496a3f098c24b5ba29cb485cc6a35",
+      "original_bytes": 2163,
+      "bytes": 2324,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/005_short_steps/verdict.md",
+      "source": "autolab/experiments/005_short_steps/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "7305ce62ec0e616c37b17dd0a1f2d1d23aff79339dc66f33a99688890bfab89d",
+      "sha256": "7305ce62ec0e616c37b17dd0a1f2d1d23aff79339dc66f33a99688890bfab89d",
+      "original_bytes": 1627,
+      "bytes": 1627,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/analysis.json",
+      "source": "autolab/experiments/006_admit_while_waiting/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "2789fea0112e1b7730795bb2e023e3297d34c058b88af5a338605324d0d78130",
+      "sha256": "11c6208373494debd4c6db2f7954d585c42c701c1a9262f89c76923847379bca",
+      "original_bytes": 26916,
+      "bytes": 36639,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/fleet-overrides.env",
+      "source": "autolab/experiments/006_admit_while_waiting/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "fa3e1ee7e7351ec24c27defb5bdd6d42e988b17e417994ab3de7c099384ab7e2",
+      "sha256": "fa3e1ee7e7351ec24c27defb5bdd6d42e988b17e417994ab3de7c099384ab7e2",
+      "original_bytes": 1720,
+      "bytes": 1720,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/gate.json",
+      "source": "autolab/experiments/006_admit_while_waiting/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "6add9b7c25f904481fec4f8b32724fffca26394161873003079730c6c5c50955",
+      "sha256": "0bf2e92b1184f72390d4d2b192d7d3e3eebe157f208ef4443a5d3ce81c074ddd",
+      "original_bytes": 2287,
+      "bytes": 2535,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/hypothesis.md",
+      "source": "autolab/experiments/006_admit_while_waiting/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "6fb92666bf43215bffb797f7f099e9d23b4eef969e1888708a07ab4ed8f5a0c9",
+      "sha256": "6fb92666bf43215bffb797f7f099e9d23b4eef969e1888708a07ab4ed8f5a0c9",
+      "original_bytes": 753,
+      "bytes": 753,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/phases.json",
+      "source": "autolab/experiments/006_admit_while_waiting/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "c0c2108dd0c7a484265079194294abb928c647a9cbd378bd444a237974dbf421",
+      "sha256": "af8fa39e6836f41684818d77f06b797f0ac303a1b9d994df732d677fce6652b0",
+      "original_bytes": 1520,
+      "bytes": 1634,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/006_admit_while_waiting/verdict.md",
+      "source": "autolab/experiments/006_admit_while_waiting/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "d0dd96c7f03b1ea8a0a1d84c236a36aa71b41ff8393321a436c3eb31f028c6cb",
+      "sha256": "d0dd96c7f03b1ea8a0a1d84c236a36aa71b41ff8393321a436c3eb31f028c6cb",
+      "original_bytes": 1413,
+      "bytes": 1413,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/analysis.json",
+      "source": "autolab/experiments/007_fused_f16_all/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "49f223ec104e2f2c18d6ae093e0fd0e68ba9940508d48ccc50bc1e5124f42477",
+      "sha256": "c20d76d6bc2a4354e30aeb1389329863f88e3285a928f12b7a43b3d59aff6173",
+      "original_bytes": 46129,
+      "bytes": 62332,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/fleet-overrides.env",
+      "source": "autolab/experiments/007_fused_f16_all/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "16fe9c59b4ed607e059b9d0e9441f53f21a0b7a41ffc9fccc779aee2b1b3770f",
+      "sha256": "16fe9c59b4ed607e059b9d0e9441f53f21a0b7a41ffc9fccc779aee2b1b3770f",
+      "original_bytes": 2208,
+      "bytes": 2208,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/gate.json",
+      "source": "autolab/experiments/007_fused_f16_all/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "a9d4c0ecbffb972f0dd79d4e8f2773f46a8d7f533cc026cda87a6fd97071da03",
+      "sha256": "1fde6e39d7c1bae13910edc77764139c058b94bc5ca9a8150f80556a22c5d64a",
+      "original_bytes": 2290,
+      "bytes": 2538,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/hypothesis.md",
+      "source": "autolab/experiments/007_fused_f16_all/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "246dff78719eb6db552fc7dca439ef6cc30f7e672bca701f8972d129bd2bebd3",
+      "sha256": "246dff78719eb6db552fc7dca439ef6cc30f7e672bca701f8972d129bd2bebd3",
+      "original_bytes": 950,
+      "bytes": 950,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/phases.json",
+      "source": "autolab/experiments/007_fused_f16_all/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "23929baa8058b682636ea6b40f690d587080eea6b0f714b784489048e742877f",
+      "sha256": "4460dc439238e575cc4bd180a93dc247531aed16cabb841790e4c22e90a6ad93",
+      "original_bytes": 2380,
+      "bytes": 2558,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/quality.json",
+      "source": "autolab/experiments/007_fused_f16_all/quality.json",
+      "kind": "git-blob",
+      "original_sha256": "0331a4162ac1a4c8e9393a520c86cd45bc2c671c6a7866cc5de26cbf51b9f211",
+      "sha256": "80b62cd0bb16299142501cfde2a173628b34d7638092a4d25bfcb6a0f4cdac28",
+      "original_bytes": 2923,
+      "bytes": 3358,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/007_fused_f16_all/verdict.md",
+      "source": "autolab/experiments/007_fused_f16_all/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "eed22ca1eacb9aa4ae7efee5f44633c9a1fdf3f2c0580af70a07064e49ad781a",
+      "sha256": "eed22ca1eacb9aa4ae7efee5f44633c9a1fdf3f2c0580af70a07064e49ad781a",
+      "original_bytes": 2015,
+      "bytes": 2015,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/analysis.json",
+      "source": "autolab/experiments/008a_six_fused_one_rank/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "075721b42c6b644b8194a037a9d6abe9bc47bd6b99e07e9cdc5910ac64c975e7",
+      "sha256": "71c2afcd1913b4d2e8e5b888771b9f09a3d5ae2841f7fba429a14b41b283f29d",
+      "original_bytes": 18500,
+      "bytes": 24983,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/fleet-overrides.env",
+      "source": "autolab/experiments/008a_six_fused_one_rank/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "a4157a990cfa1569f396ef103bfa2f4d5ceb2f30c7b398cca5f8eeab1162f17c",
+      "sha256": "a4157a990cfa1569f396ef103bfa2f4d5ceb2f30c7b398cca5f8eeab1162f17c",
+      "original_bytes": 2715,
+      "bytes": 2715,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/gate.json",
+      "source": "autolab/experiments/008a_six_fused_one_rank/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "ce3cdf8f4fd8422c980ba973b632b47eaec8a340fa5ea854f654fe21e83b7d24",
+      "sha256": "90401ef3623fb2e5c145c2a66022e9dffdcd0deb6e88a7b919993f7f6ffee331",
+      "original_bytes": 2291,
+      "bytes": 2539,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/hypothesis.md",
+      "source": "autolab/experiments/008a_six_fused_one_rank/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "462f70bbfff077c1d5510340e8f80198c6ee251cba253faddc0084eba1eb8b51",
+      "sha256": "462f70bbfff077c1d5510340e8f80198c6ee251cba253faddc0084eba1eb8b51",
+      "original_bytes": 1198,
+      "bytes": 1198,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/phases.json",
+      "source": "autolab/experiments/008a_six_fused_one_rank/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "c007f1bf8c5866102c5a4232262ace2c380359414af44790f34e6878f9bd383e",
+      "sha256": "b1468a5cb4462c891ec9c8e4f7222738457132c2170d51eba0c20f5fcea24834",
+      "original_bytes": 867,
+      "bytes": 932,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008a_six_fused_one_rank/verdict.md",
+      "source": "autolab/experiments/008a_six_fused_one_rank/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "88418559a6efc98b19f88b52a6ec4e3a5a9d95890f565c79820e05ab34dd2b31",
+      "sha256": "88418559a6efc98b19f88b52a6ec4e3a5a9d95890f565c79820e05ab34dd2b31",
+      "original_bytes": 957,
+      "bytes": 957,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/analysis.json",
+      "source": "autolab/experiments/008b_all_fused/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "f9b5b31a5215b7252e94b79912496252b74fd37841948254d4f2ba9bdd9fd9a6",
+      "sha256": "f99632f0f23891ab9b7afbcec7b9d70ab98efbfd1b112bec12def8062faffcbc",
+      "original_bytes": 27961,
+      "bytes": 37684,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/fleet-overrides.env",
+      "source": "autolab/experiments/008b_all_fused/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "0f9d0ee83810432e2cb065cccaf36a7c9e61c1ffc3e63889cb741e6279cfa563",
+      "sha256": "0f9d0ee83810432e2cb065cccaf36a7c9e61c1ffc3e63889cb741e6279cfa563",
+      "original_bytes": 2452,
+      "bytes": 2452,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/gate.json",
+      "source": "autolab/experiments/008b_all_fused/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "76c91f1a0ef10e0e850bbba60e162856805c8e3482ce55820437d38fd7f72cef",
+      "sha256": "94ca7bec7a41c71c6dc54486fcb9b808f4e56d5234a0d5be216acd2767e54b2f",
+      "original_bytes": 2289,
+      "bytes": 2537,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/hypothesis.md",
+      "source": "autolab/experiments/008b_all_fused/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "b0d6b147c8112e32afe05edeb60678b34dd18b70c9cb7245c404af0ee28ee0c7",
+      "sha256": "b0d6b147c8112e32afe05edeb60678b34dd18b70c9cb7245c404af0ee28ee0c7",
+      "original_bytes": 855,
+      "bytes": 855,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/phases.json",
+      "source": "autolab/experiments/008b_all_fused/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "9ccb4ab36a80107c0b14d559a4d64229eccba234fed35c63cca6fdb725ae089b",
+      "sha256": "e1d76b7b8223f92cf30b0a8f41f5ee58e6bb05f6f6ce10d44a721966779f92ef",
+      "original_bytes": 2380,
+      "bytes": 2558,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/quality.json",
+      "source": "autolab/experiments/008b_all_fused/quality.json",
+      "kind": "git-blob",
+      "original_sha256": "1bbbec13cb06cb1d7cba464d3b58e7564bb97a86a1a945c83a5e66c13477e9f4",
+      "sha256": "1fe1394f22e368c0e26181590fc18353a8ef6887f046d3874667e3d59b49ac99",
+      "original_bytes": 2984,
+      "bytes": 3419,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/008b_all_fused/verdict.md",
+      "source": "autolab/experiments/008b_all_fused/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "f4326cfdc0010c358d936d913fab2b811656ac6b84e7b9cdde3e953e66dfaedd",
+      "sha256": "f4326cfdc0010c358d936d913fab2b811656ac6b84e7b9cdde3e953e66dfaedd",
+      "original_bytes": 1497,
+      "bytes": 1497,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/analysis.json",
+      "source": "autolab/experiments/009_dense_igpu/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "2ad7ed12a3a296595dd7e3959de6312a04d712c92244be97aee5b5b678898c7e",
+      "sha256": "5aeb36d04b58ea1b9dab844fae72a45cdcbaad4c4ec1b249589c321f16b4046f",
+      "original_bytes": 34737,
+      "bytes": 47700,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/fleet-overrides.env",
+      "source": "autolab/experiments/009_dense_igpu/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "0a288d6000ce30b0a4c224cad0ac82b1344eadb15490de7c4d81fef29db0d7b2",
+      "sha256": "0a288d6000ce30b0a4c224cad0ac82b1344eadb15490de7c4d81fef29db0d7b2",
+      "original_bytes": 2885,
+      "bytes": 2885,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/gate.json",
+      "source": "autolab/experiments/009_dense_igpu/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "97f013583251137acb76a27b5a3ab9d832dd1a29acd00c4287d1e981dcbf1b11",
+      "sha256": "783de776f380c7933020822639392db9a2f8e7a8171bbbabe1e42ecf4b898346",
+      "original_bytes": 2292,
+      "bytes": 2540,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/hypothesis.md",
+      "source": "autolab/experiments/009_dense_igpu/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "ebc1d5adff8821784e360427197006abd946bdadca7e47f99c766d344586cdd9",
+      "sha256": "ebc1d5adff8821784e360427197006abd946bdadca7e47f99c766d344586cdd9",
+      "original_bytes": 601,
+      "bytes": 601,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/phases.json",
+      "source": "autolab/experiments/009_dense_igpu/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "c84b59ea5e26da502232a51f8e478790249db23b68a232c95ffa485cc1513bee",
+      "sha256": "911ff85994dbedfd82ba4459227268d9077f2c0d64c40dac6d156bee26d2f8e3",
+      "original_bytes": 1733,
+      "bytes": 1862,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/009_dense_igpu/verdict.md",
+      "source": "autolab/experiments/009_dense_igpu/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "333846a742e991e3bdca8a4ef0043aed776ada5f608466d1c3f459e8e7b9d203",
+      "sha256": "333846a742e991e3bdca8a4ef0043aed776ada5f608466d1c3f459e8e7b9d203",
+      "original_bytes": 1399,
+      "bytes": 1399,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/010_after_seeding/phases.json",
+      "source": "autolab/experiments/010_after_seeding/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "dcd3aee663aa219e3fc12fcbdfb6612bf7510563e147990bf223efa1b5a270ae",
+      "sha256": "178354dd63f9410896ad00aa18c56c193046a6ebd54033827fa28b475748cd13",
+      "original_bytes": 1712,
+      "bytes": 1841,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/010_after_seeding/verdict.md",
+      "source": "autolab/experiments/010_after_seeding/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "7a2ac1b2f5ac993b4ada4553d86c372ebf2ebba5940d17ec3f9c0942d932a6d0",
+      "sha256": "7a2ac1b2f5ac993b4ada4553d86c372ebf2ebba5940d17ec3f9c0942d932a6d0",
+      "original_bytes": 584,
+      "bytes": 584,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/analysis.json",
+      "source": "autolab/experiments/011_parallel_attention/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "c4cbc4e0212833eada29b181c9c0335413a4386447b2fe06323f27930890171f",
+      "sha256": "8d1aedd2be0f6138ad714ca4a775014a6e3f5b14e3e0793b6d8bab75780a767c",
+      "original_bytes": 18508,
+      "bytes": 24991,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/fleet-overrides.env",
+      "source": "autolab/experiments/011_parallel_attention/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "0a288d6000ce30b0a4c224cad0ac82b1344eadb15490de7c4d81fef29db0d7b2",
+      "sha256": "0a288d6000ce30b0a4c224cad0ac82b1344eadb15490de7c4d81fef29db0d7b2",
+      "original_bytes": 2885,
+      "bytes": 2885,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/gate.json",
+      "source": "autolab/experiments/011_parallel_attention/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "a0b1c9490160aa8852beed1f46a2af10c4033b742499f7dce39dd33137b772a3",
+      "sha256": "e21ee8938996c8989d6cf25153ed93c33e9f1c30151faaa39a4a41718ede68cd",
+      "original_bytes": 2291,
+      "bytes": 2539,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/hypothesis.md",
+      "source": "autolab/experiments/011_parallel_attention/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "78609496aacdc79b597aa9163f6bfe47a8fdc2c225ab072b3383ad1d558d56bb",
+      "sha256": "78609496aacdc79b597aa9163f6bfe47a8fdc2c225ab072b3383ad1d558d56bb",
+      "original_bytes": 484,
+      "bytes": 484,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/phases.json",
+      "source": "autolab/experiments/011_parallel_attention/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "8c2ae6a64a63d1bc6eca1f07b82b4ef4d28cdf64e97d26b8b6047b6e83d71338",
+      "sha256": "d3fd6835fe54814e7541d10abb5e7c2ddc666ffe3c9aacb68fca4e0a4150a4bc",
+      "original_bytes": 1305,
+      "bytes": 1402,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011_parallel_attention/verdict.md",
+      "source": "autolab/experiments/011_parallel_attention/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "610cf23c7176fb1f0fc73ddcf985d256357ed5c212771bd86c2a4a3d7f02bb6b",
+      "sha256": "610cf23c7176fb1f0fc73ddcf985d256357ed5c212771bd86c2a4a3d7f02bb6b",
+      "original_bytes": 757,
+      "bytes": 757,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011b_long_generation/phases.json",
+      "source": "autolab/experiments/011b_long_generation/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "7660a6f94b68971d41fd27d1c096ed271648529b95819fb5c5da2e5dd9ddd243",
+      "sha256": "a3580f5a6c6f170d13db4cc487ee4c462463802b6d5e4a511a84558ca979ea61",
+      "original_bytes": 445,
+      "bytes": 478,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/011b_long_generation/verdict.md",
+      "source": "autolab/experiments/011b_long_generation/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "89d6517f831147d586f194fb260a6cc6dc381a030922ea6d1f0a436dc4eedb3e",
+      "sha256": "89d6517f831147d586f194fb260a6cc6dc381a030922ea6d1f0a436dc4eedb3e",
+      "original_bytes": 759,
+      "bytes": 759,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/012_single_stream_anatomy/analysis.json",
+      "source": "autolab/experiments/012_single_stream_anatomy/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "132a8f83fabdf9f7828ff16c5e6d45d9b19eecb242b3c164edc847b7cb8d1453",
+      "sha256": "26cb78c55430d3b6e8955529a95d16c99effd47fd84a0917faab583ce51e3c1a",
+      "original_bytes": 27239,
+      "bytes": 36962,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/012_single_stream_anatomy/phases.json",
+      "source": "autolab/experiments/012_single_stream_anatomy/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "731081c54e0f0d2149c04bda0ec8af5321deea45bcfad09ca6011450de64d911",
+      "sha256": "d3803b17eb466d414b67e38287640709fbe2f0de65d63b728ccd51448bb9292c",
+      "original_bytes": 1288,
+      "bytes": 1385,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/012_single_stream_anatomy/verdict.md",
+      "source": "autolab/experiments/012_single_stream_anatomy/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "b4469ff69e106c04b99db9daafa021249664c91d35a3c90706efd86cac9e3906",
+      "sha256": "b4469ff69e106c04b99db9daafa021249664c91d35a3c90706efd86cac9e3906",
+      "original_bytes": 1972,
+      "bytes": 1972,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/013_acceptance_study/hypothesis.md",
+      "source": "autolab/experiments/013_acceptance_study/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "988d0e0cb7aa5320701cc954d4d3f4549a577bbcad76ae34d1509217679ed8fa",
+      "sha256": "988d0e0cb7aa5320701cc954d4d3f4549a577bbcad76ae34d1509217679ed8fa",
+      "original_bytes": 1272,
+      "bytes": 1272,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/013_acceptance_study/study.json",
+      "source": "autolab/experiments/013_acceptance_study/study.json",
+      "kind": "git-blob",
+      "original_sha256": "cdb93f8cb4e0c6d52e783e22ad74e5bd3e5355618909e90bebfc3010cb857359",
+      "sha256": "306ab2cf3dd0f4d395a3d8b5e0a750106b97b14451e61d5137beb94e517b51f6",
+      "original_bytes": 19769,
+      "bytes": 20008,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/013_acceptance_study/verdict.md",
+      "source": "autolab/experiments/013_acceptance_study/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "bbf07fea733ea8e3d4ef4da8b60b912c6e0847bb28a446987ac1076fbfa16a4b",
+      "sha256": "bbf07fea733ea8e3d4ef4da8b60b912c6e0847bb28a446987ac1076fbfa16a4b",
+      "original_bytes": 2168,
+      "bytes": 2168,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/014_lan_latency_probe/fleet-overrides.env",
+      "source": "autolab/experiments/014_lan_latency_probe/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "a21ef0e3fb67550d5bdc41993cdeb9eb9d26f3b124ad9ca2cfe67f677c6cbff2",
+      "sha256": "a21ef0e3fb67550d5bdc41993cdeb9eb9d26f3b124ad9ca2cfe67f677c6cbff2",
+      "original_bytes": 6245,
+      "bytes": 6245,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/014_lan_latency_probe/hypothesis.md",
+      "source": "autolab/experiments/014_lan_latency_probe/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "2374a0c8522a1cb49bd9dd21d077a91f41c68fef867c51f005f6f53d63c85314",
+      "sha256": "2374a0c8522a1cb49bd9dd21d077a91f41c68fef867c51f005f6f53d63c85314",
+      "original_bytes": 1706,
+      "bytes": 1706,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/014_lan_latency_probe/verdict.md",
+      "source": "autolab/experiments/014_lan_latency_probe/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "a976730a0549ff33e42932365fc8a14c49012ca56f09d7f99bbac04240bbcb16",
+      "sha256": "a976730a0549ff33e42932365fc8a14c49012ca56f09d7f99bbac04240bbcb16",
+      "original_bytes": 2242,
+      "bytes": 2242,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/analysis.json",
+      "source": "autolab/experiments/015_drafter_model/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "a75e177d6e8efcf502224ffb40bcddaaa9fc515175bbd8e40e863341e7725b23",
+      "sha256": "2d4a4fa4b38653b697bc60adfd71b82c42a327d4cc5eeb2c34459e964ad4130e",
+      "original_bytes": 44122,
+      "bytes": 60325,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/fleet-overrides.env",
+      "source": "autolab/experiments/015_drafter_model/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "ad75deb1241b9d54f31e14c679bb7c98db355f3450d669c0bf09f3680b58263c",
+      "sha256": "ad75deb1241b9d54f31e14c679bb7c98db355f3450d669c0bf09f3680b58263c",
+      "original_bytes": 6708,
+      "bytes": 6708,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/gate.json",
+      "source": "autolab/experiments/015_drafter_model/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "d83dc88545ad42e6c34b39cdaefc1c6443c83e4d9fac00bc8e386f7b75628328",
+      "sha256": "5cbff69ec8119b99759babe509e87209aa76cd14bce6ed4e264b5cce3fb4b8f9",
+      "original_bytes": 2289,
+      "bytes": 2537,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/hypothesis.md",
+      "source": "autolab/experiments/015_drafter_model/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "bcd589671164d2bbf3b353500431971c91e4a003d0e8ced17aed8082f9f38b84",
+      "sha256": "bcd589671164d2bbf3b353500431971c91e4a003d0e8ced17aed8082f9f38b84",
+      "original_bytes": 1720,
+      "bytes": 1720,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/phases.json",
+      "source": "autolab/experiments/015_drafter_model/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "45de164383b5bbfa7a680d7e7e322cc315ec3d109683039dd05de37e4a87bf10",
+      "sha256": "0464d5f3b5a8af37756b7ace512bc7f060934b48dbd22616902e253f564324d7",
+      "original_bytes": 2149,
+      "bytes": 2310,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015_drafter_model/verdict.md",
+      "source": "autolab/experiments/015_drafter_model/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "e834597548457665320b43e189bd10dddfa99f0ea0f4a759b9aacb341e77b98d",
+      "sha256": "e834597548457665320b43e189bd10dddfa99f0ea0f4a759b9aacb341e77b98d",
+      "original_bytes": 2780,
+      "bytes": 2780,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015c_ensemble/analysis.json",
+      "source": "autolab/experiments/015c_ensemble/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "07e176ee350a7ee77e1ceb29e9926459b40c77f69459095c758388bb7e8a61b4",
+      "sha256": "8b5cfaafa466559dd3649accdb38509b23b89be60f3b92c3cc62bcaf8e3bb07a",
+      "original_bytes": 55581,
+      "bytes": 77664,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015c_ensemble/fleet-overrides.env",
+      "source": "autolab/experiments/015c_ensemble/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "ad75deb1241b9d54f31e14c679bb7c98db355f3450d669c0bf09f3680b58263c",
+      "sha256": "ad75deb1241b9d54f31e14c679bb7c98db355f3450d669c0bf09f3680b58263c",
+      "original_bytes": 6708,
+      "bytes": 6708,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015c_ensemble/gate.json",
+      "source": "autolab/experiments/015c_ensemble/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "ee22fda77ab708cca987b7b47e60af8213a013e5b2d14a0faa4866759865eb3c",
+      "sha256": "b8b8ff985decafc2f19dcbd210fee6a62df4463a53bcb201249e89a75f8892ef",
+      "original_bytes": 2293,
+      "bytes": 2541,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/015c_ensemble/phases.json",
+      "source": "autolab/experiments/015c_ensemble/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "b0815384731b3d82907b2d39349d2da000ce32298227992ea5138d168298bc0f",
+      "sha256": "9519d8cdcf4ece80654d2032ca6df5546b93fce0a6cef65646ea5178db72763c",
+      "original_bytes": 2628,
+      "bytes": 2821,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/016_distill_data/hypothesis.md",
+      "source": "autolab/experiments/016_distill_data/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "5bfbc321ff8b1e42b750b00080f643d35a4b99e7400dd73bf9dbc5c3daf8d722",
+      "sha256": "5bfbc321ff8b1e42b750b00080f643d35a4b99e7400dd73bf9dbc5c3daf8d722",
+      "original_bytes": 1186,
+      "bytes": 1186,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/017_rollback/fleet-overrides.env",
+      "source": "autolab/experiments/017_rollback/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "6e64b9891510aa8424cce821c2e9d936a14ea319c4c7c0d0e01905c9b861364e",
+      "sha256": "6e64b9891510aa8424cce821c2e9d936a14ea319c4c7c0d0e01905c9b861364e",
+      "original_bytes": 3436,
+      "bytes": 3436,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/018_all_to_all_network/fleet-overrides.env",
+      "source": "autolab/experiments/018_all_to_all_network/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "d87b44fc83abc6fdec11da2aa18fa0c54f594d9323d0aace1c70d0bd8f3eb44d",
+      "sha256": "d87b44fc83abc6fdec11da2aa18fa0c54f594d9323d0aace1c70d0bd8f3eb44d",
+      "original_bytes": 15698,
+      "bytes": 15698,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/018_all_to_all_network/hypothesis.md",
+      "source": "autolab/experiments/018_all_to_all_network/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "5e48ddc2afbff9a92c5780988be5ce5a39150df507f77decd78389fa3b59309a",
+      "sha256": "5e48ddc2afbff9a92c5780988be5ce5a39150df507f77decd78389fa3b59309a",
+      "original_bytes": 1772,
+      "bytes": 1772,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/018_all_to_all_network/results.json",
+      "source": "autolab/experiments/018_all_to_all_network/results.json",
+      "kind": "git-blob",
+      "original_sha256": "68b483ccbf86ccf66aff57fe75cf09ea68351f26b57e1252b76598ec77a99bb8",
+      "sha256": "1d38d776509f101384d0e1ea75ac54a7bd996d1c74dd580fcf4fa75d6c5d940f",
+      "original_bytes": 11649,
+      "bytes": 13050,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/018_all_to_all_network/verdict.md",
+      "source": "autolab/experiments/018_all_to_all_network/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "3bf909597b25e725528b6d8962f4541fe95cbcda564c0096006992165eb3bbce",
+      "sha256": "3bf909597b25e725528b6d8962f4541fe95cbcda564c0096006992165eb3bbce",
+      "original_bytes": 2746,
+      "bytes": 2746,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/019_baseline_15_streams/analysis.json",
+      "source": "autolab/experiments/019_baseline_15_streams/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "7a251c0f8eeb920a2e9c6eafdcdb2213bee3f56ceb761bcacf7cab2bbc84db11",
+      "sha256": "c51e266c6cb22a3822dd71e5431e8c7cb5d1ddc2a4e1ad5814766af7c076c172",
+      "original_bytes": 49165,
+      "bytes": 67568,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/019_baseline_15_streams/phases.json",
+      "source": "autolab/experiments/019_baseline_15_streams/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "7f3bede0170ccde82222ceddc6cdcbf48f7738ce2dbccf068a6089f8dcd93f79",
+      "sha256": "ced4830ffc4aa3f879ff0d1a5e112f184b1ac31b3f76a734b487198f6f6fc2cb",
+      "original_bytes": 2621,
+      "bytes": 2812,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/020_gpu_idle_diagnostic/fleet-overrides.env",
+      "source": "autolab/experiments/020_gpu_idle_diagnostic/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "e18db11b52edd83de787305358a3805961d4d30c7d8f77ce3af5e4473903d8a2",
+      "sha256": "e18db11b52edd83de787305358a3805961d4d30c7d8f77ce3af5e4473903d8a2",
+      "original_bytes": 7141,
+      "bytes": 7141,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/020_gpu_idle_diagnostic/gate.json",
+      "source": "autolab/experiments/020_gpu_idle_diagnostic/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "dcfd1bb59375e90e733f7e0461e23409d2311277897e6ed41d4a5d1bc598bc70",
+      "sha256": "fa3bbec38b308bf519731ab4a6bcfc4e8f40e71db7d7546067ef00b15484f550",
+      "original_bytes": 2292,
+      "bytes": 2540,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/020_gpu_idle_diagnostic/hypothesis.md",
+      "source": "autolab/experiments/020_gpu_idle_diagnostic/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "c0189768b161fdd5b04c3a9794aa284cbbc6ca95e09a58bd2cea2e0ac83fa01b",
+      "sha256": "c0189768b161fdd5b04c3a9794aa284cbbc6ca95e09a58bd2cea2e0ac83fa01b",
+      "original_bytes": 1253,
+      "bytes": 1253,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/020_gpu_idle_diagnostic/phases.json",
+      "source": "autolab/experiments/020_gpu_idle_diagnostic/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "1b717de7c7daec24d54d2657010b032da5eac4551a53756a3cdb6f093e4a7db0",
+      "sha256": "3084dd08e482c9066d1572b6820cca20b4c2280c84783d7e36b93ffb55a6abfc",
+      "original_bytes": 1573,
+      "bytes": 1688,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/020_gpu_idle_diagnostic/verdict.md",
+      "source": "autolab/experiments/020_gpu_idle_diagnostic/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "f55e696f45384fa8a4cf1387a64502c140c64534203b49993902c427734c7ccc",
+      "sha256": "f55e696f45384fa8a4cf1387a64502c140c64534203b49993902c427734c7ccc",
+      "original_bytes": 1431,
+      "bytes": 1431,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/021_moe_decode_kernel/fleet-overrides.env",
+      "source": "autolab/experiments/021_moe_decode_kernel/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "781c90aa3698d175a11121bb424168fc3e4ef1d293b430e75f95830c9fa25991",
+      "sha256": "781c90aa3698d175a11121bb424168fc3e4ef1d293b430e75f95830c9fa25991",
+      "original_bytes": 7123,
+      "bytes": 7123,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/021_moe_decode_kernel/gate.json",
+      "source": "autolab/experiments/021_moe_decode_kernel/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "39d0e2cf56f27a89cd39ab571fff6d08e4bded4765818835ed0a1caa7b87a4cd",
+      "sha256": "c5c8e4b15ef085d9f08f985089aeb52e2b94adaf861852005c701c3b3d463442",
+      "original_bytes": 2700,
+      "bytes": 2952,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/021_moe_decode_kernel/hypothesis.md",
+      "source": "autolab/experiments/021_moe_decode_kernel/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "d5980c4cceb7a03fed563b25df6b39fbc68b93f8f63e820b8699edf6cbb3ad85",
+      "sha256": "d5980c4cceb7a03fed563b25df6b39fbc68b93f8f63e820b8699edf6cbb3ad85",
+      "original_bytes": 1144,
+      "bytes": 1144,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/021_moe_decode_kernel/phases.json",
+      "source": "autolab/experiments/021_moe_decode_kernel/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "24bc6a301d52411f72a046a909b432ac20a0318a4d2ef3283f08432509cb092d",
+      "sha256": "e14469b2d07af094f48eb7c7a39298a621968bf4a9b36545968e71b925726bac",
+      "original_bytes": 1918,
+      "bytes": 2029,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/021_moe_decode_kernel/verdict.md",
+      "source": "autolab/experiments/021_moe_decode_kernel/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "35e36c88b6be8536cf3dc0adb1f171826c0d99af32395098e90066bc3b0aa994",
+      "sha256": "35e36c88b6be8536cf3dc0adb1f171826c0d99af32395098e90066bc3b0aa994",
+      "original_bytes": 532,
+      "bytes": 532,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/022_patched_decode_kernel/fleet-overrides.env",
+      "source": "autolab/experiments/022_patched_decode_kernel/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "f73484e350a919d872661274cc66005d255062de26e045afccca41bfa2ee5933",
+      "sha256": "f73484e350a919d872661274cc66005d255062de26e045afccca41bfa2ee5933",
+      "original_bytes": 9982,
+      "bytes": 9982,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/022_patched_decode_kernel/gate.json",
+      "source": "autolab/experiments/022_patched_decode_kernel/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "e8c6510c8f453fdb65b1581ff9bda71e828776d104f4bfea697313c42d7d52c5",
+      "sha256": "38461eba58149cc6d3f65c8c7e613306155b9f9023a928e97dc9de1dd5025254",
+      "original_bytes": 858,
+      "bytes": 955,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/022_patched_decode_kernel/hypothesis.md",
+      "source": "autolab/experiments/022_patched_decode_kernel/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "8d32767e1a9b999aa7da26c36fd04c877bd60197b525d8c3b851a400ebad351a",
+      "sha256": "8d32767e1a9b999aa7da26c36fd04c877bd60197b525d8c3b851a400ebad351a",
+      "original_bytes": 1654,
+      "bytes": 1654,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/022_patched_decode_kernel/verdict.md",
+      "source": "autolab/experiments/022_patched_decode_kernel/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "06d600c268619643dbf0a4dba80448ba2ec9ebba994f0fed107d429dde532ac9",
+      "sha256": "06d600c268619643dbf0a4dba80448ba2ec9ebba994f0fed107d429dde532ac9",
+      "original_bytes": 1427,
+      "bytes": 1427,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/fleet-overrides.env",
+      "source": "autolab/experiments/023_split_bench/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "9f9ed90860a9fac18b1638d6c004fe24c62b57f6e70d1a62c322e5a6e4608067",
+      "sha256": "9f9ed90860a9fac18b1638d6c004fe24c62b57f6e70d1a62c322e5a6e4608067",
+      "original_bytes": 7235,
+      "bytes": 7235,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/gate.json",
+      "source": "autolab/experiments/023_split_bench/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "601ef9dfc627110c90cf3f5c1b252f6a64f35f589f98aecc814d6ee613a08f1c",
+      "sha256": "fca30f31920b67d23f297fa7df373e8c73ef3e713121eb99d973bfc239f0d4a1",
+      "original_bytes": 2293,
+      "bytes": 2541,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/high_id_check.json",
+      "source": "autolab/experiments/023_split_bench/high_id_check.json",
+      "kind": "git-blob",
+      "original_sha256": "1d53c8ca93c86c3992222682575e1fea21f09abe5296211847ac6ab0d020711c",
+      "sha256": "4b394b4ea4f839656387ed5014f63e780e46f5fba82ea8addfb440367922eb4f",
+      "original_bytes": 6707,
+      "bytes": 7604,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/hypothesis.md",
+      "source": "autolab/experiments/023_split_bench/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "f261e50e657a08d5d6fed42ad5a5bc3fbd1bf0afec70a479ed8d96b7bda09291",
+      "sha256": "f261e50e657a08d5d6fed42ad5a5bc3fbd1bf0afec70a479ed8d96b7bda09291",
+      "original_bytes": 1115,
+      "bytes": 1115,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/phases.json",
+      "source": "autolab/experiments/023_split_bench/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "51d006bd07b31b9938b24f35d934cb2e620229be7aaad3bea75ec44bbdb44fd3",
+      "sha256": "914522e061e8a083d333f419a5c921c72dae1770972c7a9e6195a6a1b84a90f5",
+      "original_bytes": 525,
+      "bytes": 564,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/split_bench.json",
+      "source": "autolab/experiments/023_split_bench/split_bench.json",
+      "kind": "git-blob",
+      "original_sha256": "d9b8bb6ec495976e50d5ad5168494a2f390785701a22dba7d3527115b5453fa1",
+      "sha256": "4137ca58db14fc6d1cb1006467a5eb3b3eeb9f8d2ef1e6a804d572f85d81a623",
+      "original_bytes": 598,
+      "bytes": 671,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/023_split_bench/verdict.md",
+      "source": "autolab/experiments/023_split_bench/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "f70f75d1f19efbb33018c0311523db58ed6313f02923bdf4421ac324955caaa7",
+      "sha256": "f70f75d1f19efbb33018c0311523db58ed6313f02923bdf4421ac324955caaa7",
+      "original_bytes": 1224,
+      "bytes": 1224,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/024_prefill_windows/fleet-overrides.env",
+      "source": "autolab/experiments/024_prefill_windows/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "07c04c38bbe9392fc33b0e760198de812db004199383f2ea098ba12a336cad06",
+      "sha256": "07c04c38bbe9392fc33b0e760198de812db004199383f2ea098ba12a336cad06",
+      "original_bytes": 7865,
+      "bytes": 7865,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/024_prefill_windows/gate.json",
+      "source": "autolab/experiments/024_prefill_windows/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "60cd191e3a74f51d428bc1beb44ac9d5b46012c64cdb9968d3d4db3352e94512",
+      "sha256": "832aa3d2aedc9c9b8ec6ca91b4902ac03adf2c24361921f1d5e4b4ceae40fa47",
+      "original_bytes": 2293,
+      "bytes": 2541,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/024_prefill_windows/hypothesis.md",
+      "source": "autolab/experiments/024_prefill_windows/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "f61c57dc391682677563c7c3465f246411eaad01e071fa67a799458a17f05d8b",
+      "sha256": "f61c57dc391682677563c7c3465f246411eaad01e071fa67a799458a17f05d8b",
+      "original_bytes": 1132,
+      "bytes": 1132,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/024_prefill_windows/phases.json",
+      "source": "autolab/experiments/024_prefill_windows/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "06eda55c6078b6529c794cc70e0ef29b3bdacf5d989df8f05f0006b2e2891b20",
+      "sha256": "76a846033e013c1cc146bbc52468c86010b01e90ae13e801c6a356e49ea3deae",
+      "original_bytes": 2077,
+      "bytes": 2230,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/024_prefill_windows/verdict.md",
+      "source": "autolab/experiments/024_prefill_windows/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "27010742ceb7b2451962c28c88908407146ded06a71083a3cc26dbe5a1ddf865",
+      "sha256": "27010742ceb7b2451962c28c88908407146ded06a71083a3cc26dbe5a1ddf865",
+      "original_bytes": 1365,
+      "bytes": 1365,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/025_crash_evidence/fleet-overrides.env",
+      "source": "autolab/experiments/025_crash_evidence/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "17187b65c7ff4e0f06c8061a57a19215a46440108495f45dd7ed1715e6f833da",
+      "sha256": "17187b65c7ff4e0f06c8061a57a19215a46440108495f45dd7ed1715e6f833da",
+      "original_bytes": 8536,
+      "bytes": 8536,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/025_crash_evidence/verdict.md",
+      "source": "autolab/experiments/025_crash_evidence/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "ba3cb46c574a0ac338bf4e4a1dee9154efe182f98b31ea4da8e8a4a7287991d9",
+      "sha256": "ba3cb46c574a0ac338bf4e4a1dee9154efe182f98b31ea4da8e8a4a7287991d9",
+      "original_bytes": 1633,
+      "bytes": 1633,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/026_decode_kernel_group64/fleet-overrides.env",
+      "source": "autolab/experiments/026_decode_kernel_group64/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "d6ad051ae5f09baf85f8489f327476dedad035b46fca9c1a386202530f0c5ff2",
+      "sha256": "d6ad051ae5f09baf85f8489f327476dedad035b46fca9c1a386202530f0c5ff2",
+      "original_bytes": 12037,
+      "bytes": 12037,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/026_decode_kernel_group64/hypothesis.md",
+      "source": "autolab/experiments/026_decode_kernel_group64/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "1fc220d9296e1724bfa726f109ad2d671d2876ed6308b5e5f93130a0efe3587a",
+      "sha256": "1fc220d9296e1724bfa726f109ad2d671d2876ed6308b5e5f93130a0efe3587a",
+      "original_bytes": 1799,
+      "bytes": 1799,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/026_decode_kernel_group64/phases.json",
+      "source": "autolab/experiments/026_decode_kernel_group64/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "cbb7933b659cdb94e1f5d869b82d6384e363b0f2c2f74dbfeb694f363956101f",
+      "sha256": "be26074da1ed3839c211c2ab2e3d6864e0d4b72e6e834fe9615be91dbe419c1b",
+      "original_bytes": 1045,
+      "bytes": 1122,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/026_decode_kernel_group64/verdict.md",
+      "source": "autolab/experiments/026_decode_kernel_group64/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "e0dfc3b9491cd21bab30fcaced002917b4f6ea0265c36d12de7b8cf097cd846c",
+      "sha256": "e0dfc3b9491cd21bab30fcaced002917b4f6ea0265c36d12de7b8cf097cd846c",
+      "original_bytes": 2699,
+      "bytes": 2699,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/027_rank0_dense_as_moe/fleet-overrides.env",
+      "source": "autolab/experiments/027_rank0_dense_as_moe/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "ff4b1cc72e628b3e4aa3791a26c349b652ef4d25b22c470f6eef19991cef7697",
+      "sha256": "ff4b1cc72e628b3e4aa3791a26c349b652ef4d25b22c470f6eef19991cef7697",
+      "original_bytes": 12669,
+      "bytes": 12669,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/027_rank0_dense_as_moe/hypothesis.md",
+      "source": "autolab/experiments/027_rank0_dense_as_moe/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "1fdaf6d0eed6ca5c4e9878da7560f7ef34863caf6008531460d67a6a9a84e929",
+      "sha256": "1fdaf6d0eed6ca5c4e9878da7560f7ef34863caf6008531460d67a6a9a84e929",
+      "original_bytes": 1009,
+      "bytes": 1009,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/027_rank0_dense_as_moe/phases.json",
+      "source": "autolab/experiments/027_rank0_dense_as_moe/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "c07fedd8419d08f6a90f43b9aab481521015dcb4e248099c2c46c3c53f4a8328",
+      "sha256": "bb2ec15b46573e4f9e2ed69449abad476d94a574034774bd05dbb13bf29777fd",
+      "original_bytes": 1562,
+      "bytes": 1677,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/027_rank0_dense_as_moe/verdict.md",
+      "source": "autolab/experiments/027_rank0_dense_as_moe/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "d12db37039ba9e58fc2642cd6361a41f796d1dfc46139459e12f423ec4ee8694",
+      "sha256": "d12db37039ba9e58fc2642cd6361a41f796d1dfc46139459e12f423ec4ee8694",
+      "original_bytes": 1450,
+      "bytes": 1450,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/028_head_batching/fleet-overrides.env",
+      "source": "autolab/experiments/028_head_batching/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "e74542f465e3d5cab1f8ceb283f89724cca45f7ae4b2fe7c86a1ee79f1b7f50c",
+      "sha256": "e74542f465e3d5cab1f8ceb283f89724cca45f7ae4b2fe7c86a1ee79f1b7f50c",
+      "original_bytes": 8725,
+      "bytes": 8725,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/028_head_batching/hypothesis.md",
+      "source": "autolab/experiments/028_head_batching/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "5e3197d3062b0b9cec58f2976d12a4e502b7311576667f5eed4e4d6c1646f923",
+      "sha256": "5e3197d3062b0b9cec58f2976d12a4e502b7311576667f5eed4e4d6c1646f923",
+      "original_bytes": 1560,
+      "bytes": 1560,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/028_head_batching/phases.json",
+      "source": "autolab/experiments/028_head_batching/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "f47dc85d30d35a1aadc5777ab4a7a7437b65ad8fdd2efd7781e54c37319215be",
+      "sha256": "41d2e1f03dcef97e8691344de4cf137011f23c4a8da68d9ad511206ab01cc61c",
+      "original_bytes": 1560,
+      "bytes": 1675,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/028_head_batching/verdict.md",
+      "source": "autolab/experiments/028_head_batching/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "32476e280d9a5cf689940dbe1de444676678249f6717c4f0dcf8b9f864b930ab",
+      "sha256": "32476e280d9a5cf689940dbe1de444676678249f6717c4f0dcf8b9f864b930ab",
+      "original_bytes": 2297,
+      "bytes": 2297,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/029_decode_kernels_exact/fleet-overrides.env",
+      "source": "autolab/experiments/029_decode_kernels_exact/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "a81692695ba87b658537fb68c83c41d860d056a615ca3548466bb519f858cb58",
+      "sha256": "a81692695ba87b658537fb68c83c41d860d056a615ca3548466bb519f858cb58",
+      "original_bytes": 12725,
+      "bytes": 12725,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/029_decode_kernels_exact/hypothesis.md",
+      "source": "autolab/experiments/029_decode_kernels_exact/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "75334469e119571d3f8c955c1952b98db451fcb3058e451629609bfffbf4ca99",
+      "sha256": "75334469e119571d3f8c955c1952b98db451fcb3058e451629609bfffbf4ca99",
+      "original_bytes": 2145,
+      "bytes": 2145,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/029_decode_kernels_exact/phases.json",
+      "source": "autolab/experiments/029_decode_kernels_exact/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "37394b1932eabaf7aede07721b96ebf4f6c1b1a65b8744618d3c17c5064ae252",
+      "sha256": "9db4465870ddbfe95b6be838f6c496e873f692e6af94300630153dcc7452a8e9",
+      "original_bytes": 1552,
+      "bytes": 1667,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/029_decode_kernels_exact/verdict.md",
+      "source": "autolab/experiments/029_decode_kernels_exact/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "861da28c8c8d336242341cd0618a9dbff0806fcd7a483bbc91896bb017947e89",
+      "sha256": "861da28c8c8d336242341cd0618a9dbff0806fcd7a483bbc91896bb017947e89",
+      "original_bytes": 3640,
+      "bytes": 3640,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/030_clean_exact/fleet-overrides.env",
+      "source": "autolab/experiments/030_clean_exact/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "4c6882eed12a52ba36cb782cf88e1f1c6825ba48b42bf292e26fd1cd39f56384",
+      "sha256": "4c6882eed12a52ba36cb782cf88e1f1c6825ba48b42bf292e26fd1cd39f56384",
+      "original_bytes": 9014,
+      "bytes": 9014,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/031_single_stream_check/phases.json",
+      "source": "autolab/experiments/031_single_stream_check/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "6fc76889ec62b2c56701767fdbdd483111d4eb4b0d47ba344f686bc87e1a501b",
+      "sha256": "8daee9fab0421800f61b22c72110e7d1076bd9cdab0de9aead5141673225d416",
+      "original_bytes": 3130,
+      "bytes": 3359,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/031_single_stream_check/phases_before_swap.json",
+      "source": "autolab/experiments/031_single_stream_check/phases_before_swap.json",
+      "kind": "git-blob",
+      "original_sha256": "f7c7c0546898acb3a8192e431d57a2b5e04ffb26050f9091e6826ff38d2cc5af",
+      "sha256": "33f1b220136334d951f0025d6c775cf7c3fd4c20d88fabc6e3f1728ecbfe78b6",
+      "original_bytes": 522,
+      "bytes": 561,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/032_role_swap/032a_role_sync.env",
+      "source": "autolab/experiments/032_role_swap/032a_role_sync.env",
+      "kind": "git-blob",
+      "original_sha256": "352c6f310d60cc1fb04b99db42230aff7cadc432082ff968ef84ce4b655a4c92",
+      "sha256": "352c6f310d60cc1fb04b99db42230aff7cadc432082ff968ef84ce4b655a4c92",
+      "original_bytes": 22028,
+      "bytes": 22028,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/032_role_swap/032b_role_swap.env",
+      "source": "autolab/experiments/032_role_swap/032b_role_swap.env",
+      "kind": "git-blob",
+      "original_sha256": "a29714352705245eb9b7d834bb3b05618df453d063ac67b2685e157675a1774a",
+      "sha256": "a29714352705245eb9b7d834bb3b05618df453d063ac67b2685e157675a1774a",
+      "original_bytes": 27979,
+      "bytes": 27979,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/032_role_swap/hypothesis.md",
+      "source": "autolab/experiments/032_role_swap/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "c0332ccff15d125b05383f886091b2a095ec302b436cf5833eed7e4b86520a97",
+      "sha256": "c0332ccff15d125b05383f886091b2a095ec302b436cf5833eed7e4b86520a97",
+      "original_bytes": 3858,
+      "bytes": 3858,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/032_role_swap/phases.json",
+      "source": "autolab/experiments/032_role_swap/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "6351e8b29a0adab9ecec167e7eb88194b774224da9bc3f83a060f5122723151a",
+      "sha256": "9d4968608d17082750ffba87af41e7e40a4f2862a17ed3d791a01d70d97a8c1d",
+      "original_bytes": 1047,
+      "bytes": 1124,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/032_role_swap/verdict.md",
+      "source": "autolab/experiments/032_role_swap/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "ee1c68e9e3d8f91092e9cbcded1c1247086ba986a9757058bd7666691a606c12",
+      "sha256": "ee1c68e9e3d8f91092e9cbcded1c1247086ba986a9757058bd7666691a606c12",
+      "original_bytes": 3992,
+      "bytes": 3992,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/033_mtp_offline_study/verdict.md",
+      "source": "autolab/experiments/033_mtp_offline_study/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "1cbcaa56a6c05f668c3fe80e34d3acce84f527cb34fc01a14ed71afdd43ddbb9",
+      "sha256": "1cbcaa56a6c05f668c3fe80e34d3acce84f527cb34fc01a14ed71afdd43ddbb9",
+      "original_bytes": 4789,
+      "bytes": 4789,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/analysis-baseline.json",
+      "source": "autolab/experiments/034_inflight10/analysis-baseline.json",
+      "kind": "git-blob",
+      "original_sha256": "87498c25fb6cb9066704271b808fb959ad20ee5a7e2e6372ffe50da0c31c2d16",
+      "sha256": "871a4e2c161e9ebfa6fd37947b6260e73357501c7768c55f394f3655efdb0ac5",
+      "original_bytes": 39512,
+      "bytes": 54499,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/analysis.json",
+      "source": "autolab/experiments/034_inflight10/analysis.json",
+      "kind": "git-blob",
+      "original_sha256": "9ca36ec2ae5d6c1910ab6037cd260074f3dfc1f688f386858738b22fdec7112c",
+      "sha256": "c23d75e244bb505cfb45056967185717ccaf631efcd18e8a6814b878a1b630a0",
+      "original_bytes": 39077,
+      "bytes": 54064,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/gate-baseline.json",
+      "source": "autolab/experiments/034_inflight10/gate-baseline.json",
+      "kind": "git-blob",
+      "original_sha256": "146fdd57f38949e853b11aefb3f4c7bf5d99911749565f3770aa773543d33142",
+      "sha256": "538a6092293a2e5fe7a9eb1210fe512caf3517668e1d8fc0d1b4530976bb3f4a",
+      "original_bytes": 2291,
+      "bytes": 2539,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/gate.json",
+      "source": "autolab/experiments/034_inflight10/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "651011cb7dca7b621623d39b9fa082a64ad9f6f4a8a748d5336ecd14ab874212",
+      "sha256": "2aee7a4738f291ccdd6fee59bad9e0f8fbf0b859111d1770ca5acce11b23289a",
+      "original_bytes": 2291,
+      "bytes": 2539,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/hypothesis.md",
+      "source": "autolab/experiments/034_inflight10/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "f872d5a3defd676e01390b83cac16c26113eaff9bd9748fe5246d7053894d939",
+      "sha256": "f872d5a3defd676e01390b83cac16c26113eaff9bd9748fe5246d7053894d939",
+      "original_bytes": 753,
+      "bytes": 753,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/phases-baseline.json",
+      "source": "autolab/experiments/034_inflight10/phases-baseline.json",
+      "kind": "git-blob",
+      "original_sha256": "9d45f0a2ecb0c0d30153dc08befe91f5e6c4e488a2fc5dab914f5eae119d2c07",
+      "sha256": "6a3a2cd19f84200ae069541b97cc10b55b5b5bc1cec57fb16ff685c53931a481",
+      "original_bytes": 2080,
+      "bytes": 2233,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/phases.json",
+      "source": "autolab/experiments/034_inflight10/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "918684d67e73dca73be81a411a8466bde945a09601d770307c7adb246f53780f",
+      "sha256": "4fa01a8c3c1eaccea332258988aebf492f57526aec0532046778ac55b037e600",
+      "original_bytes": 2084,
+      "bytes": 2237,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/verdict.md",
+      "source": "autolab/experiments/034_inflight10/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "4545f5546679e6cf3b7d320c9abc3aa4e9ba46fbb20664cb7e3ed8c0bf25378f",
+      "sha256": "4545f5546679e6cf3b7d320c9abc3aa4e9ba46fbb20664cb7e3ed8c0bf25378f",
+      "original_bytes": 969,
+      "bytes": 969,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/035_chain_readiness/hypothesis.md",
+      "source": "autolab/experiments/035_chain_readiness/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "cd62b9a481f614872b662144daddce654711faef59e3fefc9d0dcc3a1967c358",
+      "sha256": "cd62b9a481f614872b662144daddce654711faef59e3fefc9d0dcc3a1967c358",
+      "original_bytes": 1084,
+      "bytes": 1084,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/035_chain_readiness/phases.json",
+      "source": "autolab/experiments/035_chain_readiness/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "9739059866fc3e6901a7d5c8fadbb4cbb771d0205cdb0bf35b9636145bb33fc9",
+      "sha256": "1dbf935301cf2ef8f1cf7a5a011469bf898e85eead139adba1b84430d0693512",
+      "original_bytes": 1046,
+      "bytes": 1123,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/035_chain_readiness/verdict.md",
+      "source": "autolab/experiments/035_chain_readiness/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "acd65bb902b63ef26620a975be9e88dffcc589e3e5e07db272a215619a0c91f6",
+      "sha256": "acd65bb902b63ef26620a975be9e88dffcc589e3e5e07db272a215619a0c91f6",
+      "original_bytes": 1130,
+      "bytes": 1130,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/036_telemetry_roles/verdict.md",
+      "source": "autolab/experiments/036_telemetry_roles/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "f5c0f02db7087e505c22cd26fe763e510a4cfed5097cb2060cd9e2193fe367c4",
+      "sha256": "f5c0f02db7087e505c22cd26fe763e510a4cfed5097cb2060cd9e2193fe367c4",
+      "original_bytes": 893,
+      "bytes": 893,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/hypothesis.md",
+      "source": "autolab/experiments/037_fleet_state_capture/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "4fe4e5a08423afb59d1129266ab7b8af90e25e0b47aec191a4cfcced51ab1b50",
+      "sha256": "4fe4e5a08423afb59d1129266ab7b8af90e25e0b47aec191a4cfcced51ab1b50",
+      "original_bytes": 1579,
+      "bytes": 1579,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/phases-f16.json",
+      "source": "autolab/experiments/037_fleet_state_capture/phases-f16.json",
+      "kind": "git-blob",
+      "original_sha256": "82c1ed7139399c660d9804721b6fb50a8a1b34787d66d1a049d66d4847325800",
+      "sha256": "cc4a98e4f96f2db3b1585a1a59dd230c78eecb62de8e8d41281ac6709ba7102b",
+      "original_bytes": 1045,
+      "bytes": 1122,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/phases.json",
+      "source": "autolab/experiments/037_fleet_state_capture/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "096cfec19e05847d1b94d39f34d34fec62e271adbf0f59cc56450b74a2908398",
+      "sha256": "e0170b24b23acf5069518ecf262ee1753e927b23338e03b466f51dbf43cca642",
+      "original_bytes": 1041,
+      "bytes": 1118,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/validation.json",
+      "source": "autolab/experiments/037_fleet_state_capture/validation.json",
+      "kind": "git-blob",
+      "original_sha256": "e38418c4ff99e11032e27c5c55103d5a3f730b47f75279d3610752dbc05d03b9",
+      "sha256": "e38418c4ff99e11032e27c5c55103d5a3f730b47f75279d3610752dbc05d03b9",
+      "original_bytes": 287,
+      "bytes": 287,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/verdict.md",
+      "source": "autolab/experiments/037_fleet_state_capture/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "0fa3d9b9c25df2afb7ca26d65c45303e96e7d3d360bf0ce6c3554fd2e3b1717c",
+      "sha256": "0fa3d9b9c25df2afb7ca26d65c45303e96e7d3d360bf0ce6c3554fd2e3b1717c",
+      "original_bytes": 1660,
+      "bytes": 1660,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/038_phrase_transfer/gate.json",
+      "source": "autolab/experiments/038_phrase_transfer/gate.json",
+      "kind": "git-blob",
+      "original_sha256": "07684f2ad862fb68d28a4c8820a27b1e5e0bdcd6768a6dd84fb91142b3677498",
+      "sha256": "19c6dd99be6a528cfe134bc085f50a885affe300d093605b63a259e4bf3cdd78",
+      "original_bytes": 2292,
+      "bytes": 2540,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/038_phrase_transfer/hypothesis.md",
+      "source": "autolab/experiments/038_phrase_transfer/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "3d2a46020e85eee175b9080ab47801feb0b1be5e9b8a2442a507d1e761ac8559",
+      "sha256": "3d2a46020e85eee175b9080ab47801feb0b1be5e9b8a2442a507d1e761ac8559",
+      "original_bytes": 1115,
+      "bytes": 1115,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/038_phrase_transfer/phases-baseline.json",
+      "source": "autolab/experiments/038_phrase_transfer/phases-baseline.json",
+      "kind": "git-blob",
+      "original_sha256": "7a55736076d2e0cb0c53ecf922498223abda79411d37b7e8d266f5998ac73e43",
+      "sha256": "e046ec67cd29be00b33b861b3fba78f9cf1da6239e243d80c7d4345b8f1e4f4c",
+      "original_bytes": 3124,
+      "bytes": 3353,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/038_phrase_transfer/phases.json",
+      "source": "autolab/experiments/038_phrase_transfer/phases.json",
+      "kind": "git-blob",
+      "original_sha256": "3fcc3b1dd94f76ed8fa7fb2905dd6a74293af2afc3529002b6050de61c602bd5",
+      "sha256": "efd2e06a666a8e2517dcac2d8adac52d2265d2dc91bd027153adcd00f86e5146",
+      "original_bytes": 3129,
+      "bytes": 3358,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/038_phrase_transfer/verdict.md",
+      "source": "autolab/experiments/038_phrase_transfer/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "eee47a1a59ff798e99128f0ed1455248b6512de89edd78efd89bf13183e4e876",
+      "sha256": "eee47a1a59ff798e99128f0ed1455248b6512de89edd78efd89bf13183e4e876",
+      "original_bytes": 940,
+      "bytes": 940,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/039_mtp_fleet_rescore/capture_matches.json",
+      "source": "autolab/experiments/039_mtp_fleet_rescore/capture_matches.json",
+      "kind": "git-blob",
+      "original_sha256": "bb7f2abc0093a9a83838d0c894d0250f2ec37a83dcb357d63f67d02fe021d359",
+      "sha256": "c55128d8c0ca0471124058cef9173dbdb6f3f478ea21692acfc410d3967163ff",
+      "original_bytes": 4786,
+      "bytes": 5363,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/039_mtp_fleet_rescore/hypothesis.md",
+      "source": "autolab/experiments/039_mtp_fleet_rescore/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "aede059b021ea050135b82b6d71b31571528e2ab97b7c2488c3d43e78e0c8862",
+      "sha256": "aede059b021ea050135b82b6d71b31571528e2ab97b7c2488c3d43e78e0c8862",
+      "original_bytes": 1242,
+      "bytes": 1242,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/039_mtp_fleet_rescore/results.json",
+      "source": "autolab/experiments/039_mtp_fleet_rescore/results.json",
+      "kind": "git-blob",
+      "original_sha256": "07cd00a8bacae9da73aaf2e8d9433f0a3009e3431c87a041908c20a5212900d5",
+      "sha256": "c25eacc3a327b66fbe63c519cafc50bbbed9ef83f080b4f9a5dd3aef129797bf",
+      "original_bytes": 6226,
+      "bytes": 6229,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/039_mtp_fleet_rescore/verdict.md",
+      "source": "autolab/experiments/039_mtp_fleet_rescore/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "8b7ac11b6e408b1bdbb2452cac39182872dfde7b5ec0b77fb54d0b946cd35ed4",
+      "sha256": "8b7ac11b6e408b1bdbb2452cac39182872dfde7b5ec0b77fb54d0b946cd35ed4",
+      "original_bytes": 2223,
+      "bytes": 2223,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/040_expert_usage/hypothesis.md",
+      "source": "autolab/experiments/040_expert_usage/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "508171507d87e0675a5c963c6df01b1bf4b3a6a51c489e54f0ebceef1ac79241",
+      "sha256": "508171507d87e0675a5c963c6df01b1bf4b3a6a51c489e54f0ebceef1ac79241",
+      "original_bytes": 1344,
+      "bytes": 1344,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/040_expert_usage/interruption.json",
+      "source": "autolab/experiments/040_expert_usage/interruption.json",
+      "kind": "git-blob",
+      "original_sha256": "090244e9284b3e60bdd36e6ce3eb117aa3bc6e5068192c4a3b45df07356e4b92",
+      "sha256": "090244e9284b3e60bdd36e6ce3eb117aa3bc6e5068192c4a3b45df07356e4b92",
+      "original_bytes": 429,
+      "bytes": 429,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/041_attention_int4/hypothesis.md",
+      "source": "autolab/experiments/041_attention_int4/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "a438f578d8742497dabbc96bf6dc5b437fd773d0520515528b5f38c1df14320c",
+      "sha256": "a438f578d8742497dabbc96bf6dc5b437fd773d0520515528b5f38c1df14320c",
+      "original_bytes": 1205,
+      "bytes": 1205,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/041_attention_int4/results.json",
+      "source": "autolab/experiments/041_attention_int4/results.json",
+      "kind": "git-blob",
+      "original_sha256": "eed30115a18fc3c8d33064392223ab679412ff57be7b9bc68efa34ba0f89d9ea",
+      "sha256": "eed30115a18fc3c8d33064392223ab679412ff57be7b9bc68efa34ba0f89d9ea",
+      "original_bytes": 947,
+      "bytes": 947,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/041_attention_int4/verdict.md",
+      "source": "autolab/experiments/041_attention_int4/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "b2c332299edf8eacd96dd825cdd95219af87433fb66494735077a34ca2b1f30b",
+      "sha256": "b2c332299edf8eacd96dd825cdd95219af87433fb66494735077a34ca2b1f30b",
+      "original_bytes": 1298,
+      "bytes": 1298,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/042_fleet_draft_training/hypothesis.md",
+      "source": "autolab/experiments/042_fleet_draft_training/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "d9f8766654aff4e9bc4fefa945388ac235e9a24f9eded293aa70be8b93f41761",
+      "sha256": "d9f8766654aff4e9bc4fefa945388ac235e9a24f9eded293aa70be8b93f41761",
+      "original_bytes": 3346,
+      "bytes": 3346,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/043_attention_int4_canary/hypothesis.md",
+      "source": "autolab/experiments/043_attention_int4_canary/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "73beced40c7503e9e990dd833569b5db4336a74b4bda9e1af5faaa76efa9f12d",
+      "sha256": "73beced40c7503e9e990dd833569b5db4336a74b4bda9e1af5faaa76efa9f12d",
+      "original_bytes": 1734,
+      "bytes": 1734,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/044_cpu_overlap/hypothesis.md",
+      "source": "autolab/experiments/044_cpu_overlap/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "2504dc40c180561ca9e6892167afb64b2832c4808fe1f46ec8bd5c4b931bdd18",
+      "sha256": "2504dc40c180561ca9e6892167afb64b2832c4808fe1f46ec8bd5c4b931bdd18",
+      "original_bytes": 1589,
+      "bytes": 1589,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/045_expert_parallel_serving/hypothesis.md",
+      "source": "autolab/experiments/045_expert_parallel_serving/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "24b2a1b8cf1a269a60eb3368fb9f731400d96d4573a6553032fbaf97a166d77e",
+      "sha256": "24b2a1b8cf1a269a60eb3368fb9f731400d96d4573a6553032fbaf97a166d77e",
+      "original_bytes": 1650,
+      "bytes": 1650,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/README.md",
+      "source": "autolab/queue/README.md",
+      "kind": "git-blob",
+      "original_sha256": "30518545e2ed825d389eda5bc0cf8df589bfcf8633f55ac3b6fd12055b509703",
+      "sha256": "30518545e2ed825d389eda5bc0cf8df589bfcf8633f55ac3b6fd12055b509703",
+      "original_bytes": 3077,
+      "bytes": 3077,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/001-balanced-groups.md",
+      "source": "autolab/queue/items/001-balanced-groups.md",
+      "kind": "git-blob",
+      "original_sha256": "1e154b4c428eeebd502b3dfc98a3358fa886b06034fb9e15968d4bca17d932aa",
+      "sha256": "1e154b4c428eeebd502b3dfc98a3358fa886b06034fb9e15968d4bca17d932aa",
+      "original_bytes": 322,
+      "bytes": 322,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/002a-return-link.md",
+      "source": "autolab/queue/items/002a-return-link.md",
+      "kind": "git-blob",
+      "original_sha256": "79eaa528bb2a1bdbe0c217411a56900900ec880ae852208e0cf5bd94fce244a1",
+      "sha256": "79eaa528bb2a1bdbe0c217411a56900900ec880ae852208e0cf5bd94fce244a1",
+      "original_bytes": 358,
+      "bytes": 358,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/002b-speculation.md",
+      "source": "autolab/queue/items/002b-speculation.md",
+      "kind": "git-blob",
+      "original_sha256": "74d30120f57ecc0abfefb2950d3f35c0aa8d67e19b1c5594102b2776e0440cdd",
+      "sha256": "74d30120f57ecc0abfefb2950d3f35c0aa8d67e19b1c5594102b2776e0440cdd",
+      "original_bytes": 376,
+      "bytes": 376,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/003-per-rank-ab.md",
+      "source": "autolab/queue/items/003-per-rank-ab.md",
+      "kind": "git-blob",
+      "original_sha256": "2d48203910175bad8301cafe963e4e5dc8aad6671c2f90bf44d64ccbb1d5abfb",
+      "sha256": "2d48203910175bad8301cafe963e4e5dc8aad6671c2f90bf44d64ccbb1d5abfb",
+      "original_bytes": 387,
+      "bytes": 387,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/004-row-gemm-prewarm-batchadmit.md",
+      "source": "autolab/queue/items/004-row-gemm-prewarm-batchadmit.md",
+      "kind": "git-blob",
+      "original_sha256": "52d6c226e38ffed34ec788c0097685209310a2f73d7bcb0d143b57a5effbe732",
+      "sha256": "52d6c226e38ffed34ec788c0097685209310a2f73d7bcb0d143b57a5effbe732",
+      "original_bytes": 435,
+      "bytes": 435,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/005-short-steps.md",
+      "source": "autolab/queue/items/005-short-steps.md",
+      "kind": "git-blob",
+      "original_sha256": "2d307736ad8e13aecc0a30b3281a98c4861289c14dd9c4ee754e7191274ecd08",
+      "sha256": "2d307736ad8e13aecc0a30b3281a98c4861289c14dd9c4ee754e7191274ecd08",
+      "original_bytes": 393,
+      "bytes": 393,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/006-admit-while-waiting.md",
+      "source": "autolab/queue/items/006-admit-while-waiting.md",
+      "kind": "git-blob",
+      "original_sha256": "84c45ac3afabf52a1352db5374a6e7e2071741cec3030a264c14410dd26adcd3",
+      "sha256": "84c45ac3afabf52a1352db5374a6e7e2071741cec3030a264c14410dd26adcd3",
+      "original_bytes": 405,
+      "bytes": 405,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/007-fused-f16-all.md",
+      "source": "autolab/queue/items/007-fused-f16-all.md",
+      "kind": "git-blob",
+      "original_sha256": "57f4cb67f70e694227cafd4da7a2672e9beb5b193b0cdf36a239434cc6fd8a4f",
+      "sha256": "57f4cb67f70e694227cafd4da7a2672e9beb5b193b0cdf36a239434cc6fd8a4f",
+      "original_bytes": 396,
+      "bytes": 396,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/008a-six-fused-one-rank.md",
+      "source": "autolab/queue/items/008a-six-fused-one-rank.md",
+      "kind": "git-blob",
+      "original_sha256": "ff1cd1d1ea14493292f3bd63df3bbb9a9e9f795e4c2448c789d0de5c8ca4b142",
+      "sha256": "ff1cd1d1ea14493292f3bd63df3bbb9a9e9f795e4c2448c789d0de5c8ca4b142",
+      "original_bytes": 409,
+      "bytes": 409,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/008b-all-fused.md",
+      "source": "autolab/queue/items/008b-all-fused.md",
+      "kind": "git-blob",
+      "original_sha256": "96a12e597b1fd4ab8082992b6ca0844b7ef6eb8494157b13b2156125ca02e3df",
+      "sha256": "96a12e597b1fd4ab8082992b6ca0844b7ef6eb8494157b13b2156125ca02e3df",
+      "original_bytes": 419,
+      "bytes": 419,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/009-dense-igpu.md",
+      "source": "autolab/queue/items/009-dense-igpu.md",
+      "kind": "git-blob",
+      "original_sha256": "e646ad44c3e44d5eb21d065ceaf0abea97759d28b00aa436296c10ac436a4650",
+      "sha256": "e646ad44c3e44d5eb21d065ceaf0abea97759d28b00aa436296c10ac436a4650",
+      "original_bytes": 377,
+      "bytes": 377,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/010-after-seeding.md",
+      "source": "autolab/queue/items/010-after-seeding.md",
+      "kind": "git-blob",
+      "original_sha256": "fc8d2f79a980c1b557ef03b1d15d1c9c4f4e2c5909fd35543e9256fc1f7887d3",
+      "sha256": "fc8d2f79a980c1b557ef03b1d15d1c9c4f4e2c5909fd35543e9256fc1f7887d3",
+      "original_bytes": 400,
+      "bytes": 400,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/011-parallel-attention.md",
+      "source": "autolab/queue/items/011-parallel-attention.md",
+      "kind": "git-blob",
+      "original_sha256": "dddb82d38a374c755d2cc8dc0082054fb50e1effb877d86403fca28533ed056f",
+      "sha256": "dddb82d38a374c755d2cc8dc0082054fb50e1effb877d86403fca28533ed056f",
+      "original_bytes": 397,
+      "bytes": 397,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/011b-long-generation.md",
+      "source": "autolab/queue/items/011b-long-generation.md",
+      "kind": "git-blob",
+      "original_sha256": "71e9009bff9fb499cf122a7db668fe04fe532184907742e062d0b5e21f40c990",
+      "sha256": "71e9009bff9fb499cf122a7db668fe04fe532184907742e062d0b5e21f40c990",
+      "original_bytes": 376,
+      "bytes": 376,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/012-single-stream-anatomy.md",
+      "source": "autolab/queue/items/012-single-stream-anatomy.md",
+      "kind": "git-blob",
+      "original_sha256": "4341df4fe95ec00ef983ef81b9a79721fc5bdf14de6699ce0721ae0830b299a1",
+      "sha256": "4341df4fe95ec00ef983ef81b9a79721fc5bdf14de6699ce0721ae0830b299a1",
+      "original_bytes": 400,
+      "bytes": 400,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/013-acceptance-study.md",
+      "source": "autolab/queue/items/013-acceptance-study.md",
+      "kind": "git-blob",
+      "original_sha256": "2346d92d243439f3973cea7627536cfece0fcfcc251247267206baf655cc3d22",
+      "sha256": "2346d92d243439f3973cea7627536cfece0fcfcc251247267206baf655cc3d22",
+      "original_bytes": 439,
+      "bytes": 439,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/014-lan-latency-probe.md",
+      "source": "autolab/queue/items/014-lan-latency-probe.md",
+      "kind": "git-blob",
+      "original_sha256": "4299e25037bcbf5b9078811ceac7ab4737bb69bd248f97edd24ec86e3782f4df",
+      "sha256": "4299e25037bcbf5b9078811ceac7ab4737bb69bd248f97edd24ec86e3782f4df",
+      "original_bytes": 409,
+      "bytes": 409,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/015-drafter-model.md",
+      "source": "autolab/queue/items/015-drafter-model.md",
+      "kind": "git-blob",
+      "original_sha256": "1d680ae1594f014ac2ff9d79e1632f2ccc72f0f2035bfcf78ae02bfdfc1674cc",
+      "sha256": "1d680ae1594f014ac2ff9d79e1632f2ccc72f0f2035bfcf78ae02bfdfc1674cc",
+      "original_bytes": 398,
+      "bytes": 398,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/015c-ensemble.md",
+      "source": "autolab/queue/items/015c-ensemble.md",
+      "kind": "git-blob",
+      "original_sha256": "bbda3d8fc6d8675b592ba0e3502741d6b0d271af2532ffbe4255133dabc8e806",
+      "sha256": "bbda3d8fc6d8675b592ba0e3502741d6b0d271af2532ffbe4255133dabc8e806",
+      "original_bytes": 383,
+      "bytes": 383,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/016-distill-data.md",
+      "source": "autolab/queue/items/016-distill-data.md",
+      "kind": "git-blob",
+      "original_sha256": "70183dc0195f451795c68331bf51432871bcab29c29f973c78ebf863b7d425e9",
+      "sha256": "70183dc0195f451795c68331bf51432871bcab29c29f973c78ebf863b7d425e9",
+      "original_bytes": 438,
+      "bytes": 438,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/017-rollback.md",
+      "source": "autolab/queue/items/017-rollback.md",
+      "kind": "git-blob",
+      "original_sha256": "b445a7812ade9f84069769f059161917589cf8c8183db610fe3d43f4de75416a",
+      "sha256": "b445a7812ade9f84069769f059161917589cf8c8183db610fe3d43f4de75416a",
+      "original_bytes": 377,
+      "bytes": 377,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/018-all-to-all-network.md",
+      "source": "autolab/queue/items/018-all-to-all-network.md",
+      "kind": "git-blob",
+      "original_sha256": "1daf1629a46d2dd4c731151cf902b95b456270a0bfdd265347e4f796a1a5a333",
+      "sha256": "1daf1629a46d2dd4c731151cf902b95b456270a0bfdd265347e4f796a1a5a333",
+      "original_bytes": 423,
+      "bytes": 423,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/019-baseline-15-streams.md",
+      "source": "autolab/queue/items/019-baseline-15-streams.md",
+      "kind": "git-blob",
+      "original_sha256": "a9671b23336d7e7ec6e0991e2458f3a97d53b13b075ae7df2be3a62608fdb09a",
+      "sha256": "a9671b23336d7e7ec6e0991e2458f3a97d53b13b075ae7df2be3a62608fdb09a",
+      "original_bytes": 428,
+      "bytes": 428,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/020-gpu-idle-diagnostic.md",
+      "source": "autolab/queue/items/020-gpu-idle-diagnostic.md",
+      "kind": "git-blob",
+      "original_sha256": "1802090ce6cd43a24358e581f16656d2a98ac41b6de006cc717125404b8394a9",
+      "sha256": "1802090ce6cd43a24358e581f16656d2a98ac41b6de006cc717125404b8394a9",
+      "original_bytes": 509,
+      "bytes": 509,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/021-moe-decode-kernel.md",
+      "source": "autolab/queue/items/021-moe-decode-kernel.md",
+      "kind": "git-blob",
+      "original_sha256": "712a4a13a36620f418d96e07395643c9ac5fdee9b8380c7a919f4b936dd9bafa",
+      "sha256": "712a4a13a36620f418d96e07395643c9ac5fdee9b8380c7a919f4b936dd9bafa",
+      "original_bytes": 380,
+      "bytes": 380,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/022-patched-decode-kernel.md",
+      "source": "autolab/queue/items/022-patched-decode-kernel.md",
+      "kind": "git-blob",
+      "original_sha256": "ca9e33e0bf31cafde907d0b701c609c378425a0ddcd7dec4b3f709b6e1e81fd6",
+      "sha256": "ca9e33e0bf31cafde907d0b701c609c378425a0ddcd7dec4b3f709b6e1e81fd6",
+      "original_bytes": 407,
+      "bytes": 407,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/023-split-bench.md",
+      "source": "autolab/queue/items/023-split-bench.md",
+      "kind": "git-blob",
+      "original_sha256": "aaec1fbf47bbdc4a66be6701552219b51e9b89dd39f56f7330e554796f73c413",
+      "sha256": "aaec1fbf47bbdc4a66be6701552219b51e9b89dd39f56f7330e554796f73c413",
+      "original_bytes": 397,
+      "bytes": 397,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/024-prefill-windows.md",
+      "source": "autolab/queue/items/024-prefill-windows.md",
+      "kind": "git-blob",
+      "original_sha256": "4abe03b685ec2cb76f417537594f02695bb05bb99f397f2dd5779362dc886252",
+      "sha256": "4abe03b685ec2cb76f417537594f02695bb05bb99f397f2dd5779362dc886252",
+      "original_bytes": 393,
+      "bytes": 393,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/025-crash-evidence.md",
+      "source": "autolab/queue/items/025-crash-evidence.md",
+      "kind": "git-blob",
+      "original_sha256": "c1cfe333884bc01a0000734435c4c34791810c8cae1f822743c8a0e1f298157c",
+      "sha256": "c1cfe333884bc01a0000734435c4c34791810c8cae1f822743c8a0e1f298157c",
+      "original_bytes": 414,
+      "bytes": 414,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/026-decode-kernel-group64.md",
+      "source": "autolab/queue/items/026-decode-kernel-group64.md",
+      "kind": "git-blob",
+      "original_sha256": "38266d0d9ef01796eda591c2bbdc9f3bdef7b4147bb86cb029c8c3d982231a91",
+      "sha256": "38266d0d9ef01796eda591c2bbdc9f3bdef7b4147bb86cb029c8c3d982231a91",
+      "original_bytes": 425,
+      "bytes": 425,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/027-rank0-dense-as-moe.md",
+      "source": "autolab/queue/items/027-rank0-dense-as-moe.md",
+      "kind": "git-blob",
+      "original_sha256": "e3d4547086faa170867b22096c973be7d1e137972d53d710ea89bbc5408024e3",
+      "sha256": "e3d4547086faa170867b22096c973be7d1e137972d53d710ea89bbc5408024e3",
+      "original_bytes": 462,
+      "bytes": 462,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/028-head-batching.md",
+      "source": "autolab/queue/items/028-head-batching.md",
+      "kind": "git-blob",
+      "original_sha256": "8d0f028749b636e09abc7cf55a3688948218628281db6fce909871d5012ec7ea",
+      "sha256": "8d0f028749b636e09abc7cf55a3688948218628281db6fce909871d5012ec7ea",
+      "original_bytes": 450,
+      "bytes": 450,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/029-decode-kernels-exact.md",
+      "source": "autolab/queue/items/029-decode-kernels-exact.md",
+      "kind": "git-blob",
+      "original_sha256": "1408ad9cf589afaa06fde1e1fca0924b20e20b6a32c6f12d7cb0218698c27d2a",
+      "sha256": "1408ad9cf589afaa06fde1e1fca0924b20e20b6a32c6f12d7cb0218698c27d2a",
+      "original_bytes": 579,
+      "bytes": 579,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/analyze-py-lab-py-map-telemetry-rows-to-pipeline-roles-under.md",
+      "source": "autolab/queue/items/analyze-py-lab-py-map-telemetry-rows-to-pipeline-roles-under.md",
+      "kind": "git-blob",
+      "original_sha256": "5bc174898ff81bc9bfc54e3285245331a0249d35c2f1ba90c793af54fbd60079",
+      "sha256": "5bc174898ff81bc9bfc54e3285245331a0249d35c2f1ba90c793af54fbd60079",
+      "original_bytes": 833,
+      "bytes": 833,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/another-box-plays-rank-0-role-swap-with-the-box-installed-as.md",
+      "source": "autolab/queue/items/another-box-plays-rank-0-role-swap-with-the-box-installed-as.md",
+      "kind": "git-blob",
+      "original_sha256": "5681e411a3448df03b2e1f37780277316f6827ec9ef4e71f0b73dc606b7f502b",
+      "sha256": "5681e411a3448df03b2e1f37780277316f6827ec9ef4e71f0b73dc606b7f502b",
+      "original_bytes": 595,
+      "bytes": 595,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/carry-the-memorised-phrase-table-spec-ngrams-bin-from-the-en.md",
+      "source": "autolab/queue/items/carry-the-memorised-phrase-table-spec-ngrams-bin-from-the-en.md",
+      "kind": "git-blob",
+      "original_sha256": "38e05e07ef38e20dfdfb8b6bb6c8af8cca7e7fd5d80de0ed1d65b6fb7265c58d",
+      "sha256": "38e05e07ef38e20dfdfb8b6bb6c8af8cca7e7fd5d80de0ed1d65b6fb7265c58d",
+      "original_bytes": 803,
+      "bytes": 803,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/clean-exact-configuration-after-the-evening-s-canaries-027-p.md",
+      "source": "autolab/queue/items/clean-exact-configuration-after-the-evening-s-canaries-027-p.md",
+      "kind": "git-blob",
+      "original_sha256": "2a0718d9866d16203d2bf1c89bafec78b716bfc6ea30c9ea07ff43563eedef1d",
+      "sha256": "2a0718d9866d16203d2bf1c89bafec78b716bfc6ea30c9ea07ff43563eedef1d",
+      "original_bytes": 543,
+      "bytes": 543,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/eagle-style-head-trained-on-the-final-state.md",
+      "source": "autolab/queue/items/eagle-style-head-trained-on-the-final-state.md",
+      "kind": "git-blob",
+      "original_sha256": "4efdbefb25e77e81f924b541d9aa0542b5958d42b2da44e57c7d502a848a8787",
+      "sha256": "4efdbefb25e77e81f924b541d9aa0542b5958d42b2da44e57c7d502a848a8787",
+      "original_bytes": 515,
+      "bytes": 515,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/entry-box-hardware-swap-its-power-brick-and-outlet-if-it-sto.md",
+      "source": "autolab/queue/items/entry-box-hardware-swap-its-power-brick-and-outlet-if-it-sto.md",
+      "kind": "git-blob",
+      "original_sha256": "0c5808f33895fb72bd4d6df4c9741669c3eab667550f2c9a1a1945872da5d1c8",
+      "sha256": "0c5808f33895fb72bd4d6df4c9741669c3eab667550f2c9a1a1945872da5d1c8",
+      "original_bytes": 953,
+      "bytes": 953,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/expert-parallelism-for-a-lone-stream-as-a-serving-mode.md",
+      "source": "autolab/queue/items/expert-parallelism-for-a-lone-stream-as-a-serving-mode.md",
+      "kind": "git-blob",
+      "original_sha256": "739b1bd2fac60cdcd23604b0212d1a9c2ed093636ac63ef9662aaab53be2041b",
+      "sha256": "739b1bd2fac60cdcd23604b0212d1a9c2ed093636ac63ef9662aaab53be2041b",
+      "original_bytes": 578,
+      "bytes": 578,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/expert-usage-skew-per-layer-are-the-top-64-experts-60-of-sel.md",
+      "source": "autolab/queue/items/expert-usage-skew-per-layer-are-the-top-64-experts-60-of-sel.md",
+      "kind": "git-blob",
+      "original_sha256": "4bc1c5176e76fc0e92f0705dfc9da80f04603ec308cb858c9bf699525036bc67",
+      "sha256": "4bc1c5176e76fc0e92f0705dfc9da80f04603ec308cb858c9bf699525036bc67",
+      "original_bytes": 1399,
+      "bytes": 1399,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/fifteen-one-row-frames-in-the-ring-cascadia-streams-inflight.md",
+      "source": "autolab/queue/items/fifteen-one-row-frames-in-the-ring-cascadia-streams-inflight.md",
+      "kind": "git-blob",
+      "original_sha256": "b9aeea3ec7ef5132aca4fdbf232f582a26ea6d615a8ae3daee82e43da2ee082b",
+      "sha256": "b9aeea3ec7ef5132aca4fdbf232f582a26ea6d615a8ae3daee82e43da2ee082b",
+      "original_bytes": 1583,
+      "bytes": 1583,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/fleet-state-capture-final-and-rank-boundary-residuals-writte.md",
+      "source": "autolab/queue/items/fleet-state-capture-final-and-rank-boundary-residuals-writte.md",
+      "kind": "git-blob",
+      "original_sha256": "4aaf306fd7394508e2e99e8c4829005dd42c7635807b01050aa77704e63900ef",
+      "sha256": "4aaf306fd7394508e2e99e8c4829005dd42c7635807b01050aa77704e63900ef",
+      "original_bytes": 2659,
+      "bytes": 2659,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/fleet-wiring-for-mtp-drafts-final-state-on-the-reply-link-mt.md",
+      "source": "autolab/queue/items/fleet-wiring-for-mtp-drafts-final-state-on-the-reply-link-mt.md",
+      "kind": "git-blob",
+      "original_sha256": "74656347531b764db7fa3c81f7403337e316f99bac0684bf6e9d751c4291299e",
+      "sha256": "74656347531b764db7fa3c81f7403337e316f99bac0684bf6e9d751c4291299e",
+      "original_bytes": 849,
+      "bytes": 849,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/frames-in-flight-11-10-at-15-streams-cascadia-streams-inflig.md",
+      "source": "autolab/queue/items/frames-in-flight-11-10-at-15-streams-cascadia-streams-inflig.md",
+      "kind": "git-blob",
+      "original_sha256": "61c85ab3dc41fd98fbde07027b440293ddd7460625c6dd076b213745dd8356ac",
+      "sha256": "61c85ab3dc41fd98fbde07027b440293ddd7460625c6dd076b213745dd8356ac",
+      "original_bytes": 1026,
+      "bytes": 1026,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/gpu-queue-throttle-low-on-one-rank-the-completion-wait-spins.md",
+      "source": "autolab/queue/items/gpu-queue-throttle-low-on-one-rank-the-completion-wait-spins.md",
+      "kind": "git-blob",
+      "original_sha256": "eb37996f7bd0e74b38b5412f3afed72580a31144c2487338df5d2d74555016ca",
+      "sha256": "eb37996f7bd0e74b38b5412f3afed72580a31144c2487338df5d2d74555016ca",
+      "original_bytes": 985,
+      "bytes": 985,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/head-sharing-on-the-last-rank-once-frames-are-uniform-fiftee.md",
+      "source": "autolab/queue/items/head-sharing-on-the-last-rank-once-frames-are-uniform-fiftee.md",
+      "kind": "git-blob",
+      "original_sha256": "374db75bbe767c98bc662fd3b489af9800dcc3dd006d386ae2ecb5a20466842e",
+      "sha256": "374db75bbe767c98bc662fd3b489af9800dcc3dd006d386ae2ecb5a20466842e",
+      "original_bytes": 956,
+      "bytes": 956,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/int4-attention-projections-0-78-0-4-gb-read-per-frame.md",
+      "source": "autolab/queue/items/int4-attention-projections-0-78-0-4-gb-read-per-frame.md",
+      "kind": "git-blob",
+      "original_sha256": "84e106431241a7e409dcbc076d075875036facbcc26fb87da1e8783f293b732e",
+      "sha256": "84e106431241a7e409dcbc076d075875036facbcc26fb87da1e8783f293b732e",
+      "original_bytes": 893,
+      "bytes": 893,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/int4-attention-quality-canary-on-role-5-after-faster-kernel.md",
+      "source": "autolab/queue/items/int4-attention-quality-canary-on-role-5-after-faster-kernel.md",
+      "kind": "git-blob",
+      "original_sha256": "c02a229a3b0fba0f8b7a78c20ec8021c154cf9c1c357ed014dd444d0db5297d5",
+      "sha256": "c02a229a3b0fba0f8b7a78c20ec8021c154cf9c1c357ed014dd444d0db5297d5",
+      "original_bytes": 2260,
+      "bytes": 2260,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/logit-lens-per-rank-boundary-can-a-deeper-rank-s-state-name.md",
+      "source": "autolab/queue/items/logit-lens-per-rank-boundary-can-a-deeper-rank-s-state-name.md",
+      "kind": "git-blob",
+      "original_sha256": "21e6baba5c1731e9629285c85096b29978120dc824870907f44ec9a5d4411b87",
+      "sha256": "21e6baba5c1731e9629285c85096b29978120dc824870907f44ec9a5d4411b87",
+      "original_bytes": 511,
+      "bytes": 511,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/one-frame-s-cpu-work-attention-core-routers-overlapped-with.md",
+      "source": "autolab/queue/items/one-frame-s-cpu-work-attention-core-routers-overlapped-with.md",
+      "kind": "git-blob",
+      "original_sha256": "bbcb50e14ee28169baac42768eeeaae28ad5a7c51943642b865a9b1aed9bd695",
+      "sha256": "bbcb50e14ee28169baac42768eeeaae28ad5a7c51943642b865a9b1aed9bd695",
+      "original_bytes": 580,
+      "bytes": 580,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/rank-10-output-head-as-an-int4-proxy-exact-rescoring-of-the.md",
+      "source": "autolab/queue/items/rank-10-output-head-as-an-int4-proxy-exact-rescoring-of-the.md",
+      "kind": "git-blob",
+      "original_sha256": "f0d66203b237bdd3971be67fd125b591186e075339de1d35b998327e4a953d9b",
+      "sha256": "f0d66203b237bdd3971be67fd125b591186e075339de1d35b998327e4a953d9b",
+      "original_bytes": 625,
+      "bytes": 625,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/re-quantise-every-expert-to-int4-group-64-so-the-stock-plugi.md",
+      "source": "autolab/queue/items/re-quantise-every-expert-to-int4-group-64-so-the-stock-plugi.md",
+      "kind": "git-blob",
+      "original_sha256": "cbc924baaa14754bb810fbc56bf6080bd477f6836c2b1ad1720cadb945aa8358",
+      "sha256": "cbc924baaa14754bb810fbc56bf6080bd477f6836c2b1ad1720cadb945aa8358",
+      "original_bytes": 535,
+      "bytes": 535,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/re-score-the-model-s-own-mtp-head-on-states-captured-from-th.md",
+      "source": "autolab/queue/items/re-score-the-model-s-own-mtp-head-on-states-captured-from-th.md",
+      "kind": "git-blob",
+      "original_sha256": "0e5d7174eedbf1c4a3d5d3dbe402c0e3fd6afa892469e8ac3605c17e6f4753fc",
+      "sha256": "0e5d7174eedbf1c4a3d5d3dbe402c0e3fd6afa892469e8ac3605c17e6f4753fc",
+      "original_bytes": 985,
+      "bytes": 985,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/rebuild-the-gpu-plugin-from-source-with-sub-group-16-for-gro.md",
+      "source": "autolab/queue/items/rebuild-the-gpu-plugin-from-source-with-sub-group-16-for-gro.md",
+      "kind": "git-blob",
+      "original_sha256": "9d895fd21c3760f8970dbd1919ea4759847765128ab2b741f82fd8003fd38457",
+      "sha256": "9d895fd21c3760f8970dbd1919ea4759847765128ab2b741f82fd8003fd38457",
+      "original_bytes": 503,
+      "bytes": 503,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/refuse-requests-while-the-chain-of-ranks-is-still-assembling.md",
+      "source": "autolab/queue/items/refuse-requests-while-the-chain-of-ranks-is-still-assembling.md",
+      "kind": "git-blob",
+      "original_sha256": "3a2c729df8c0335f7269c6ac02523f1d9732765e38a34e3f13117c0c136843c0",
+      "sha256": "3a2c729df8c0335f7269c6ac02523f1d9732765e38a34e3f13117c0c136843c0",
+      "original_bytes": 537,
+      "bytes": 537,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/second-door-an-outbound-tunnel-of-its-own-on-the-box-that-pl.md",
+      "source": "autolab/queue/items/second-door-an-outbound-tunnel-of-its-own-on-the-box-that-pl.md",
+      "kind": "git-blob",
+      "original_sha256": "3bbd368769e07b645a5852830a915b07eba91f7f1a585116365b317e2e68248b",
+      "sha256": "3bbd368769e07b645a5852830a915b07eba91f7f1a585116365b317e2e68248b",
+      "original_bytes": 682,
+      "bytes": 682,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/speculation-for-every-stream-with-the-model-s-own-mtp-head-m.md",
+      "source": "autolab/queue/items/speculation-for-every-stream-with-the-model-s-own-mtp-head-m.md",
+      "kind": "git-blob",
+      "original_sha256": "c1c2de93602db7ca066a9b3e65ac962621f3261ad45e2ae45d7788af430bd125",
+      "sha256": "c1c2de93602db7ca066a9b3e65ac962621f3261ad45e2ae45d7788af430bd125",
+      "original_bytes": 1549,
+      "bytes": 1549,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/fused_moe_f16.md",
+      "source": "autolab/research/fused_moe_f16.md",
+      "kind": "git-blob",
+      "original_sha256": "493eb0ad1fa4f427a7a8cbd453595c5a57f259935a509c927f7520b5c6af0542",
+      "sha256": "493eb0ad1fa4f427a7a8cbd453595c5a57f259935a509c927f7520b5c6af0542",
+      "original_bytes": 18496,
+      "bytes": 18496,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/README.md",
+      "source": "autolab/research/mtp_offline/README.md",
+      "kind": "git-blob",
+      "original_sha256": "2c6590aa91a7844a545f5cd72106f9b989d70a245dff8f3ea11d5fbf066c3919",
+      "sha256": "2c6590aa91a7844a545f5cd72106f9b989d70a245dff8f3ea11d5fbf066c3919",
+      "original_bytes": 2163,
+      "bytes": 2163,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/WIRING.md",
+      "source": "autolab/research/mtp_offline/WIRING.md",
+      "kind": "git-blob",
+      "original_sha256": "a23bf2e2ba5477acb48a031ff458e73e5c8ccbc66843473620d984371a9fc1f6",
+      "sha256": "a23bf2e2ba5477acb48a031ff458e73e5c8ccbc66843473620d984371a9fc1f6",
+      "original_bytes": 4693,
+      "bytes": 4693,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/corpus_compare.py",
+      "source": "autolab/research/mtp_offline/corpus_compare.py",
+      "kind": "git-blob",
+      "original_sha256": "0d7aa0181e27210062dd25abf9ed42ab0486f1e00945a03090347e6ddedeb028",
+      "sha256": "0d7aa0181e27210062dd25abf9ed42ab0486f1e00945a03090347e6ddedeb028",
+      "original_bytes": 2237,
+      "bytes": 2237,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/export_module.py",
+      "source": "autolab/research/mtp_offline/export_module.py",
+      "kind": "git-blob",
+      "original_sha256": "9f78b091a4c30a552895c25589aa1e0c21302cb60d993e808a165137ff21438e",
+      "sha256": "9f78b091a4c30a552895c25589aa1e0c21302cb60d993e808a165137ff21438e",
+      "original_bytes": 5432,
+      "bytes": 5432,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/final_tables.py",
+      "source": "autolab/research/mtp_offline/final_tables.py",
+      "kind": "git-blob",
+      "original_sha256": "c777792009bd4b6ad5156f6132e16d9006ea1999d771c5837c3070539698a78e",
+      "sha256": "c777792009bd4b6ad5156f6132e16d9006ea1999d771c5837c3070539698a78e",
+      "original_bytes": 3123,
+      "bytes": 3123,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/fleet_convert.py",
+      "source": "autolab/research/mtp_offline/fleet_convert.py",
+      "kind": "git-blob",
+      "original_sha256": "8cd2c68b379ea4c08f98ec84d735e89de99ef7a36cbb806898ab928a1e3bb07f",
+      "sha256": "8cd2c68b379ea4c08f98ec84d735e89de99ef7a36cbb806898ab928a1e3bb07f",
+      "original_bytes": 5637,
+      "bytes": 5637,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/lens_score.py",
+      "source": "autolab/research/mtp_offline/lens_score.py",
+      "kind": "git-blob",
+      "original_sha256": "01976c324dcd09f83ba4d3fe474cfd15ebe3f5f56f5b4fb25f8200cc9ceb481f",
+      "sha256": "01976c324dcd09f83ba4d3fe474cfd15ebe3f5f56f5b4fb25f8200cc9ceb481f",
+      "original_bytes": 3903,
+      "bytes": 3903,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/lens_tuned.py",
+      "source": "autolab/research/mtp_offline/lens_tuned.py",
+      "kind": "git-blob",
+      "original_sha256": "0454c051179d823a0fb6c62a49c46c65f39bbe5a98c53afca62d395767571b30",
+      "sha256": "0454c051179d823a0fb6c62a49c46c65f39bbe5a98c53afca62d395767571b30",
+      "original_bytes": 4213,
+      "bytes": 4213,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/mtp_prodsim.py",
+      "source": "autolab/research/mtp_offline/mtp_prodsim.py",
+      "kind": "git-blob",
+      "original_sha256": "a76a61e54906dc7208b6aeac72d01090dc9f62700fd6a1cd7b0a87bedaa203a8",
+      "sha256": "a76a61e54906dc7208b6aeac72d01090dc9f62700fd6a1cd7b0a87bedaa203a8",
+      "original_bytes": 10017,
+      "bytes": 10017,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/mtp_quant_score.py",
+      "source": "autolab/research/mtp_offline/mtp_quant_score.py",
+      "kind": "git-blob",
+      "original_sha256": "e09868a51ff50d1e3a1f34be2042c99864f84d8e2551922b7771434adec2fcd0",
+      "sha256": "e09868a51ff50d1e3a1f34be2042c99864f84d8e2551922b7771434adec2fcd0",
+      "original_bytes": 3065,
+      "bytes": 3065,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/mtp_score.py",
+      "source": "autolab/research/mtp_offline/mtp_score.py",
+      "kind": "git-blob",
+      "original_sha256": "ff291dc1d1ae1a06b360ed6cf5f9d68992e39235de66b6be71fa15fc7fb198b2",
+      "sha256": "ff291dc1d1ae1a06b360ed6cf5f9d68992e39235de66b6be71fa15fc7fb198b2",
+      "original_bytes": 13918,
+      "bytes": 13918,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/mtp_tables.py",
+      "source": "autolab/research/mtp_offline/mtp_tables.py",
+      "kind": "git-blob",
+      "original_sha256": "1b6e58dc739198feef33cec45fe394e7e0badf85ec6798be0a0d1322fb7d5338",
+      "sha256": "1b6e58dc739198feef33cec45fe394e7e0badf85ec6798be0a0d1322fb7d5338",
+      "original_bytes": 6219,
+      "bytes": 6219,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/results/corpus_compare.txt",
+      "source": "autolab/research/mtp_offline/results/corpus_compare.txt",
+      "kind": "git-blob",
+      "original_sha256": "8b0d6477667a6be3ae3ad2da26d6a3dee416abcc554453095c54028dcb3b3054",
+      "sha256": "8b0d6477667a6be3ae3ad2da26d6a3dee416abcc554453095c54028dcb3b3054",
+      "original_bytes": 6283,
+      "bytes": 6283,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/results/tables_final.txt",
+      "source": "autolab/research/mtp_offline/results/tables_final.txt",
+      "kind": "git-blob",
+      "original_sha256": "ceabce2de59f05c37921fc942690797d8742f6a224625fb5aa481073b174a094",
+      "sha256": "ceabce2de59f05c37921fc942690797d8742f6a224625fb5aa481073b174a094",
+      "original_bytes": 3094,
+      "bytes": 3094,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/results/tables_mtp.txt",
+      "source": "autolab/research/mtp_offline/results/tables_mtp.txt",
+      "kind": "git-blob",
+      "original_sha256": "ae154f776f89faf47e44e4f9f89c7ac455794f2a1e0032c8b695692999a76ba9",
+      "sha256": "ae154f776f89faf47e44e4f9f89c7ac455794f2a1e0032c8b695692999a76ba9",
+      "original_bytes": 6704,
+      "bytes": 6704,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/test_fleet_training.py",
+      "source": "autolab/research/mtp_offline/test_fleet_training.py",
+      "kind": "git-blob",
+      "original_sha256": "052fb559ffada28828480dbd19fdf8143e050391a24a81f864c96cc3e148eb4f",
+      "sha256": "052fb559ffada28828480dbd19fdf8143e050391a24a81f864c96cc3e148eb4f",
+      "original_bytes": 3559,
+      "bytes": 3559,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/train_feature_head.py",
+      "source": "autolab/research/mtp_offline/train_feature_head.py",
+      "kind": "git-blob",
+      "original_sha256": "eca9eb08d1078852194cbe9541cd1847d4c9bb59639298410c1644c6613c1fc1",
+      "sha256": "eca9eb08d1078852194cbe9541cd1847d4c9bb59639298410c1644c6613c1fc1",
+      "original_bytes": 8087,
+      "bytes": 8087,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/research/mtp_offline/train_mtp_adapter.py",
+      "source": "autolab/research/mtp_offline/train_mtp_adapter.py",
+      "kind": "git-blob",
+      "original_sha256": "bcfd38fbf4194d15ef6432ab001b2ff8aada8582490e237feadfe8b3bf87e14f",
+      "sha256": "bcfd38fbf4194d15ef6432ab001b2ff8aada8582490e237feadfe8b3bf87e14f",
+      "original_bytes": 6808,
+      "bytes": 6808,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/deploy/inkling-fleet/fleet.env",
+      "source": "deploy/inkling-fleet/fleet.env",
+      "kind": "git-blob",
+      "original_sha256": "2c89c48a0ea5ec0ebb0f04aee3fb360d2fe9c0e3222be98b3ba08d346be7bf77",
+      "sha256": "23a7a5e70faf0b0d7900c2cd9cca966c15b4e55a80c14a7a9ebb09f11700bb19",
+      "original_bytes": 1642,
+      "bytes": 1620,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/architectures/inkling.md",
+      "source": "docs/architectures/inkling.md",
+      "kind": "git-blob",
+      "original_sha256": "207159b3db80a9862aa21a0075fba37493b3a40cd9bcc42601f51b6a8bb4a264",
+      "sha256": "cb7fe525b8a5cbb81681335fbde6c8e586a5a532ed0f5d1687e3f1011ef678bc",
+      "original_bytes": 35379,
+      "bytes": 35421,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_CPU_PREREQUISITES.md",
+      "source": "docs/perf/INKLING_CPU_PREREQUISITES.md",
+      "kind": "git-blob",
+      "original_sha256": "5da78c63f2662c510782adbacb8372ca234083cd661e9e939fe29bf427dcedbc",
+      "sha256": "ecb442b1ae69461e2f974b3152372b9fd7b51da1be793a3b8b86fa11c7c28c82",
+      "original_bytes": 5079,
+      "bytes": 5086,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_EXPERT_ROUTING.md",
+      "source": "docs/perf/INKLING_EXPERT_ROUTING.md",
+      "kind": "git-blob",
+      "original_sha256": "fe3a85716b3ced00a382fe2ea3b603570f1b9e9a692d668fab9251f2f3e43dfa",
+      "sha256": "fe3a85716b3ced00a382fe2ea3b603570f1b9e9a692d668fab9251f2f3e43dfa",
+      "original_bytes": 7908,
+      "bytes": 7908,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_FULL_MODEL_EP_VALIDATION.md",
+      "source": "docs/perf/INKLING_FULL_MODEL_EP_VALIDATION.md",
+      "kind": "git-blob",
+      "original_sha256": "c1824b19b2615dd557bb5a3cdf86266b29454094ec5e4430d526ceacaf4c402f",
+      "sha256": "53c166ca3b14e34e637c9302e48bfd7e0392edecb472060507ff38623043bede",
+      "original_bytes": 10376,
+      "bytes": 10378,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_MULTISTREAM.md",
+      "source": "docs/perf/INKLING_MULTISTREAM.md",
+      "kind": "git-blob",
+      "original_sha256": "9cb01fbdb02c572b82ec382763137ca07dbed616c2da99c4c2fbfca93681ff80",
+      "sha256": "325803a0a32a2f16e8189cf4f23283dc873e0e095c68344dcf3caf723bb96aca",
+      "original_bytes": 15244,
+      "bytes": 15256,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_SCALING.md",
+      "source": "docs/perf/INKLING_SCALING.md",
+      "kind": "git-blob",
+      "original_sha256": "e1f45378684c67437bf20d64e919529fc5ed22e7f865e76fcb3c9eb6011706f3",
+      "sha256": "6b836edb2cb79ad3382149c06ddb9a7d557f5354e376405112630aee0b1bf13d",
+      "original_bytes": 13267,
+      "bytes": 13274,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/docs/perf/INKLING_SINGLE_BOX_BENCH.md",
+      "source": "docs/perf/INKLING_SINGLE_BOX_BENCH.md",
+      "kind": "git-blob",
+      "original_sha256": "d70f3bfa68cee838d10b6cc943ea4da368d53a389563e716ed6cf3acca945dc1",
+      "sha256": "d771c6a9fdb797fc3dbfbc08078ee5548756c175b69ca27de8cb47ea8a7477ba",
+      "original_bytes": 9271,
+      "bytes": 9285,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/013_acceptance_study/corpus.jsonl",
+      "source": "autolab/experiments/013_acceptance_study/corpus.jsonl",
+      "kind": "git-blob",
+      "original_sha256": "0e831b3e8ec4584921ad45f69e2eba66cc9aaab3f5331954b59c27e1ba201851",
+      "sha256": "2dbf1020b77c1ee2c75d499e723aac44a59ae4bc9b7e1adf2ecba6eff46d1898",
+      "original_bytes": 175255,
+      "bytes": 174364,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/001_balanced_groups.jsonl.gz",
+      "source": "operator-telemetry/001_balanced_groups/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "176f67953adde40a46406c2ef21c5345ebfe9660095d09c45739336b2571b802",
+      "sha256": "5ac41159f74d9b4a13d4499face180c5af6fe6040d9338d99fd2b7d55f28dfdc",
+      "original_bytes": 41294,
+      "bytes": 3037,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/002a_return_link.jsonl.gz",
+      "source": "operator-telemetry/002a_return_link/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "083b321d0fb3dbd9ba56fc590d44b0cc5bc78d35e4746d3479ad2b3d1f11404f",
+      "sha256": "834136ccac085900d16e961568588e0be8da2f3b4fca00ff275ef39e76ab3027",
+      "original_bytes": 2177963,
+      "bytes": 142375,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/002b_speculation.jsonl.gz",
+      "source": "operator-telemetry/002b_speculation/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "5dcb58bd70600721c309fcda209dda866645a6226a3e9989551a366bdd003fea",
+      "sha256": "89b3b9455fa401ef51b656b8eb47c2e77bdbbddace0337de73befe70dd050751",
+      "original_bytes": 1098038,
+      "bytes": 68835,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/003_per_rank_ab.jsonl.gz",
+      "source": "operator-telemetry/003_per_rank_ab/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "31a3f0e88bfe65552941072490f07e7cc403d7ccc606ac1fd6f88f6112f7f5dc",
+      "sha256": "ea4503a850df5a28a1655d8c2c3039db2869aadea470d27b546eaf3200a5d558",
+      "original_bytes": 3080383,
+      "bytes": 229332,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/004_row_gemm_prewarm_batchadmit.jsonl.gz",
+      "source": "operator-telemetry/004_row_gemm_prewarm_batchadmit/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "ad2330e9c7bcc51d59b6ea64239a5e56d07839a702b4f8026cfa6ab420cfea81",
+      "sha256": "2df057135f2c8a7b655a7075f45a74c0e778e68aea08754aa76730f1d4e84702",
+      "original_bytes": 4032686,
+      "bytes": 241921,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/005_short_steps.jsonl.gz",
+      "source": "operator-telemetry/005_short_steps/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "23addf7fc10d8d913b78a9e4ce9755d9aa2fd08e8f55826dbb6580098940010a",
+      "sha256": "451c4e93f2b806b4951624ce6a6860fdacc0c886014e047f7ce56f51e8f59a8d",
+      "original_bytes": 3942851,
+      "bytes": 239345,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/006_admit_while_waiting.jsonl.gz",
+      "source": "operator-telemetry/006_admit_while_waiting/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "54d6f90b1a78ceecab5d04f0f9e7cb4eb13f2a656576c2dc00a146f9e977c5e8",
+      "sha256": "88d7a411a12f1bad4b0391c79348c8c37503645e5df1c4b529bf995cfafbcc50",
+      "original_bytes": 1644336,
+      "bytes": 126996,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/007_fused_f16_all.jsonl.gz",
+      "source": "operator-telemetry/007_fused_f16_all/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "cdf74b626a3db44f1dc0c24d578b811f773f7a265207bcbfb72ca2a932085629",
+      "sha256": "26859b849a538a547e4a7040d2c998197c28e73f7566025030f3f641ead6c105",
+      "original_bytes": 2869398,
+      "bytes": 231284,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/008a_six_fused_one_rank.jsonl.gz",
+      "source": "operator-telemetry/008a_six_fused_one_rank/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "1cbf486517236b92c73109445fe1715e05989be3d0f59e8e07c5b170b7b08a92",
+      "sha256": "f13ad75693db0f810d0eab3052b9f60253eb849526e0a92966bd068ea947d2f2",
+      "original_bytes": 1507922,
+      "bytes": 123645,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/008b_all_fused.jsonl.gz",
+      "source": "operator-telemetry/008b_all_fused/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "dd547f83341de4234fd011d52d42a6c88f7c5e9014172df90924057da528a452",
+      "sha256": "f5ce935f8c62727f3089ff53a84158b040fe9106ff8b1a0486e883f26aeaf00d",
+      "original_bytes": 2515050,
+      "bytes": 215200,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/009_dense_igpu.jsonl.gz",
+      "source": "operator-telemetry/009_dense_igpu/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "a56f2ebdc3c4618a6d024044315a5bf7b5d4a23ec6e3ade0542c55738af9eb95",
+      "sha256": "688fde3789857703b72b47bf6fdccc738296a22ebafe044a4f96762e5f866ca3",
+      "original_bytes": 2697298,
+      "bytes": 244053,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/010_after_seeding.jsonl.gz",
+      "source": "operator-telemetry/010_after_seeding/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "50f5fbacb479887023424388ececdc13b908c2fdcbae37eaee500e7746dca0cc",
+      "sha256": "fab044c44d09adea5c8e06394cd029faab463684612ac10f52aa4abfb43bbf02",
+      "original_bytes": 923641,
+      "bytes": 63263,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/011_parallel_attention.jsonl.gz",
+      "source": "operator-telemetry/011_parallel_attention/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "683e66b6a13f929b3746dc11c0bacff1f74d3a4157f272962250024b62bc80f8",
+      "sha256": "7a65b2c12b7bdb480c7b3d1f03116498f795b740e299890caf6051a93ceef701",
+      "original_bytes": 2383283,
+      "bytes": 216189,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/011b_long_generation.jsonl.gz",
+      "source": "operator-telemetry/011b_long_generation/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "819babfc92257fb3ad1e800ae6b77ec373e3a42ea3220bc983ab82b4b7452cb2",
+      "sha256": "a707c91b2f38654bf5383785a5288292a053f946e6acc71e461ba7c6c203d895",
+      "original_bytes": 2155225,
+      "bytes": 184814,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/012_single_stream_anatomy.jsonl.gz",
+      "source": "operator-telemetry/012_single_stream_anatomy/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "ea9523a5991262c0ef0dc85ed390647f1c3e155e4337e0fcc4bea008a2ebfc13",
+      "sha256": "02a4efc2a5c1ccd40c85e1aa12ca0afe6a92ab64571d055a89544cbad607418f",
+      "original_bytes": 1077806,
+      "bytes": 71047,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/015_drafter_model.jsonl.gz",
+      "source": "operator-telemetry/015_drafter_model/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "cb2f3cb26f2041ceb0c3e12691dbf9d4d3f45fb672cad88db4eabdaa0e2f3975",
+      "sha256": "c52328c5e147667b81ef6d3d7b3345e4704a160f43959d291254a8d4e4e5d627",
+      "original_bytes": 1904358,
+      "bytes": 149790,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/015c_ensemble.jsonl.gz",
+      "source": "operator-telemetry/015c_ensemble/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "f16677bba855fe5b985d14ab58f5a476d6c83902665b068d3da6efbebee9c618",
+      "sha256": "ab2bb152c659fbf02fc1645a3bf67feacfd18bfb3b21a6cead2e809a26ad4582",
+      "original_bytes": 2830295,
+      "bytes": 194501,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/019_baseline_15_streams.jsonl.gz",
+      "source": "operator-telemetry/019_baseline_15_streams/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "f51a2e264322062a0a9b2038acb5ef61e78e8a46727dfcc5166cd491af0a164a",
+      "sha256": "765dfb296aa40ff7fe68dba0d7454eae6c21dfa11193408c49a75a51189986be",
+      "original_bytes": 2848670,
+      "bytes": 212061,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/020_gpu_idle_diagnostic.jsonl.gz",
+      "source": "operator-telemetry/020_gpu_idle_diagnostic/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "e58eac0b299ed20034352cf23f9f5ec9dbd400c4fdf99b5d044e1fda40c2b8cf",
+      "sha256": "ce2154b2e606292a7dc3d88166b9774ddd7e72ebbed6629efcc19aa9bcd93b25",
+      "original_bytes": 1879794,
+      "bytes": 141500,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/021_moe_decode_kernel.jsonl.gz",
+      "source": "operator-telemetry/021_moe_decode_kernel/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "620922663f5c3319f00acbf03271f3208cac5408c7fa544680f7c87e1023af26",
+      "sha256": "ee8e06defe71ed272309af19173d66742afab757cbc556b40d37a565c0a131e2",
+      "original_bytes": 1009699,
+      "bytes": 80289,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/023_split_bench.jsonl.gz",
+      "source": "operator-telemetry/023_split_bench/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "e2ae771d74bc00751faa3d47e246b5c5d3abc5a6a41beac6aca8ab8f406c0506",
+      "sha256": "0aade4bcd9d0cc7cd597e12eb04bea934c021ec191eddb572387a635fb409eda",
+      "original_bytes": 791083,
+      "bytes": 64463,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/024_prefill_windows.jsonl.gz",
+      "source": "operator-telemetry/024_prefill_windows/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "48daa1f68d6c3bd9c83251f5c174ecfd8653bdd3fa805d0ffeafcb7885b6dd7c",
+      "sha256": "866a5f9f4b6d2460034ef5357be49d15406848c64ef153ed8357f5ad2587d39e",
+      "original_bytes": 1393985,
+      "bytes": 100742,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/026_decode_kernel_group64.jsonl.gz",
+      "source": "operator-telemetry/026_decode_kernel_group64/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "5d7985085146a05c27dc8beea345fd87191f09879a1453fb5769bc5720095d40",
+      "sha256": "a2bb181eddf8b891715aa03c92b9c728e045b1db115f99ef1d9f05e13f6c28f8",
+      "original_bytes": 1208651,
+      "bytes": 88685,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/027_rank0_dense_as_moe.jsonl.gz",
+      "source": "operator-telemetry/027_rank0_dense_as_moe/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "29ec532791b8ad377957fa3f90dee6406b2de80456870bb33d4143f7659e61e8",
+      "sha256": "5e55bce0fa2d71a9f1606170820d59177cf38c2d4a19209f7cd78479b9b04a9c",
+      "original_bytes": 1326933,
+      "bytes": 95778,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/028_head_batching.jsonl.gz",
+      "source": "operator-telemetry/028_head_batching/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "c46d2ed6212970273a1053e6a0e80e4146c3e86dee3e1aea6d23b766c9494bc0",
+      "sha256": "2602f66b51ceb192318413794866fb8d21febc16891f7356cfdd0ab556caee90",
+      "original_bytes": 4096030,
+      "bytes": 238081,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/029_decode_kernels_exact.jsonl.gz",
+      "source": "operator-telemetry/029_decode_kernels_exact/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "ed89726f5a1e05679bd1cc52d8e75e78019a1c6a686b51b97f39af08b0848280",
+      "sha256": "eeded9883f09277569dcd6596ec34bfd4c61293f6a5bec62204ebd2f3d7699a9",
+      "original_bytes": 1555194,
+      "bytes": 115133,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/030_clean_exact.jsonl.gz",
+      "source": "operator-telemetry/030_clean_exact/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "59f607924285474f64986e356415d0f7c7c5117b06f8fd80d8b678bacf6dc205",
+      "sha256": "1e012b76056b8d72e3f00f3272b9b6be5d03980348efe9d9900b400799d72ce7",
+      "original_bytes": 578899,
+      "bytes": 47264,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/031_single_stream_check.jsonl.gz",
+      "source": "operator-telemetry/031_single_stream_check/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "a3ae5c0774b0e14590a8d48df67fab57ecc1bc0bf0b87d4d7a568480e3a29dac",
+      "sha256": "70410764b7b74c89e6d1e2a7a1b4cd2291e28060e38ff78fd61c0692af388358",
+      "original_bytes": 3721606,
+      "bytes": 249833,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/032_role_swap.jsonl.gz",
+      "source": "operator-telemetry/032_role_swap/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "befc02a3a6d36e890095ee3db57e4bb5de56f6b06ed8767b1e3db8a02f423b00",
+      "sha256": "fb18fd1c5ddb60bcd2c1bfaef62002535e584ed2ff4e49acbba2469bdf263f3c",
+      "original_bytes": 2299736,
+      "bytes": 160498,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/034_inflight10.jsonl.gz",
+      "source": "operator-telemetry/034_inflight10/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "b5750c9e459ce71f7f02d735bf366a5af3cdd00f5fdb85149f8edbb328b76b98",
+      "sha256": "e88e8bcb2bcd428cc14b0b11a97019e51ef4fdd9d9b362fe7223e0892cef4d9a",
+      "original_bytes": 6007715,
+      "bytes": 458149,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/035_chain_readiness.jsonl.gz",
+      "source": "operator-telemetry/035_chain_readiness/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "905b59c40ac3166e3ab75d3d4d3c5d5c3eea51249c911f4704f05043a2c1cc2d",
+      "sha256": "da916f07900871cb7e330acc3f7084b09e8c70c082b6e5f07dcaabee05191dbf",
+      "original_bytes": 1222198,
+      "bytes": 92972,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/037_fleet_state_capture.jsonl.gz",
+      "source": "operator-telemetry/037_fleet_state_capture/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "700e12bf4b0bdb1a94716280a48c47b91deca32dbe8b2f6172cf8257d6067210",
+      "sha256": "8a01495e3cbaeac97ca1e9a8b4fbc11f482553e9ad723b25ace5ac6e37145e9e",
+      "original_bytes": 2450850,
+      "bytes": 182714,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/038_phrase_transfer.jsonl.gz",
+      "source": "operator-telemetry/038_phrase_transfer/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "4c90f4b6368e65fd21b646dff49b6505907ab871cf1b499dd0af9744e6ec2b05",
+      "sha256": "462ff10dda7dc34d5d48f4e4bde505e92d3278bb2d61428552b9b3148aca02ab",
+      "original_bytes": 2483576,
+      "bytes": 168740,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/telemetry/040_expert_usage.jsonl.gz",
+      "source": "operator-telemetry/040_expert_usage/telemetry.jsonl",
+      "kind": "scrubbed-gzip-jsonl",
+      "original_sha256": "244c9efd8563f38ef23fbe8e4b7aec380139ccbbc1665e154deb0a83bb8cc40c",
+      "sha256": "9140f537d7998dd951658618ad599b26f53a9d027db2f7afbdeae1d2cae26e6a",
+      "original_bytes": 206464,
+      "bytes": 22112,
+      "transformed": true
+    }
+  ]
+}

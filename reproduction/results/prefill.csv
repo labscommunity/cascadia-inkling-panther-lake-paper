@@ -1,0 +1,8 @@
+experiment,phase,phase_tok_s,sum_rates,ttft_median_s,ttft_mean_s,stream_median
+019_baseline_15_streams,mix15a,15.678,22.544,31.52,36.67,1.409
+019_baseline_15_streams,mix15b,17.005,23.383,31.23,29.97,1.572
+024_prefill_windows,mix15a,22.521,24.626,6.91,6.37,1.649
+027_rank0_dense_as_moe,mix15a,22.771,24.886,6.24,6.51,1.654
+027_rank0_dense_as_moe,mix15b,22.69,24.694,5.68,6.19,1.636
+035_chain_readiness,mix15a,22.131,24.212,6.62,6.61,1.613
+035_chain_readiness,mix15b,22.645,24.631,6.27,6.1,1.645

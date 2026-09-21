@@ -1,0 +1,14 @@
+{
+  "experiment": "011b_long_generation",
+  "recorded_client_tokens": 21549,
+  "server_counter_delta": 21549,
+  "phase_seconds": 371.87047028541565,
+  "phase_throughput": 57.94759660120592,
+  "sum_stream_rates": 70.235,
+  "ttft_mean_s": 50.52,
+  "blocks_at_least_170_inflight": 14,
+  "median_rate": 70.66653037722506,
+  "mean_rate": 45.863745657381294,
+  "max_rate": 79.75726758361385,
+  "method": "Disjoint five-poll blocks; endpoint in-flight >=170; includes admission ramp; descriptive, not independent replicates."
+}
