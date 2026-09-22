@@ -3385,6 +3385,36 @@
       "transformed": false
     },
     {
+      "path": "reproduction/evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/gate.rs",
+      "source": "crates/cascadia-engine-sparse-moe/src/inkling/gate.rs",
+      "kind": "git-blob",
+      "original_sha256": "27226b53f15ccbc28b84c39bc1a2be4fea1b515b8b8c01c376d44f648680f7b3",
+      "sha256": "27226b53f15ccbc28b84c39bc1a2be4fea1b515b8b8c01c376d44f648680f7b3",
+      "original_bytes": 3488,
+      "bytes": 3488,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs",
+      "source": "crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs",
+      "kind": "git-blob",
+      "original_sha256": "52cc0c7a55056a04389f12092d3303637e155efe6d126c70be0b399dd2353967",
+      "sha256": "52cc0c7a55056a04389f12092d3303637e155efe6d126c70be0b399dd2353967",
+      "original_bytes": 37845,
+      "bytes": 37845,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/crates/cascadia-ov-genai-shim/cpp/shim.cpp",
+      "source": "crates/cascadia-ov-genai-shim/cpp/shim.cpp",
+      "kind": "git-blob",
+      "original_sha256": "e4f5e2a9a8cf82e23ac8695adac11527efd3e5227ba1939b43a453f1f8b473ac",
+      "sha256": "e4f5e2a9a8cf82e23ac8695adac11527efd3e5227ba1939b43a453f1f8b473ac",
+      "original_bytes": 75286,
+      "bytes": 75286,
+      "transformed": false
+    },
+    {
       "path": "reproduction/evidence/source/deploy/inkling-fleet/fleet.env",
       "source": "deploy/inkling-fleet/fleet.env",
       "kind": "git-blob",
@@ -3463,6 +3493,16 @@
       "original_bytes": 9271,
       "bytes": 9285,
       "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/tools/inkling_moe_layer_ov.py",
+      "source": "tools/inkling_moe_layer_ov.py",
+      "kind": "git-blob",
+      "original_sha256": "c714e9e0a5672bcbd6a28dbe517234642746a05970c0b38cd4e97ea40e666448",
+      "sha256": "c714e9e0a5672bcbd6a28dbe517234642746a05970c0b38cd4e97ea40e666448",
+      "original_bytes": 25361,
+      "bytes": 25361,
+      "transformed": false
     },
     {
       "path": "reproduction/evidence/source/autolab/experiments/013_acceptance_study/corpus.jsonl",

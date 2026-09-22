@@ -1,6 +1,6 @@
 # Literature-search scope and limits
 
-Search and inspection date: **2026-09-21**. There are **33 source entries**, not 33 peer-reviewed papers. The collection includes research papers/preprints, official vendor and software documentation, two companion manuscripts, a model card/announcement, a project repository and a first-person deployment report.
+Initial search: **2026-09-21**; engine-specific attribution extended **2026-09-22**. There are **36 source entries**, including research and implementation sources. The collection includes research papers/preprints, official vendor and software documentation, two companion manuscripts, a model card/announcement, a project repository and a first-person deployment report.
 
 The search followed the measured mechanisms rather than searching only for the exact machine name. It covered these question families:
 
@@ -13,12 +13,14 @@ The search followed the measured mechanisms rather than searching only for the e
 | Are chunked prefill and pipeline scheduling novel? | Orca, SARATHI, Sarathi-Serve, pipeline uniformity, admission and latency/throughput tradeoffs. |
 | Is the drafting argument new? | Speculative decoding, MTP, EAGLE, MoESD, MoE-Spec, SpecMoE, intermediate-state probes and Tuned Lens. |
 | What hardware is actually specified? | Intel's 358H SKU table, Panther Lake architecture presentation and Series 3 edge white paper. Fleet telemetry remains the source for installed configuration. |
+| Which parts of the fused engine come from upstream? | Compared the Cascadia exporter/runtime to OpenVINO 2026.3.1 compressed-MoE primitive and tiled-graph lowering sources. |
+| What precedes the numerical range treatment? | Equivalent rescaling and SmoothQuant; distinguish W8A8 activation/weight redistribution from the implemented FP16 layer/row factors and FP32 output restoration. |
 | Are backend/network controls established? | Official Linux v7.0 `cdc_ncm` sysfs documentation and OpenVINO runtime option source. Local pinned artifacts govern claims about the tested plugin. |
 
 This table records search coverage, not an exact reproducible browser-query transcript. Search results were followed to primary sources; secondary summaries are not technical evidence in the manuscript. The `review` field in [sources.json](sources.json) identifies whether inspection covered full HTML, a publication abstract, documentation, indexed PDF text or only source location/metadata. Do not represent an abstract-only inspection as a full-paper review. In particular, MLPMoE's primary abstract explicitly supports the slicing/summation overlap; its HTML was unavailable.
 
 The companion pipeline paper's public arXiv v1 and local working manuscript differ. We cite its architectural lineage, without importing a local draft number as a published benchmark. The architecture manuscript is cited as a repository manuscript; publication acceptance is not assumed.
 
-Mutable model cards, vendor tables and repository `master` URLs were inspected as available on the search date. The bibliography carries access dates. That does not create immutable source snapshots: a public artifact release should archive permissible metadata or pin revisions. The local experiment evidence, in contrast, is content-hashed at an explicit commit.
+Mutable model cards, vendor tables and repository `master` URLs were inspected as available on the search date. The bibliography carries per-source access dates for the engine extension and retains the initial access date for earlier entries. The new OpenVINO primitive and lowering references use the tested release tag, 2026.3.1. That does not create immutable source snapshots: a public artifact release should archive permissible metadata or pin revisions. The local experiment evidence, in contrast, is content-hashed at an explicit commit.
 
 Coverage is sufficient to reject several broad novelty claims and identify a plausible empirical contribution. It is not a systematic review with a preregistered inclusion protocol, exhaustive forward/backward citation graph, independent double screening or proof of absence. Relevant work after the cutoff is outside this assessment. Search should be refreshed before public submission.

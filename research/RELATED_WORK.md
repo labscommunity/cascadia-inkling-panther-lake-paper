@@ -1,6 +1,6 @@
 # Annotated primary sources
 
-Search and assessment cutoff: 2026-09-21. Summaries are interpretive notes, not quotations. Citation metadata follows the version explicitly identified below.
+Initial search: 2026-09-21; custom-engine attribution extended 2026-09-22. Summaries are interpretive notes, not quotations. Citation metadata follows the version explicitly identified below.
 
 ## inkling: Inkling: Our Open-Weights Model
 
@@ -265,3 +265,27 @@ Decode/prefill dispatch is a backend configuration choice, not a new kernel intr
 Primary archive located for bandwidth-model attribution.
 
 Byte/time bounds are established performance analysis, and require measured or explicitly assumed bandwidth.
+
+## ovmoe: OpenVINO 2026.3.1: Compressed Fused Three-GEMM MoE Primitive
+
+[official GPU plugin source, pinned release](https://github.com/openvinotoolkit/openvino/blob/2026.3.1/src/plugins/intel_gpu/include/intel_gpu/primitives/moe_3gemm_fused_compressed.hpp) · 2026 · inspected 2026-09-22
+
+Release-tagged primitive interface inspected alongside the Cascadia exporter and runtime call path.
+
+OpenVINO supplies the compressed fused-MoE primitive. Cascadia contributes model-specific graph construction, routing interface, numerical range handling and the resident distributed runtime.
+
+## ovmoelowering: OpenVINO 2026.3.1: Tiled MoE Graph Lowering
+
+[official graph transformation source, pinned release](https://github.com/openvinotoolkit/openvino/blob/2026.3.1/src/common/transformations/src/transformations/common_optimizations/convert_tiled_moe_block_to_gather_matmuls.cpp) · 2026 · inspected 2026-09-22
+
+Release-tagged graph matcher inspected against build_layer in the pinned Inkling exporter.
+
+Tiled MoE graph recognition and lowering are upstream mechanisms. Cascadia constructs a matching graph with external Inkling routing and an expert-major compressed representation.
+
+## smoothquant: SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models
+
+[ICML paper](https://proceedings.mlr.press/v202/xiao23c.html) · 2023 · inspected 2026-09-22
+
+Primary proceedings abstract and bibliographic metadata inspected; broader equivalent-rescaling precedent, not an assertion of identical routing treatment.
+
+Equivalent transformations for numerical range and quantization have prior art. SmoothQuant migrates activation outliers into weights for W8A8; Cascadia uses per-row routing normalization and per-layer up-projection attenuation with FP32 restoration for fused FP16 MoE execution.

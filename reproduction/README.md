@@ -21,7 +21,7 @@ These commands reconstruct measurements rather than execute inference. The suppo
 
 | Paper contribution | Reconstructed material |
 |---|---|
-| Resident execution and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
+| Custom resident engine and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
 | Streaming service across resident shards | `results/concurrency.csv`, `results/survey_phases.csv`, `results/prefill.csv`, `figures/concurrency.pdf`, `figures/prefill.pdf` |
 | Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
 | Independent token-accounting check | `results/survey_audit.json`; historical `results/server_counter_audit.json` and supporting `figures/counter.pdf` |
@@ -32,8 +32,9 @@ Figure paths are relative to the repository root. Each chart is generated as bot
 
 | Path | Contents |
 |---|---|
-| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 417 evidence files |
+| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 421 evidence files |
 | `evidence/source/autolab/` | Recorded measurements, configuration files, research summaries, harness and scoring code |
+| `evidence/source/tools/`, `evidence/source/crates/` | Four pinned exporter, gate, layer-runtime and C++ bridge files supporting the engine description |
 | `evidence/source/docs/` | Inkling architecture and execution context |
 | `evidence/source/deploy/` | Scrubbed fleet defaults |
 | `evidence/telemetry/` | 35 deterministic fleet telemetry gzip JSONL archives |

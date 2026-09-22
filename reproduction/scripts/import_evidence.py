@@ -11,6 +11,12 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+ENGINE_SOURCES = {
+    'tools/inkling_moe_layer_ov.py',
+    'crates/cascadia-engine-sparse-moe/src/inkling/gate.rs',
+    'crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs',
+    'crates/cascadia-ov-genai-shim/cpp/shim.cpp',
+}
 
 
 def digest(data):
@@ -84,6 +90,7 @@ def main():
             or (path.startswith('autolab/experiments/046_final_performance/') and p.suffix == '.csv')
             or (path.startswith('docs/perf/INKLING') and p.suffix == '.md')
             or path in {'docs/architectures/inkling.md', 'deploy/inkling-fleet/fleet.env'}
+            or path in ENGINE_SOURCES
         )
         if not selected:
             continue

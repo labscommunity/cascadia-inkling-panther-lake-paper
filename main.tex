@@ -19,7 +19,7 @@ Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
 \maketitle
 
 \begin{abstract}
-Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. The work contributes a compressed execution architecture that fits six consecutive decoder layers per machine, a streaming pipeline that coordinates prompt admission and concurrent decoding, and a method for evaluating draft heads against states and token IDs captured from the deployed numerical path. A unified fused-expert representation accommodates both sparse and dense feed-forward layers, reducing measured dense-layer call time from approximately 8.1 to 4.5\,ms. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach \SurveyDecode{} aggregate decode tokens/s at \SurveyPeakStreams{} streams, with \SurveyPhase{} tokens/s over the complete serving phases. At fifteen streams, median first-token latency is \SurveyTTFT{}\,s. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
+Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. We contribute a custom resident MoE engine that preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, and coordinates FP16 expert computation with FP32 output restoration. The engine fits six consecutive decoder layers per machine and represents dense feed-forward blocks as all-active expert slices, reducing measured dense-layer call time from approximately 8.1 to 4.5\,ms. A streaming pipeline coordinates concurrent generation, while captured-state draft evaluation measures agreement with the deployed numerical path. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach \SurveyDecode{} aggregate decode tokens/s at \SurveyPeakStreams{} streams, with \SurveyPhase{} tokens/s over the complete serving phases. At fifteen streams, median first-token latency is \SurveyTTFT{}\,s. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
 \end{abstract}
 
 \section{Introduction}
@@ -30,7 +30,7 @@ Cascadia distributes Inkling's text decoder across eleven Intel Panther Lake mac
 The research contribution is the design and evaluation of this integrated serving system at nearly trillion-parameter scale on 64\,GB client devices. The work develops three aspects that are closely coupled in this setting:
 
 \begin{enumerate}
-\item \textbf{Resident execution across shared-memory accelerators.} We combine layer partitioning, operator-specific compression and CPU--GPU placement to keep the model distributed across the fleet. A common fused-expert representation supports both sparse MoE blocks and the model's dense feed-forward blocks. The measured dense-layer implementation takes approximately 4.5\,ms per call, compared with 8.1\,ms for three compressed matrix operations.
+\item \textbf{A custom resident MoE engine for shared-memory accelerators.} We construct compressed graphs that preserve Inkling's routing rules while using OpenVINO's fused expert primitives, manage numerical range across the FP16/FP32 boundary, and coordinate layer residency with distributed stream state. Dense blocks use the same fused representation through eight all-active slices, taking approximately 4.5\,ms per measured call versus 8.1\,ms for three compressed matrix operations.
 \item \textbf{A streaming pipeline for concurrent sparse-model service.} We integrate per-stream attention and convolution state, balanced admission, eight-row prefill windows and a direct sampled-token return path. A paired concurrency curve from 1 to 176 streams characterizes the resulting service. The highest measured paired mean occurs at 88 streams, eight per pipeline group: \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s. Fifteen streams yield \SurveyTTFT{}\,s median first-token latency.
 \item \textbf{Draft evaluation aligned with deployed inference.} We capture FP32 residuals together with the fleet's emitted token IDs and replay each draft module's temporal state. On 36 sequences, the resulting analysis separates vocabulary selection from additional weight quantization: restricting the head to 65,536 tokens changes first-draft agreement by 2.271 percentage points, while quantization at that vocabulary changes it by a further 0.175 percentage points.
 \end{enumerate}
@@ -84,15 +84,53 @@ Pipeline role 0 owns layers 0--5, token embedding and request admission. Roles 1
 \label{fig:architecture}
 \end{figure}
 
-\section{Resident execution of dense and sparse layers}
+\section{A custom resident MoE engine for integrated GPUs}
 \label{sec:resident}
 
-\subsection{Compression and placement as one design}
-The execution architecture assigns numerical formats by operator. Expert weights use group-32 four-bit quantization; attention projections and the output head use eight-bit weights. OpenVINO's fused-expert path performs half-precision arithmetic, while the Rust runtime maintains routing decisions, attention and convolution history, and the FP32 residual stream.
+\subsection{Model-specific graph construction and routing}
+Cascadia's engine connects Inkling's model semantics to OpenVINO's compressed fused-MoE primitive and GPU kernel implementations~\cite{ovmoe}. Cascadia supplies the exporter, routing interface, numerical range management and resident layer runtime. OpenVINO supplies graph recognition, lowering and device execution. This division lets the engine use established accelerated operations while retaining the model's routing and state behavior.
 
-This placement keeps the GPU's compressed expert representation resident while avoiding a second large resident CPU expert cache in normal operation. The configuration budgets approximately 52\,GiB for GPU pages on each machine, with a larger allocation on the final role. Per-layer scaling of the expert up-projection and corresponding output compensation manage the range of the fused arithmetic. The relevant allocation unit is the entire layer shard: expert storage, projections, sequence state and host working memory share one physical capacity budget.
+The exporter builds one graph per MoE layer from the existing group-32 INT4 expert bins. It arranges weights in expert-major order, preserves their packed nibbles, and represents group scales in FP16. A tiled three-matrix-operation graph expresses gate/up projections, SwiGLU, down projection and weighted reduction in the pattern recognized by OpenVINO's MoE lowering pass~\cite{ovmoelowering}. This tiled algebra is a compiler representation; the fused path executes the selected expert work.
 
-The contribution is a resident execution architecture for this model and client-memory setting. It combines local placement with distributed partitioning: the cluster supplies weight capacity, each integrated GPU supplies compressed projection/expert execution, and CPU cores maintain the stateful operations that connect successive tokens. Recorded profiles include fallback counters alongside GPU timings, so residency and execution placement remain observable properties of the implementation.
+Routing remains in Rust. The gate computes Inkling's sigmoid scores, bias-adjusted top-six selection, selected/shared normalization and model-specific scale factors. Its results enter the graph as expert IDs and routing weights. The two shared experts occupy IDs 256 and 257 and are always included, so each row supplies eight selections through the same interface. This preserves Inkling's routing rules while allowing the GPU backend to fuse the expert computation.
+
+\begin{figure}[ht]
+\centering
+\resizebox{\linewidth}{!}{\begin{tikzpicture}[>=Latex,every node/.style={font=\footnotesize},box/.style={draw,rounded corners,align=center,text width=4.3cm,minimum height=1.55cm,inner sep=5pt}]
+\node[box,fill=blue!7] (export) at (0,0) {Cascadia exporter\\expert-major INT4 graphs\\and layer scale metadata};
+\node[box,fill=orange!10] (compile) at (5.2,0) {OpenVINO compiler\\MoE pattern recognition\\and compressed fusion};
+\node[box,fill=blue!7] (resident) at (10.4,0) {Cascadia layer runtime\\resident compiled models\\and reusable requests};
+\draw[->,thick] (export) -- (compile);
+\draw[->,thick] (compile) -- (resident);
+\node[box,fill=blue!7] (route) at (0,-2.5) {Cascadia host path\\routing IDs, scaled weights\\and frame rows};
+\node[box,fill=orange!10] (gpu) at (5.2,-2.5) {OpenVINO iGPU path\\compressed expert execution\\with FP16 arithmetic};
+\node[box,fill=blue!7] (restore) at (10.4,-2.5) {Cascadia host path\\FP32 output restoration\\convolution and residual};
+\draw[->,thick] (route) -- (gpu);
+\draw[->,thick] (gpu) -- (restore);
+\draw[->,dashed] (resident.south) -- ++(0,-.45) -| (gpu.north);
+\end{tikzpicture}}
+\caption{The custom engine and its OpenVINO execution boundary. The upper path prepares resident layer models; the lower path executes each frame. Cascadia supplies the model-specific representation and stateful runtime around OpenVINO's compiler and GPU primitives.}
+\label{fig:engine}
+\end{figure}
+
+\subsection{Residency and the layer execution contract}
+Expert weights use four-bit compression; attention projections and the output head use eight-bit weights. CPU routing, attention and convolution history share local memory with GPU weights and working storage. The configuration budgets approximately 52\,GiB for GPU pages per machine, with a larger allocation on the final role, and avoids a second large resident CPU expert cache in normal operation.
+
+Cascadia's C++ bridge materializes graph constants before compilation for the resident path. The Rust runtime retains one compiled model and reusable inference request per layer. A call supplies a frame's rows, expert IDs and weights; the runtime selects a supported row shape, pads extra rows with zero routing weights, invokes the compiled model and restores the real row count on return. Host computation then advances the stream's convolution and residual state. Device-call counters and profiles make the execution placement observable. The allocation and scheduling unit is the complete layer shard, including weights, sequence state and host working memory.
+
+\subsection{Numerical range across the FP16/FP32 boundary}
+The engine manages two sources of magnitude separately: the expert output and its routing coefficient. For layer $\ell$, the exporter can attenuate up-projection scales by $A_\ell=2^{n_\ell}$ and record the exponent with the graph. Since the up branch enters SwiGLU multiplicatively, this scales the expert output $E_{\ell e}(x)$ by $1/A_\ell$ in real arithmetic. The recorded layer-8 configuration uses $A_8=16$.
+
+For row $i$, with $e$ ranging over its eight selected experts, the runtime chooses
+\begin{equation}
+ F_i=2^{\lceil\log_2\max(1,\sum_e |w_{ie}|)\rceil},\qquad
+ \widetilde y_i=\sum_e\frac{w_{ie}}{F_i}\frac{E_{\ell e}(x_i)}{A_\ell},\qquad
+ y_i=A_\ell F_i\widetilde y_i.
+ \label{eq:range}
+\end{equation}
+The GPU receives the normalized routing weights, whose absolute values sum to at most one. In real arithmetic, their weighted combination is bounded componentwise by the largest absolute attenuated expert value. The host restores both factors in FP32 before state updates. Layer metadata binds the export-time attenuation to the runtime compensation.
+
+Equation~\ref{eq:range} preserves the real-arithmetic function. Powers of two change exponents exactly when representable; FP16 conversion, subnormal scales and reduction rounding still determine finite-precision agreement. Equivalent rescaling is established numerical practice: SmoothQuant, for example, transfers activation magnitude into weights for W8A8 quantization~\cite{smoothquant}. Our implementation applies separate layer and row factors to preserve the fused FP16 expert path and the FP32 residual interface. This is an explicit engine design and implementation contribution, evaluated together with resident serving.
 
 \subsection{A common fused representation for dense and sparse blocks}
 The two dense feed-forward blocks can use the same fused-expert operator family as the sparse layers. Partitioning the intermediate dimension into eight slices of width 3072 gives
@@ -101,7 +139,7 @@ The two dense feed-forward blocks can use the same fused-expert operator family 
  =\sum_{j=1}^{8}W_{d,j}[\operatorname{SiLU}(W_{g,j}x)\odot W_{u,j}x].
  \label{eq:dense}
 \end{equation}
-Every slice is active with unit weight. The dense block thus matches the backend's expert width without introducing a learned router or dropping intermediate activations. The algebra follows established dense-to-expert decompositions~\cite{moefication,mlpmoe}; our implementation maps that representation onto the compressed fused operator used by the resident Inkling shard.
+Every slice is active with unit weight. Gate/up rows and down-projection columns are sliced at existing quantization-group boundaries, preserving packed weights without requantization. The dense block thus matches the backend's expert width without introducing a learned router or dropping intermediate activations. The algebra follows established dense-to-expert decompositions~\cite{moefication,mlpmoe}; our implementation maps that representation onto the compressed fused operator used by the resident Inkling shard.
 
 \begin{table}[ht]
 \centering\small
@@ -249,13 +287,13 @@ MTP and feature-based drafting are established approaches~\cite{mtp,eagle}. MoE-
 Petals, TPI-LLM, prima.cpp and exo demonstrate inference across consumer or edge devices~\cite{petals,tpi,prima,exo}. Cascadia's earlier work develops Intel/OpenVINO pipeline shards and the broader distributed architecture~\cite{shards,architecture}. The present work extends that lineage to a resident 975B sparse decoder on eleven 64\,GB integrated-GPU machines, including compressed expert placement and dense/sparse operator unification. A reported Inkling deployment on eight DGX Sparks uses tensor parallelism, NVFP4, MTP and a different memory/interconnect configuration~\cite{sparkinkling}. The systems establish distinct deployment designs; the present evaluation uses the Intel fleet's own workloads and numerical formats.
 
 \paragraph{Sparse execution and operator representation.}
-EdgeMoE and PowerInfer exploit sparsity and memory placement on resource-constrained hardware~\cite{edgemoe,powerinfer}; Klotski, MegaScale-Infer, EC2MoE and CPU/GPU hybrid serving examine expert-aware execution and distribution~\cite{klotski,megascale,ec2moe,hybrid2026}. Cascadia combines a resident layer partition with a CPU/iGPU split inside each shard. MoEfication and MLPMoE establish dense-to-expert decompositions~\cite{moefication,mlpmoe}. The measured contribution here is using all-active slices to map Inkling's dense blocks onto the same compressed fused operator family as its sparse blocks on Arc B390.
+EdgeMoE and PowerInfer exploit sparsity and memory placement on resource-constrained hardware~\cite{edgemoe,powerinfer}; Klotski, MegaScale-Infer, EC2MoE and CPU/GPU hybrid serving examine expert-aware execution and distribution~\cite{klotski,megascale,ec2moe,hybrid2026}. Cascadia combines a resident layer partition with a CPU/iGPU split inside each shard. Its model-specific exporter and routing interface build on OpenVINO's compressed MoE primitive and lowering passes~\cite{ovmoe,ovmoelowering}; its layer/row scaling applies equivalent-rescaling principles to the FP16 expert and FP32 residual boundary~\cite{smoothquant}. MoEfication and MLPMoE establish dense-to-expert decompositions~\cite{moefication,mlpmoe}. The measured contribution here is using all-active slices to map Inkling's dense blocks onto the same compressed fused operator family as its sparse blocks on Arc B390.
 
 \paragraph{Streaming and draft evaluation.}
 Orca and SARATHI/Sarathi-Serve establish iteration-level scheduling and chunked prefill~\cite{orca,sarathi,sarathiserve}. We integrate those principles with a gigabit sparse-model pipeline, short-convolution state and a direct sampled-token return path. The draft evaluation contributes captured-state measurements of the deployed model, complementing speculative decoding, MTP and MoE-specific verification research~\cite{specdecode,mtp,moesd}. The evidence supports these architectural, implementation and empirical contributions without requiring a priority claim for the underlying algebra or scheduling primitives.
 
 \section{Conclusion}
-Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. The system combines compressed expert placement, a unified fused representation for dense and sparse blocks, and stream-oriented coordination across integrated GPUs sharing memory with CPUs. Its paired concurrency curve reaches \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s at 88 streams, with \SurveyTTFT{}\,s median first-token latency at fifteen streams. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
+Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. Its custom engine preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, manages numerical range across FP16 and FP32, and unifies dense and sparse blocks within resident layer shards. Stream-oriented coordination connects those shards across machines. Its paired concurrency curve reaches \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s at 88 streams, with \SurveyTTFT{}\,s median first-token latency at fifteen streams. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
 
 \paragraph{Artifact.}
 The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{3189a189fe3428f5a6315a7eb67b13148ec314e2}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.

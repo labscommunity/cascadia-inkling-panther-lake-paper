@@ -1,6 +1,6 @@
 # Artifact validation record
 
-Finalized-performance revision **0.3.0**, validated **2026-09-21** with Python **3.14.4**, uv **0.11.12**, Matplotlib **3.10.8**, Tectonic **0.16.9** and cffconvert **2.0.0** on macOS.
+Custom-engine revision **0.4.0**, validated **2026-09-22** with Python **3.14.4**, uv **0.11.12**, Matplotlib **3.10.8**, Tectonic **0.16.9** and cffconvert **2.0.0** on macOS.
 
 Evidence source: Cascadia commit **3189a189fe3428f5a6315a7eb67b13148ec314e2** on `autolab/inkling-fleet-perf`.
 
@@ -11,13 +11,14 @@ Completed checks:
 - Verified the report's survey totals excluding pilots: **33 phases, 1,592 requests and 203,776 output tokens**.
 - Independently matched all **34** survey phases with available sampled idle brackets to server token-counter deltas; the audit records the remaining phase's absent sampled bracket separately.
 - Confirmed that all twelve single-stream prompt/output pairs are text-identical through their complete 128-token outputs, consistent with the retained output hashes.
-- Verified all **417** evidence hashes and byte sizes and recomputed all **125 historical phase rates** within storage rounding.
+- Verified all **421** evidence hashes and byte sizes and recomputed all **125 historical phase rates** within storage rounding.
 - Matched the historical **21,549-token** server-counter delta independently to client accounting.
 - Reconstructed dense-operator, prefill and draft tables and checked physical-device/pipeline-role identity. Confirmed that runtime files linked in the code map are unchanged between the prior and current evidence commits.
-- Generated **four paper charts** and one supporting counter chart as PDF/PNG, plus the in-document architecture diagram.
-- Resolved all **29 manuscript citations** within the **33-source literature ledger** and validated current report-document links.
+- Retained the four validated paper charts and supporting counter chart as PDF/PNG. Built the fleet architecture diagram and new custom-engine/OpenVINO boundary diagram from the LaTeX source.
+- Checked the graph/routing, layer/row scaling, constant materialization and dense-slicing descriptions against the four frozen implementation files; attributed upstream mechanisms separately from Cascadia's custom engine.
+- Resolved all **32 manuscript citations** within the **36-source literature ledger** and validated current report-document links.
 - Validated strict JSON and scanned text/compressed archives for the specified private-address, home-path, MAC and credential patterns.
-- Built the **14-page PDF** with resolved references and no overfull boxes; visually inspected the new performance table and chart in the rendered pages. Tectonic's `inputenc` warning reflects its UTF-8 engine.
+- Built the **15-page PDF** with resolved references and no overfull boxes; visually inspected the expanded engine section, numerical equation and engine diagram in the rendered pages. Tectonic's `inputenc` warning reflects its UTF-8 engine.
 - Validated `CITATION.cff` against schema 1.2.0 and confirmed that the GitHub repository remains private.
 
-The revision retains the paper's contribution-based organization and incorporates the finalized performance survey. Complete-phase throughput, common-interval decode throughput, operator timings and offline draft agreement have distinct definitions in the manuscript and claim map.
+The revision makes the custom resident engine central to contribution one. Four additional implementation files are frozen at the existing evidence commit, and the bibliography adds release-pinned OpenVINO primitive/lowering references and SmoothQuant as broader equivalent-rescaling precedent. The finalized performance survey remains the serving evidence. Complete-phase throughput, common-interval decode throughput, operator timings and offline draft agreement have distinct definitions in the manuscript and claim map.

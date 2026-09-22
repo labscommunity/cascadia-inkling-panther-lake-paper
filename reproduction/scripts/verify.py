@@ -38,12 +38,12 @@ def close(a, b, tolerance=1e-9):
 def main():
     manifest = load(EVIDENCE / 'manifest.json')
     assert manifest['source_commit'] == '3189a189fe3428f5a6315a7eb67b13148ec314e2'
-    assert len(manifest['files']) == 417
+    assert len(manifest['files']) == 421
     for entry in manifest['files']:
         data = (ROOT / entry['path']).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry['sha256'], entry['path']
         assert len(data) == entry['bytes'], entry['path']
-    print('PASS: 417 evidence files match frozen hashes and byte sizes.')
+    print('PASS: 421 evidence files match frozen hashes and byte sizes.')
 
     all_phases = []
     for path in sorted(EXPS.glob('*/phases*.json')):
@@ -138,7 +138,7 @@ def main():
     keys = {s['key'] for s in sources}
     bib_keys = set(re.findall(r'@\w+\{([^,]+),', (ROOT / 'references.bib').read_text()))
     cited = {k.strip() for group in re.findall(r'\\cite\w*\{([^}]+)\}', main_tex) for k in group.split(',')}
-    assert len(sources) == len(keys) == 33 and bib_keys == keys
+    assert len(sources) == len(keys) == 36 and bib_keys == keys
     assert cited <= bib_keys, cited - bib_keys
     for s in sources:
         assert s['review'] and s['finding'] and urlparse(s['url']).scheme == 'https'
@@ -152,7 +152,7 @@ def main():
     assert r'\newcommand{\SurveyPhase}{46.87}' in survey_macros
     assert r'\newcommand{\SurveyTTFT}{6.05}' in survey_macros
     assert len((ROOT / 'generated/concurrency_rows.tex').read_text().splitlines()) == 18
-    print(f'PASS: {len(cited)} cited sources resolve within the 33-source ledger; figures and PDF exist.')
+    print(f'PASS: {len(cited)} cited sources resolve within the 36-source ledger; figures and PDF exist.')
 
     documents = [ROOT / 'README.md', ROOT / 'NOTICE.md', *ROOT.glob('research/*.md'), *ROOT.glob('reproduction/*.md')]
     for doc in documents:
@@ -170,7 +170,7 @@ def main():
     for path in sorted(ROOT.rglob('*')):
         if not path.is_file() or any(p in {'.git', '__pycache__', '.venv'} for p in path.parts):
             continue
-        if path.suffix not in {'.md', '.json', '.jsonl', '.gz', '.py', '.tex', '.bib', '.env', '.txt', '.cff'}:
+        if path.suffix not in {'.md', '.json', '.jsonl', '.gz', '.py', '.tex', '.bib', '.env', '.txt', '.cff', '.rs', '.cpp'}:
             continue
         body = gzip.decompress(path.read_bytes()).decode() if path.suffix == '.gz' else path.read_text()
         # The scrubber/verifier contain pattern literals, not identifiers.

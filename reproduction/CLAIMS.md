@@ -4,7 +4,7 @@ This map follows the manuscript's contribution-based organization. Experiment id
 
 Evidence types: **R** — retained structured/raw measurement; **J** — retained load-check or research summary; **C** — inspected implementation/configuration; **V** — model/vendor primary source; **D** — arithmetic derived from those inputs. These types describe provenance, not statistical confidence. [AUDIT.md](AUDIT.md) defines the metrics and reconstruction rules.
 
-## C1. Resident execution across shared-memory accelerators
+## C1. A custom resident MoE engine for shared-memory accelerators
 
 | Claim | Source and selector | Evidence / interpretation |
 |---|---|---|
@@ -16,6 +16,13 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 | 66 layers; first 2 dense 24576, remaining 64 MoE width 3072; hidden 6144; top 6 of 256 routed plus 2 shared | [architecture notes](evidence/source/docs/architectures/inkling.md), [code map](CODE_MAP.md), model-card source | C/V |
 | Six consecutive layers per role, FP32 residuals, 24,576 bytes/row, direct sampled-ID return | [code map](CODE_MAP.md), `layer_split`, `hidden_to_tensor`, `send_stream_decode`, `send_tokens_reply` | C/D; payload 6144×4, before protocol metadata |
 | Group 32 INT4 experts; INT8 projections/head; FP16 fused arithmetic; approximately 52 GiB GPU page budget | [resident configuration](evidence/source/autolab/experiments/008b_all_fused/verdict.md); [fused path notes](evidence/source/autolab/research/fused_moe_f16.md) and experiment overrides | J/C; normal placement, with observable fallback counters |
+| Cascadia builds model-specific graphs/routing/runtime around OpenVINO's compressed fused-MoE primitive | [exporter](evidence/source/tools/inkling_moe_layer_ov.py), [layer runtime](evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs); `ovmoe`/`ovmoelowering` in [source ledger](../research/sources.json) | C; upstream fusion and graph recognition are explicitly attributed |
+| Group-32 nibbles preserved; expert-major constants and FP16 group scales; one graph per layer | Same exporter, `stacked_weight`, `build_layer`, `layer_model` | C; scale-format conversion is separate from preservation of packed nibbles |
+| Rust sigmoid/bias top-six selection and selected/shared normalization; shared IDs 256/257 in eight selections | [gate](evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/gate.rs), exporter `layer_model` | C; model-specific routing enters graph as IDs and weights |
+| Per-layer up attenuation A=2^n; layer 8 uses A=16 | Exporter `stacked_weight`; [runtime](evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs), `layer_out_scale`; [resident record](evidence/source/autolab/experiments/008b_all_fused/verdict.md) | C/J; exponent recorded in graph metadata and restored on host |
+| Per-row F=2^ceil(log2(max(1,sum(abs(w))))); output restored by A×F in FP32 | Same runtime, `weight_rescale`, `pow2_ceil`, `forward` | C/D; real-arithmetic identity and weighted-magnitude bound; finite-precision behavior stated separately |
+| Materialized constants, retained compiled model/request, zero-weight padding and output truncation | [bridge](evidence/source/crates/cascadia-ov-genai-shim/cpp/shim.cpp), `materialize_constants`, `cascadia_runtime_compile`; layer runtime `compiled`, `forward` | C; one layer-level inference request can execute multiple GPU kernels |
+| Dense slices preserve existing quantization groups without requantization | Exporter `dense_as_moe_model`, gate/up row and down column slicing | C; dense operator measurements below compare the resulting FP16 paths |
 | Dense-to-eight-slice representation, all slices active with unit weights | [dense implementation record](evidence/source/autolab/experiments/027_rank0_dense_as_moe/verdict.md), [code map](CODE_MAP.md); `mlpmoe`/`moefication` references | C/J; real-arithmetic identity with prior attribution |
 | Dense layer 0: 8.15→4.51 ms; layer 1: 8.11→4.45 ms; reductions 44.7%/45.1%; relative differences 5.7e-4/5.9e-4 | [dense.csv](results/dense.csv), rows=1; parsed from the preceding load-check table | J/D; two FP16 execution paths |
 | Two-row dense calls 8.41 ms each versus 4.47/4.48 ms | [dense.csv](results/dense.csv), rows=2 | J; operator measurements |
@@ -59,6 +66,6 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 
 ## Artifact and related work
 
-The [manifest](evidence/manifest.json) records 417 evidence-file hashes. The reconstruction enumerates 160 phase records in 50 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. A supporting `counter` chart accompanies the data audit.
+The [manifest](evidence/manifest.json) records 421 evidence-file hashes. The reconstruction enumerates 160 phase records in 50 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. Two in-document diagrams show the fleet pipeline and the custom engine/OpenVINO boundary. A supporting `counter` chart accompanies the data audit.
 
-The [contribution assessment](../research/NOVELTY.md) maps the three contributions to the closest primary literature. The bibliography ledger contains 33 sources; the manuscript selects the sources relevant to its stated contributions.
+The [contribution assessment](../research/NOVELTY.md) maps the three contributions to the closest primary literature. The bibliography ledger contains 36 sources; the manuscript selects the sources relevant to its stated contributions.

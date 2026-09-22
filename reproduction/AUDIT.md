@@ -34,6 +34,12 @@ The reference and windowed fifteen-request configurations use the same 128-token
 
 Dense-layer times come from retained one-/two-row load checks. `dense.csv` computes reductions of 44.7%/45.1% for one row, with FP16 path differences of 5.7e-4/5.9e-4. The role 0 profile comparison is a separate stage measurement; operator savings are not an isolated fleet-throughput multiplier.
 
+## Custom engine attribution and numerical identities
+
+Four implementation files are frozen at the same Cascadia evidence commit: the exporter, Rust gate, fused layer runtime and C++ bridge. [CODE_MAP.md](CODE_MAP.md) and [CLAIMS.md](CLAIMS.md) identify the functions supporting the expanded engine description. OpenVINO's primitive and graph-lowering references are pinned to release 2026.3.1.
+
+The layer/row scaling equation describes a real-arithmetic identity. The absolute routing-weight sum is bounded by one after row normalization; multiplying the GPU output by the layer and row factors restores magnitude in FP32. FP16 conversion, subnormal scales and reduction rounding remain distinct numerical effects. The paper presents these mechanisms as implemented range management, with equivalent-rescaling prior art attributed; it does not infer a new fleet-throughput multiplier from the identity.
+
 ## Profiles and numerical labels
 
 Profile windows are deduplicated and aligned using receipt age on the operator clock. Physical device identity and pipeline role are separate. Stage times are frame-weighted software-profile averages; GPU timings retain associated fallback counters.
@@ -44,6 +50,6 @@ Short serial/concurrent prefixes and twelve known-answer questions support funct
 
 ## Evidence integrity
 
-The snapshot contains **417 hashed evidence files**, **160 phase records** across **50 source directories**, **35 fleet telemetry archives** and **36 request/stat archives**. The [claim map](CLAIMS.md) selects the measurements supporting each contribution.
+The snapshot contains **421 hashed evidence files**, **160 phase records** across **50 source directories**, **35 fleet telemetry archives** and **36 request/stat archives**. The [claim map](CLAIMS.md) selects the measurements supporting each contribution.
 
 Import scrubs device/network identities and home paths, normalizes nonfinite JSON numbers to `null`, and retains original/stored hashes. `null` is distinct from measured zero. `make data` reconstructs the tables; `make verify` checks the frozen artifact and derived results.

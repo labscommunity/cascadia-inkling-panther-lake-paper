@@ -18,6 +18,6 @@ for s in sources:
                    + '  author={' + tex(s['author']) + '},\n'
                    + '  year={' + s['year'] + '},\n'
                    + '  url={' + s['url'] + '},\n'
-                   + '  note={Accessed 2026-09-21}\n}')
+                   + '  note={Accessed ' + s.get('accessed', '2026-09-21') + '}\n}')
 (ROOT / 'references.bib').write_text('\n\n'.join(entries) + '\n')
 print(f'Rendered {len(entries)} bibliography entries.')

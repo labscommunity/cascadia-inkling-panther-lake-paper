@@ -6,11 +6,17 @@ Research manuscript by **Tate Berenbaum**, **Matias Parij** (Community Labs), an
 
 The paper presents Cascadia's execution of Inkling's 975B text decoder on eleven Intel Core Ultra X7 358H machines, each with nominal 64 GB memory, Arc B390 integrated graphics and gigabit Ethernet. It develops three contributions:
 
-1. **Resident execution on shared-memory accelerators.** Layer partitioning, operator-specific compression and CPU/iGPU placement distribute the model across the fleet. A common fused-expert representation supports both dense and sparse feed-forward blocks; the measured dense-layer call takes about **4.5 ms**, compared with **8.1 ms** for three compressed matrix operations.
+1. **A custom resident MoE engine for shared-memory accelerators.** Cascadia builds Inkling-specific compressed graphs, retains its routing rules in Rust, and manages FP16 expert computation with FP32 output restoration around OpenVINO's fused iGPU primitives. Layer residency and reusable inference requests fit this execution into each machine's shared memory. Dense layers use eight all-active expert slices, reducing measured calls from about **8.1 ms to 4.5 ms**.
 2. **A streaming pipeline for concurrent serving.** Per-stream KV/convolution state, balanced admission, eight-row prefill windows and a direct token-return path coordinate generation. Paired measurements from **1 to 176 streams** reach **60.29 aggregate decode tokens/s** and **46.87 whole-phase tokens/s** at **88 streams**, eight per pipeline group. At fifteen streams, median TTFT is **6.05 s**.
 3. **Draft evaluation using deployed states.** FP32 residual capture, emitted token IDs and stateful draft replay enable matched-state numerical comparisons. Vocabulary restriction accounts for **2.271 percentage points** of first-draft agreement difference; further quantization at that vocabulary accounts for **0.175 percentage points**.
 
 The contribution is the architecture, implementation and empirical findings of this integrated system. [The prior-work assessment](research/NOVELTY.md) explains how it extends the [Cascadia architecture manuscript](https://github.com/labscommunity/cascadia-architecture-paper), [pipeline-shard paper](https://arxiv.org/abs/2608.19147) and related research. Established algebra and scheduling primitives are credited where used.
+
+## Custom engine contribution
+
+Section 3 explains the exporter, routing interface, resident runtime and numerical range management, with a diagram showing Cascadia's responsibilities and OpenVINO's execution boundary. The engine preserves existing INT4 groups, treats routed and shared experts through one interface, and uses per-layer up-projection attenuation plus per-row routing normalization with FP32 restoration. Dense and sparse blocks share the fused representation.
+
+OpenVINO supplies the compressed MoE primitive and graph lowering. The paper attributes those mechanisms and the prior art for equivalent rescaling and dense-to-expert decomposition; its contribution is the implemented engine and measured results in this deployment. [Implementation anchors](reproduction/CODE_MAP.md) and the [novelty assessment](research/NOVELTY.md) connect that claim to source evidence.
 
 ## Finalized performance measurements
 
@@ -43,7 +49,7 @@ make            # Build the PDF with Tectonic or pdfLaTeX + BibTeX
 make verify     # Check evidence, metrics, citations and report links
 ```
 
-The [evidence snapshot](reproduction/evidence/manifest.json) covers 50 source experiment directories, 160 phase records, 35 fleet telemetry archives, 36 request/stat archives and 417 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
+The [evidence snapshot](reproduction/evidence/manifest.json) covers 50 source experiment directories, 160 phase records, 35 fleet telemetry archives, 36 request/stat archives and 421 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
 
 ## Supporting material
 
