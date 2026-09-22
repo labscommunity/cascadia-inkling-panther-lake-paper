@@ -53,7 +53,10 @@ def main():
     ap.add_argument('--source', type=Path, required=True)
     ap.add_argument('--ref', required=True)
     ap.add_argument('--telemetry', type=Path, required=True)
+    ap.add_argument('--output', type=Path, default=ROOT,
+                    help='Artifact root; permits staging a new snapshot before replacing the checked-in evidence.')
     args = ap.parse_args()
+    output = args.output
     def git(*argv):
         return subprocess.check_output(['git', '-C', str(args.source), *argv])
     commit = git('rev-parse', args.ref).decode().strip()
@@ -67,7 +70,7 @@ def main():
                 hosts.add(record['host'])
     entries = []
     def write(relative, original, cleaned, kind, source):
-        dst = ROOT / relative
+        dst = output / relative
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(cleaned)
         entries.append(dict(path=relative, source=source, kind=kind,
@@ -78,6 +81,7 @@ def main():
         p = Path(path)
         selected = (
             (path.startswith('autolab/') and p.suffix in {'.md', '.json', '.env', '.py', '.txt'})
+            or (path.startswith('autolab/experiments/046_final_performance/') and p.suffix == '.csv')
             or (path.startswith('docs/perf/INKLING') and p.suffix == '.md')
             or path in {'docs/architectures/inkling.md', 'deploy/inkling-fleet/fleet.env'}
         )
@@ -103,6 +107,18 @@ def main():
         payload = gzip.compress(cleaned, compresslevel=9, mtime=0)
         write('reproduction/evidence/telemetry/' + path.parent.name + '.jsonl.gz', original, payload,
               'scrubbed-gzip-jsonl', 'operator-telemetry/' + path.parent.name + '/telemetry.jsonl')
+    survey = 'autolab/experiments/046_final_performance/measurements.json'
+    if survey in paths:
+        phases = json.loads(git('show', f'{commit}:{survey}'))
+        names = [p['phase'] + '.jsonl' for p in phases] + ['api-stats.jsonl']
+        for name in names:
+            path = args.telemetry / '046_final_performance' / name
+            original = path.read_bytes()
+            cleaned = ''.join(json.dumps(scrub(json.loads(line), hosts), ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n'
+                              for line in original.splitlines() if line.strip()).encode()
+            write('reproduction/evidence/requests/046_final_performance/' + name + '.gz', original,
+                  gzip.compress(cleaned, compresslevel=9, mtime=0), 'scrubbed-gzip-request-jsonl',
+                  'operator-telemetry/046_final_performance/' + name)
     manifest = dict(source_repository='https://github.com/labscommunity/cascadia', source_commit=commit,
                     evidence_cutoff='2026-09-21',
                     transformations=['Drop host/IP/MAC/serial identity fields; replace private addresses and home paths.',
@@ -112,7 +128,7 @@ def main():
                     exclusions=['Model weights and binary residual captures (not present in this checkout).',
                                 'External Dolly corpus, deployment logs, credentials and release-channel files.',
                                 'Live fleet actions: no new inference, deployment or hardware changes.'], files=entries)
-    dest = ROOT / 'reproduction/evidence/manifest.json'
+    dest = output / 'reproduction/evidence/manifest.json'
     dest.write_text(json.dumps(manifest, indent=2) + '\n')
     print(f'Imported {len(entries)} files at {commit}; {len(telemetry_paths)} telemetry archives; {sum(e["bytes"] for e in entries):,} bytes.')
 

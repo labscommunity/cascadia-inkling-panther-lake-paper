@@ -12,8 +12,10 @@
   "mtp_vocab65k": 0.6453529000698812,
   "mtp_vocabulary_difference_pp": 2.271139063591887,
   "mtp_incremental_quantization_loss_pp": 0.17470300489168533,
-  "phase_rows": 125,
-  "experiment_directories": 49,
-  "telemetry_archives": 34,
-  "evidence_files": 357
+  "phase_rows": 160,
+  "historical_phase_rows": 125,
+  "survey_phase_rows": 35,
+  "experiment_directories": 50,
+  "telemetry_archives": 35,
+  "evidence_files": 417
 }

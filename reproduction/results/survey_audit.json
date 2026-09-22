@@ -1,0 +1,60 @@
+{
+  "source_commit": "3189a189fe3428f5a6315a7eb67b13148ec314e2",
+  "survey_records": 35,
+  "reported_phases": 33,
+  "pilot_phases": 2,
+  "mixed_phases": 30,
+  "mixed_concurrency_settings": 15,
+  "reported_requests": 1592,
+  "reported_tokens": 203776,
+  "audited_requests": 1605,
+  "audited_token_events": 204192,
+  "raw_counter_matches": 34,
+  "raw_counter_bracketed_phases": 34,
+  "raw_counter_unbracketed_phases": [
+    "mixed_b_c128"
+  ],
+  "raw_counter_method": "Nearest idle polls within ten seconds around each phase.",
+  "peak": {
+    "concurrency": 88,
+    "runs": 2,
+    "requests": 176,
+    "mean_decode_tok_s": 60.286375128761485,
+    "decode_min": 58.86086641981964,
+    "decode_max": 61.71188383770333,
+    "mean_phase_tok_s": 46.874876421073495,
+    "phase_min": 46.026388446069404,
+    "phase_max": 47.72336439607759,
+    "mean_decode_per_stream": 0.6850724446450168,
+    "ttft_median_s": 34.611480474472046,
+    "ttft_p95_s": 64.7450116276741
+  },
+  "interactive": {
+    "concurrency": 15,
+    "runs": 2,
+    "requests": 30,
+    "mean_decode_tok_s": 24.604266190057004,
+    "decode_min": 24.57501702670127,
+    "decode_max": 24.633515353412733,
+    "mean_phase_tok_s": 22.116879847835918,
+    "phase_min": 22.00779532738382,
+    "phase_max": 22.225964368288015,
+    "mean_decode_per_stream": 1.640284412670467,
+    "ttft_median_s": 6.052471041679382,
+    "ttft_p95_s": 10.1135737657547
+  },
+  "serial": {
+    "concurrency": 1,
+    "runs": 2,
+    "requests": 24,
+    "mean_decode_tok_s": 7.959989294843007,
+    "decode_min": 5.676967862223407,
+    "decode_max": 10.243010727462607,
+    "mean_phase_tok_s": 6.979895530322784,
+    "phase_min": 5.19460681227384,
+    "phase_max": 8.765184248371728,
+    "mean_decode_per_stream": 7.959989294843007,
+    "ttft_median_s": 2.181649923324585,
+    "ttft_p95_s": 2.4145608067512514
+  }
+}

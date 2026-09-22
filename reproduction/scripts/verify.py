@@ -37,13 +37,13 @@ def close(a, b, tolerance=1e-9):
 
 def main():
     manifest = load(EVIDENCE / 'manifest.json')
-    assert manifest['source_commit'] == 'd1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651'
-    assert len(manifest['files']) == 357
+    assert manifest['source_commit'] == '3189a189fe3428f5a6315a7eb67b13148ec314e2'
+    assert len(manifest['files']) == 417
     for entry in manifest['files']:
         data = (ROOT / entry['path']).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry['sha256'], entry['path']
         assert len(data) == entry['bytes'], entry['path']
-    print('PASS: 357 evidence files match frozen hashes and byte sizes.')
+    print('PASS: 417 evidence files match frozen hashes and byte sizes.')
 
     all_phases = []
     for path in sorted(EXPS.glob('*/phases*.json')):
@@ -55,9 +55,39 @@ def main():
             all_phases.append(p)
     assert len(all_phases) == 125
     assert sum(p['completed'] != p['streams'] or bool(p['errors']) for p in all_phases) == 5
-    assert len([d for d in EXPS.iterdir() if d.is_dir()]) == 49
-    assert len(list((EVIDENCE / 'telemetry').glob('*.jsonl.gz'))) == 34
-    print('PASS: all 125 aggregate rates recompute; five failed/incomplete rows retained.')
+    assert len([d for d in EXPS.iterdir() if d.is_dir()]) == 50
+    assert len(list((EVIDENCE / 'telemetry').glob('*.jsonl.gz'))) == 35
+    assert len(list((EVIDENCE / 'requests/046_final_performance').glob('*.jsonl.gz'))) == 36
+    print('PASS: all 125 historical aggregate rates recompute; source records retained.')
+
+    survey = load(EXPS / '046_final_performance/measurements.json')
+    audit_survey = load(RESULTS / 'survey_audit.json')
+    curve = list(csv.DictReader((RESULTS / 'concurrency.csv').open()))
+    assert len(survey) == audit_survey['survey_records'] == 35
+    assert len(curve) == audit_survey['mixed_concurrency_settings'] == 15
+    assert audit_survey['reported_phases'] == 33
+    assert audit_survey['reported_requests'] == 1592 and audit_survey['reported_tokens'] == 203776
+    assert audit_survey['audited_requests'] == 1605 and audit_survey['audited_token_events'] == 204192
+    assert audit_survey['raw_counter_matches'] == audit_survey['raw_counter_bracketed_phases'] == 34
+    assert audit_survey['raw_counter_unbracketed_phases'] == ['mixed_b_c128']
+    for row in curve:
+        pair = [p for p in survey if p['phase'].startswith('mixed_') and p['streams']==int(row['concurrency'])]
+        assert len(pair) == 2
+        for field, source in [('mean_decode_tok_s','steady_aggregate_tok_s'), ('mean_phase_tok_s','aggregate_tok_s')]:
+            close(float(row[field]), statistics.mean(p[source] for p in pair))
+        ttft = [r['ttft_s'] for p in pair for r in p['request_metrics']]
+        close(float(row['ttft_median_s']), statistics.median(ttft))
+        close(float(row['ttft_p95_s']), statistics.quantiles(ttft,n=100,method='inclusive')[94])
+    peak = max(curve, key=lambda r:float(r['mean_decode_tok_s']))
+    assert peak['concurrency'] == '88' and audit_survey['peak']['concurrency'] == 88
+    close(float(peak['mean_decode_tok_s']), 60.286375128761485)
+    close(float(peak['mean_phase_tok_s']), 46.874876421073495)
+    comparison = load(EXPS / '046_final_performance/single-stream-comparison.json')
+    assert comparison['requests'] == comparison['identical_prompts'] == comparison['identical_outputs'] == 12
+    for row in comparison['comparisons']:
+        assert row['tokens_first'] == row['tokens_repeat'] == 128
+        assert row['output_sha256_first'] == row['output_sha256_repeat']
+    print('PASS: finalized paired curve, pooled latencies, survey counts and repeated-output hashes agree.')
 
     with gzip.open(EVIDENCE / 'telemetry/011b_long_generation.jsonl.gz', 'rt') as f:
         stats = [r['stats'] for line in f if 'stats' in (r := strict_load(line))]
@@ -70,6 +100,7 @@ def main():
     print('PASS: server counter independently matches all 21,549 client tokens.')
 
     derived = load(RESULTS / 'derived.json')
+    assert derived['phase_rows'] == 160 and derived['survey_phase_rows'] == 35
     means = {}
     for e in ['026_decode_kernel_group64', '027_rank0_dense_as_moe', '028_head_batching']:
         means[e[:3]] = statistics.mean(phase(e, p)['sum_stream_tok_s'] for p in ['mix15a', 'mix15b'])
@@ -116,6 +147,11 @@ def main():
     assert (ROOT / 'main.pdf').read_bytes().startswith(b'%PDF-')
     macros = (ROOT / 'generated/numbers.tex').read_text()
     assert r'\newcommand{\LongSumRate}{70.24}' in macros
+    survey_macros = (ROOT / 'generated/survey.tex').read_text()
+    assert r'\newcommand{\SurveyDecode}{60.29}' in survey_macros
+    assert r'\newcommand{\SurveyPhase}{46.87}' in survey_macros
+    assert r'\newcommand{\SurveyTTFT}{6.05}' in survey_macros
+    assert len((ROOT / 'generated/concurrency_rows.tex').read_text().splitlines()) == 18
     print(f'PASS: {len(cited)} cited sources resolve within the 33-source ledger; figures and PDF exist.')
 
     documents = [ROOT / 'README.md', ROOT / 'NOTICE.md', *ROOT.glob('research/*.md'), *ROOT.glob('reproduction/*.md')]

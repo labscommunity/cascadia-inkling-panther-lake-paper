@@ -6,6 +6,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / 'reproduction/results'
@@ -27,6 +28,28 @@ def save(fig, name):
 
 def main():
     FIG.mkdir(exist_ok=True)
+    curve = read('concurrency.csv')
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.0))
+    ns = [int(r['concurrency']) for r in curve]
+    mean = [float(r['mean_decode_tok_s']) for r in curve]
+    axes[0].plot(ns, mean, 'o-', color=BLUE, markersize=3, label='Shared-interval decode')
+    axes[0].fill_between(ns, [float(r['decode_min']) for r in curve],
+                         [float(r['decode_max']) for r in curve], color=BLUE, alpha=.18, label='Observed repeat range')
+    axes[0].plot(ns, [float(r['mean_phase_tok_s']) for r in curve], 's--', color=ORANGE, markersize=3,
+                 label='Including startup and drain')
+    axes[0].fill_between(ns, [float(r['phase_min']) for r in curve],
+                         [float(r['phase_max']) for r in curve], color=ORANGE, alpha=.12)
+    axes[0].set_ylabel('Aggregate tokens/s'); axes[0].set_ylim(0, 83)
+    axes[0].legend(frameon=False, fontsize=6.6, loc='upper left')
+    axes[1].plot(ns, [float(r['ttft_median_s']) for r in curve], 'o-', color=BLUE, markersize=3, label='Median')
+    axes[1].plot(ns, [float(r['ttft_p95_s']) for r in curve], 's--', color=ORANGE, markersize=3, label='p95')
+    axes[1].set_ylabel('Time to first token (s)'); axes[1].set_ylim(bottom=0)
+    axes[1].legend(frameon=False, fontsize=8, loc='upper left')
+    for ax in axes:
+        ax.set_xscale('log', base=2); ax.set_xticks([1, 4, 15, 32, 88, 176])
+        ax.xaxis.set_major_formatter(ScalarFormatter()); ax.tick_params(axis='x', labelsize=8, rotation=35)
+        ax.set_xlabel('Concurrent streams'); ax.grid(alpha=.2)
+    fig.tight_layout(); save(fig, 'concurrency')
     dense = read('dense.csv')
     fig, ax = plt.subplots(figsize=(6.3, 2.6))
     x = list(range(len(dense)))
@@ -70,7 +93,7 @@ def main():
     ax.set_xlabel('Seconds from client phase start'); ax.set_ylabel('Generated tokens/s'); ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=8, loc='lower center'); ax.grid(alpha=.2)
     save(fig, 'counter')
-    print('Generated three paper charts and one supporting counter chart, each as PDF/PNG.')
+    print('Generated four paper charts and one supporting counter chart, each as PDF/PNG.')
 
 
 if __name__ == '__main__':

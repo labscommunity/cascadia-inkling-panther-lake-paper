@@ -104,6 +104,8 @@ def main():
                     failed.append(dict(experiment=experiment.name, source=file.name, phase=phase['phase'],
                                        completed=phase['completed'], requested=phase['streams'], errors=phase['errors']))
                 phase_rows.append(row)
+        if (experiment / 'measurements.json').exists():
+            count += len(load(experiment / 'measurements.json'))
         inventory.append(dict(experiment=experiment.name, phase_rows=count,
                               result_files=';'.join(p.name for p in sorted(experiment.glob('*.json'))),
                               has_verdict=(experiment / 'verdict.md').exists(),
@@ -223,6 +225,7 @@ def main():
                                    reduction_pct=100 * (1 - a / b), relative_rms_pct=p['relative_rms_ppm'] / 10000))
     csv_write('attention_int4.csv', attention_rows)
     csv_write('mtp_families.csv', mtp['families'])
+    survey_count = len(load(EXPS / '046_final_performance/measurements.json'))
     derived = dict(head_before_mean_sum_rates=head_before, head_after_mean_sum_rates=head_after,
                    head_change_pct=100 * (head_after / head_before - 1),
                    dense_before_mean_sum_rates=dense_before,
@@ -234,14 +237,16 @@ def main():
                    mtp_vocab65k=mtp['prefix']['65536'],
                    mtp_vocabulary_difference_pp=100 * (mtp['original_a1'] - mtp['prefix']['65536']),
                    mtp_incremental_quantization_loss_pp=100 * (mtp['prefix']['65536'] - mtp['quantized_a1']),
-                   phase_rows=len(phase_rows), experiment_directories=len(inventory),
+                   phase_rows=len(phase_rows)+survey_count, historical_phase_rows=len(phase_rows), survey_phase_rows=survey_count,
+                   experiment_directories=len(inventory),
                    telemetry_archives=len(telemetry), evidence_files=len(manifest['files']))
     save('derived.json', derived)
     save('audit.json', dict(source_commit=manifest['source_commit'], evidence_hashes_verified=len(manifest['files']),
-                            phase_rows=len(phase_rows), aggregate_mismatches=mismatches,
+                            phase_rows=len(phase_rows)+survey_count, historical_phase_rows=len(phase_rows), survey_phase_rows=survey_count,
+                            aggregate_mismatches=mismatches,
                             incomplete_or_failed_phases=failed,
                             caveats=['Sum of individual decode rates is not a simultaneous aggregate counter.',
-                                     'No per-request timing traces in phase summaries; no invented confidence intervals.',
+                                     'Historical phase summaries omit per-request traces; finalized survey traces are audited separately in survey_audit.json.',
                                      'Archived verdicts can be superseded; CLAIMS.md and AUDIT.md govern paper wording.']))
     assert not mismatches, mismatches
 
@@ -254,7 +259,7 @@ def main():
               'InflightRegression': f'{-derived["inflight176_change_pct"]:.2f}',
               'MTPFleet': f'{100*mtp["original_a1"]:.2f}', 'MTPDeployment': f'{100*mtp["quantized_a1"]:.2f}',
               'EvidenceFiles': str(len(manifest['files'])), 'ExperimentCount': str(len(inventory)),
-              'PhaseCount': str(len(phase_rows)), 'TelemetryCount': str(len(telemetry))}
+              'PhaseCount': str(len(phase_rows)+survey_count), 'TelemetryCount': str(len(telemetry))}
     for key, value in values.items():
         tex.append('\\newcommand{\\' + key + '}{' + value + '}')
     (GENERATED / 'numbers.tex').write_text('\n'.join(tex) + '\n')

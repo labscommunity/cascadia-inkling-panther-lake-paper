@@ -1,6 +1,6 @@
 # Source-record index
 
-This index locates all 49 source directories in the frozen archive. Directory and phase counts describe recorded artifacts; the manuscript's contribution-specific source selections are in [CLAIMS.md](CLAIMS.md). The complete machine-readable records are [inventory.csv](results/inventory.csv) and [phases.csv](results/phases.csv).
+This index locates all 50 source directories in the frozen archive. Directory and phase counts describe recorded artifacts; contribution-specific selections are in [CLAIMS.md](CLAIMS.md). Machine-readable records are [inventory.csv](results/inventory.csv), [historical phases](results/phases.csv) and [finalized survey phases](results/survey_phases.csv).
 
 | Source directory | Phase records | Telemetry archive |
 |---|---:|---|
@@ -53,3 +53,4 @@ This index locates all 49 source directories in the frozen archive. Directory an
 | [043_attention_int4_canary](evidence/source/autolab/experiments/043_attention_int4_canary/) | 0 | — |
 | [044_cpu_overlap](evidence/source/autolab/experiments/044_cpu_overlap/) | 0 | — |
 | [045_expert_parallel_serving](evidence/source/autolab/experiments/045_expert_parallel_serving/) | 0 | — |
+| [046_final_performance](evidence/source/autolab/experiments/046_final_performance/) | 35 | yes |

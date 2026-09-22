@@ -1,6 +1,6 @@
 # Reconstructing the paper's measurements
 
-The artifact freezes Cascadia source commit **d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651** and retained operator telemetry through **2026-09-21**. Its scripts reconstruct the paper's tables and figures offline from the included evidence.
+The artifact freezes Cascadia source commit **3189a189fe3428f5a6315a7eb67b13148ec314e2** and retained operator telemetry through **2026-09-21**. Its scripts reconstruct the paper's tables and figures offline from the included evidence.
 
 ## Build
 
@@ -22,9 +22,9 @@ These commands reconstruct measurements rather than execute inference. The suppo
 | Paper contribution | Reconstructed material |
 |---|---|
 | Resident execution and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
-| Streaming service across resident shards | `results/serving.csv`, `results/prefill.csv`, `figures/prefill.pdf` |
+| Streaming service across resident shards | `results/concurrency.csv`, `results/survey_phases.csv`, `results/prefill.csv`, `figures/concurrency.pdf`, `figures/prefill.pdf` |
 | Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
-| Independent token-accounting check | `results/server_counter_audit.json`, `results/server_counter_011b.csv`, supporting `figures/counter.pdf` |
+| Independent token-accounting check | `results/survey_audit.json`; historical `results/server_counter_audit.json` and supporting `figures/counter.pdf` |
 
 Figure paths are relative to the repository root. Each chart is generated as both PDF and PNG. [CLAIMS.md](CLAIMS.md) maps every reported number and mechanism to its source; [AUDIT.md](AUDIT.md) records metric interpretation.
 
@@ -32,12 +32,15 @@ Figure paths are relative to the repository root. Each chart is generated as bot
 
 | Path | Contents |
 |---|---|
-| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 357 evidence files |
+| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 417 evidence files |
 | `evidence/source/autolab/` | Recorded measurements, configuration files, research summaries, harness and scoring code |
 | `evidence/source/docs/` | Inkling architecture and execution context |
 | `evidence/source/deploy/` | Scrubbed fleet defaults |
-| `evidence/telemetry/` | 34 deterministic gzip JSONL archives |
-| `results/phases.csv` | Complete reconstruction of 125 phase records |
+| `evidence/telemetry/` | 35 deterministic fleet telemetry gzip JSONL archives |
+| `evidence/requests/046_final_performance/` | 35 phase token-event archives and one API-statistics archive |
+| `results/phases.csv` | Reconstruction of 125 historical phase records |
+| `results/survey_phases.csv` | 35 finalized-survey records: 33 measured phases and two pilots |
+| `results/concurrency.csv` | Fifteen paired mixed-workload concurrency points |
 
 Git evidence comes from the pinned commit. Telemetry comes from the corresponding retained experiment directories. The preserved archive provides the detailed provenance behind the contribution-based presentation.
 
@@ -47,7 +50,9 @@ Private IPs, observed host names, MAC-derived interface names, serial/host ident
 
 ## Reconstruction rules
 
-Whole-phase throughput is recomputed from actual token counts and unrounded start/end timestamps. The sum of individual decode rates is a distinct recorded statistic, with the interval definition in the paper. For the long-generation workload, the independent server counter matches all 21,549 client tokens.
+Whole-phase throughput is recomputed from actual token counts and unrounded start/end timestamps. `analyze_survey.py` reconstructs common decode intervals from raw token events and validates every request against final API usage. It checks all 35 survey records, including two pilots: 1,605 requests and 204,192 token events. The paper uses thirty paired mixed-workload phases for the concurrency curve and records the three completed explanation-family phases separately.
+
+The paired curve averages phase rates and pools request TTFT quantiles. Capture state, prompt repetition and active phrase learning are recorded in [AUDIT.md](AUDIT.md). Historical sums of individual request decode rates remain a separate statistic in `phases.csv`; they are not substituted for common-interval throughput. The historical long-generation counter independently matches 21,549 client tokens.
 
 Profiles are deduplicated per installed box and aligned using receipt age on the operator clock. Phase windows use the historical harness's timing tolerance and select windows with no opens. Reported stage timings are weighted by frame count; role identity is distinct from physical device identity.
 

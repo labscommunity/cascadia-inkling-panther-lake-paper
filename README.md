@@ -7,22 +7,30 @@ Research manuscript by **Tate Berenbaum**, **Matias Parij** (Community Labs), an
 The paper presents Cascadia's execution of Inkling's 975B text decoder on eleven Intel Core Ultra X7 358H machines, each with nominal 64 GB memory, Arc B390 integrated graphics and gigabit Ethernet. It develops three contributions:
 
 1. **Resident execution on shared-memory accelerators.** Layer partitioning, operator-specific compression and CPU/iGPU placement distribute the model across the fleet. A common fused-expert representation supports both dense and sparse feed-forward blocks; the measured dense-layer call takes about **4.5 ms**, compared with **8.1 ms** for three compressed matrix operations.
-2. **A streaming pipeline for concurrent serving.** Per-stream KV/convolution state, balanced admission, eight-row prefill windows and a direct token-return path coordinate generation. The fleet serves **176 concurrent requests at 57.948 whole-phase tokens/s**. A fifteen-request burst records **6.91 s median TTFT**, compared with **31.23–31.52 s** in the reference configuration.
+2. **A streaming pipeline for concurrent serving.** Per-stream KV/convolution state, balanced admission, eight-row prefill windows and a direct token-return path coordinate generation. Paired measurements from **1 to 176 streams** reach **60.29 aggregate decode tokens/s** and **46.87 whole-phase tokens/s** at **88 streams**, eight per pipeline group. At fifteen streams, median TTFT is **6.05 s**.
 3. **Draft evaluation using deployed states.** FP32 residual capture, emitted token IDs and stateful draft replay enable matched-state numerical comparisons. Vocabulary restriction accounts for **2.271 percentage points** of first-draft agreement difference; further quantization at that vocabulary accounts for **0.175 percentage points**.
 
 The contribution is the architecture, implementation and empirical findings of this integrated system. [The prior-work assessment](research/NOVELTY.md) explains how it extends the [Cascadia architecture manuscript](https://github.com/labscommunity/cascadia-architecture-paper), [pipeline-shard paper](https://arxiv.org/abs/2608.19147) and related research. Established algebra and scheduling primitives are credited where used.
 
-## Demonstrated serving configurations
+## Finalized performance measurements
 
-| Workload | Requests | Output cap | Whole-phase tokens/s | Sum of request decode rates | Median TTFT |
-|---|---:|---:|---:|---:|---:|
-| Long-generation burst | 176 | 128 | 57.948 | 70.235 | — |
-| Windowed burst | 15 | 128 | 22.521 | 24.626 | 6.91 s |
-| Windowed staggered | 15 | 96 | 20.148 | 24.169 | 2.48 s |
-| Isolated request A | 1 | 48 | 3.961 | 4.628 | 1.96 s |
-| Isolated request B | 1 | 48 | 3.488 | 4.035 | 2.11 s |
+The fixed-binary survey measures fifteen concurrency levels twice, using twelve prompt families and 128 output tokens per request. Selected operating points:
 
-Every request in these rows completed. The long-generation run produced **21,549 tokens in 371.9 s**, independently matched by the server counter; its retained TTFT summary is a mean of **50.52 s**. The sum of request decode rates uses differing request intervals and is distinct from simultaneous aggregate throughput. Configuration comparisons describe the recorded workloads; prompt tags and arrival patterns are documented in the claim map.
+| Concurrent streams | Aggregate decode tokens/s | Whole-phase tokens/s | Median TTFT | p95 TTFT |
+|---:|---:|---:|---:|---:|
+| 1 | 7.96 | 6.98 | 2.18 s | 2.41 s |
+| 15 | 24.60 | 22.12 | 6.05 s | 10.11 s |
+| 32 | 38.31 | 32.48 | 13.44 s | 21.90 s |
+| 64 | 53.60 | 42.41 | 25.10 s | 46.41 s |
+| 88 | 60.29 | 46.87 | 34.61 s | 64.75 s |
+| 128 | 50.10 | 41.61 | 55.11 s | 108.73 s |
+| 176 | 57.72 | 45.24 | 76.83 s | 165.34 s |
+
+Decode throughput counts tokens over intervals when every request in a cohort is decoding; whole-phase throughput includes admission, prefill, queueing and drain. Rates average two phases; latency quantiles pool their requests. Phrase learning remains active across repeated prompts, and the [measurement protocol](reproduction/AUDIT.md) records ordering and capture state. The highest paired mean on the measured grid occurs at 88 streams.
+
+![Finalized concurrency curve](figures/concurrency.png)
+
+The [full curve](reproduction/results/concurrency.csv) and [raw-event reconstruction](reproduction/results/survey_audit.json) accompany the paper. The complete survey comprises **33 measured phases, 1,592 requests and 203,776 output tokens**, with two additional pilot records preserved separately. Earlier windowed-admission measurements support the configuration analysis.
 
 ## Build and data
 
@@ -35,7 +43,7 @@ make            # Build the PDF with Tectonic or pdfLaTeX + BibTeX
 make verify     # Check evidence, metrics, citations and report links
 ```
 
-The [evidence snapshot](reproduction/evidence/manifest.json) covers 49 source experiment directories, 125 phase records, 34 scrubbed telemetry archives and 357 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
+The [evidence snapshot](reproduction/evidence/manifest.json) covers 50 source experiment directories, 160 phase records, 35 fleet telemetry archives, 36 request/stat archives and 417 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
 
 ## Supporting material
 

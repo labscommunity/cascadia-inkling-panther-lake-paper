@@ -48,3 +48,4 @@ experiment,phase_rows,result_files,has_verdict,telemetry
 043_attention_int4_canary,0,,False,False
 044_cpu_overlap,0,,False,False
 045_expert_parallel_serving,0,,False,False
+046_final_performance,35,capture-budget-event.json;collection-environment.json;competing-traffic-event.json;concurrency-limit.json;family-plan.json;measurements.json;owner-crash-hold.json;pause-history.json;paused.json;refinement.json;single-stream-comparison.json;stress-attempts.json;summary.json,False,True

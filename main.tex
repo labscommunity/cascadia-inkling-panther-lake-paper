@@ -6,6 +6,8 @@
 \usepackage{tabularx}
 \setlength{\emergencystretch}{2em}
 \input{generated/numbers}
+\input{generated/survey}
+\input{generated/concurrency_rows}
 \title{Cascadia: Resident 975B MoE Inference\\on Eleven AI PCs}
 \author{
 Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
@@ -17,7 +19,7 @@ Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
 \maketitle
 
 \begin{abstract}
-Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. The work contributes a compressed execution architecture that fits six consecutive decoder layers per machine, a streaming pipeline that coordinates prompt admission and concurrent decoding, and a method for evaluating draft heads against states and token IDs captured from the deployed numerical path. A unified fused-expert representation accommodates both sparse and dense feed-forward layers, reducing the measured dense-layer call time from approximately 8.1 to 4.5\,ms. The fleet generates \LongTokens{} tokens in \LongSeconds{}\,s at 176 concurrent requests, yielding \LongPhaseRate{} tokens/s over the full serving phase. At fifteen requests, eight-row prefill windows deliver median first-token latency of 6.91\,s, compared with 31.2--31.5\,s in the reference configuration. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
+Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. The work contributes a compressed execution architecture that fits six consecutive decoder layers per machine, a streaming pipeline that coordinates prompt admission and concurrent decoding, and a method for evaluating draft heads against states and token IDs captured from the deployed numerical path. A unified fused-expert representation accommodates both sparse and dense feed-forward layers, reducing measured dense-layer call time from approximately 8.1 to 4.5\,ms. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach \SurveyDecode{} aggregate decode tokens/s at \SurveyPeakStreams{} streams, with \SurveyPhase{} tokens/s over the complete serving phases. At fifteen streams, median first-token latency is \SurveyTTFT{}\,s. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
 \end{abstract}
 
 \section{Introduction}
@@ -29,7 +31,7 @@ The research contribution is the design and evaluation of this integrated servin
 
 \begin{enumerate}
 \item \textbf{Resident execution across shared-memory accelerators.} We combine layer partitioning, operator-specific compression and CPU--GPU placement to keep the model distributed across the fleet. A common fused-expert representation supports both sparse MoE blocks and the model's dense feed-forward blocks. The measured dense-layer implementation takes approximately 4.5\,ms per call, compared with 8.1\,ms for three compressed matrix operations.
-\item \textbf{A streaming pipeline for concurrent sparse-model service.} We integrate per-stream attention and convolution state, balanced admission, eight-row prefill windows and a direct sampled-token return path. The resulting system supports both latency-sensitive arrivals and 176 concurrent requests, with \LongPhaseRate{} tokens/s measured over a complete long-generation phase and 6.91\,s median first-token latency in a fifteen-request burst.
+\item \textbf{A streaming pipeline for concurrent sparse-model service.} We integrate per-stream attention and convolution state, balanced admission, eight-row prefill windows and a direct sampled-token return path. A paired concurrency curve from 1 to 176 streams characterizes the resulting service. The highest measured paired mean occurs at 88 streams, eight per pipeline group: \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s. Fifteen streams yield \SurveyTTFT{}\,s median first-token latency.
 \item \textbf{Draft evaluation aligned with deployed inference.} We capture FP32 residuals together with the fleet's emitted token IDs and replay each draft module's temporal state. On 36 sequences, the resulting analysis separates vocabulary selection from additional weight quantization: restricting the head to 65,536 tokens changes first-draft agreement by 2.271 percentage points, while quantization at that vocabulary changes it by a further 0.175 percentage points.
 \end{enumerate}
 
@@ -144,45 +146,49 @@ Chunked prefill and iteration-level scheduling have established precedents~\cite
 \subsection{Verified proposals for individual streams}
 For an individual active request, the serving loop can propose tokens using request history, a persisted phrase table and a small external draft model. The table is used for sufficiently confident contexts, with the model supplying other proposals. The target model verifies the proposed sequence; rejected positions rewind both KV and convolution state before decoding continues. This extends the existing speculative-decoding approach~\cite{specdecode,shards} to Inkling's stateful layer implementation.
 
-Observed single-stream decode rates vary with the text: approximately 3.1--3.4 tokens/s on explanation prompts, 3.38 on a story, 3.67 on code, 5.85 on rewriting, 6.60 on translation, 8.19 on arithmetic and 10.95 on a true/false prompt. These are task-conditioned samples. Related prompt families had contributed phrase history, so the values characterize the evaluated proposer and workload together.
+The finalized survey evaluates twelve single-stream prompts twice, producing text-identical 128-token outputs for every pair. Aggregate decode rate over the serial requests' decode intervals is 5.68 tokens/s in the first pass and 10.24 in the repeated pass; whole-phase rates are 5.19 and 8.77 tokens/s. Phrase learning remains active between passes, and capture instrumentation differs as described below. These paired observations characterize service with accumulated prompt history; they do not isolate a kernel speedup or estimate performance on unseen prompts.
 
 \section{Evaluation of concurrent serving}
 \label{sec:performance}
 
 \subsection{Measurement protocol}
-The evaluation uses the recorded eleven-machine deployment with greedy generation, short prompts drawn from fixed examples and twelve deterministic task families, and explicit output caps. Burst arrivals are spaced by approximately 15\,ms; the staggered workload uses approximately one-second spacing. Before/after configuration measurements generally use distinct prompt tags and are reported as observed configuration comparisons. Individual phases, rather than token positions, are the units of repetition.
+The finalized survey holds the model and serving binary fixed: group-32 INT4 experts, INT8 attention/head weights and the streaming configuration described above. Thirty mixed-workload phases cover fifteen concurrency levels from 1 to 176, with two phases per level and twelve deterministic prompt families. Each request uses greedy generation and emits 128 tokens. Requests within a cohort arrive approximately 15\,ms apart; at low concurrency, successive complete cohorts supply at least twelve requests per phase. The complete survey also retains three explanation-family phases, for 33 measured phases, 1,592 requests and 203,776 generated tokens. Table~\ref{tab:service} uses the thirty mixed-workload phases.
 
-For request $i$, let $n_i$ be generated tokens, $f_i$ its first-token time and $l_i$ its last-token time. We distinguish
+The paired passes reuse the same prompt templates. The main sweep proceeds upward and then downward in concurrency, with the 88-stream refinement measured as an additional pair. Phrase learning remains enabled throughout. Residual-capture writes are enabled at the ascending 1--15-stream points and disabled thereafter, including the repeated pass. The pairs therefore describe the serving system with its accumulated history and recorded instrumentation state. Within high-concurrency cohorts, the finite prompt generator also produces some repeated inputs: the 88-stream phase contains 79 distinct prompts. The runtime release and binary hash, phase records and token traces accompany the artifact.
+
+For cohort $j$, let $f_i$ and $l_i$ be the first and last token-event times of each request. The common decode interval is $(a_j,b_j]$, where $a_j=\max_i f_i$ and $b_j=\min_i l_i$. Let $u_j$ count tokens emitted by all requests during that interval. We report
 \begin{equation}
- Q_{\rm phase}=\frac{\sum_i n_i}{t_{\rm end}-t_{\rm start}},\qquad
- S_{\rm decode}=\sum_{i:n_i>1}\frac{n_i-1}{l_i-f_i}.
+ Q_{\rm decode}=\frac{\sum_j u_j}{\sum_j(b_j-a_j)},\qquad
+ Q_{\rm phase}=\frac{\sum_i n_i}{t_{\rm end}-t_{\rm start}}.
  \label{eq:metrics}
 \end{equation}
-$Q_{\rm phase}$ measures complete service, including admission and completion. $S_{\rm decode}$ summarizes individual request decode rates over their respective intervals. The latter intervals can differ, so $S_{\rm decode}$ is reported separately from simultaneous aggregate throughput.
+$Q_{\rm decode}$ measures aggregate throughput while every request in a cohort is decoding. $Q_{\rm phase}$ includes admission, prefill, queueing and drain. Dividing $Q_{\rm decode}$ by concurrency gives the mean contribution per stream over these common intervals. Table and figure rates are arithmetic means of the two phase rates; TTFT quantiles pool the requests from both phases. The observed range of two phases is descriptive, rather than a confidence interval.
 
-The inspected stream path emits one counted event per model token, including reasoning and structural tokens. Time to first token (TTFT) refers to the first such event. Software profiles supply frame-weighted stage timings; profile windows are deduplicated and aligned using receipt times, with physical device identity kept separate from pipeline role. Short serial/concurrent prefix checks and twelve known-answer questions provide functional validation. The evaluation characterizes serving and numerical agreement; these checks are not a general model-quality benchmark.
+The client counts token-event multiplicities and checks them against each request's final API token usage. The retained traces independently reconstruct all common intervals and whole-phase rates. TTFT refers to the first emitted model-token event, including reasoning and structural tokens. The collector checks server counters around each phase to isolate measured traffic. Software profiles supply frame-weighted stage timings, with physical device identity kept separate from pipeline role. Short serial/concurrent prefix checks and twelve known-answer questions provide functional validation; they are not a general model-quality benchmark.
 
-\subsection{Demonstrated serving configurations}
+\subsection{Concurrency, throughput and first-token latency}
 \begin{table}[ht]
 \centering\small
-\begin{tabular}{lrrrrr}
+\begin{tabular}{rrrrrr}
 \toprule
-Workload & Requests & Cap & $Q_{\rm phase}$ & $S_{\rm decode}$ & Median TTFT\\
+Streams & $Q_{\rm decode}$ & $Q_{\rm phase}$ & $Q_{\rm decode}/C$ & TTFT median & TTFT p95\\
 \midrule
-Long-generation burst & 176 & 128 & 57.948 & 70.235 & ---\\
-Windowed burst & 15 & 128 & 22.521 & 24.626 & 6.91\,s\\
-Windowed staggered & 15 & 96 & 20.148 & 24.169 & 2.48\,s\\
-Isolated request A & 1 & 48 & 3.961 & 4.628 & 1.96\,s\\
-Isolated request B & 1 & 48 & 3.488 & 4.035 & 2.11\,s\\
+\ConcurrencyRows
 \bottomrule
 \end{tabular}
-\caption{Completed serving workloads. Rates are generated tokens/s; cap is maximum requested output tokens per request. The configurations and arrival patterns differ. For the long-generation workload, the retained TTFT summary is a mean of 50.52\,s.}
+\caption{Finalized mixed-workload concurrency curve. Every request produces 128 tokens. Rates are tokens/s; TTFT is in seconds. $C$ is concurrent streams, rather than total requests at the low-concurrency points. Rates average two phases; TTFT quantiles pool their requests.}
 \label{tab:service}
 \end{table}
 
-All 176 requests in the long-generation workload complete, producing \LongTokens{} tokens in \LongSeconds{} seconds. The server's token counter independently increases by the same number of tokens. Whole-phase throughput is \LongPhaseRate{} tokens/s, while the sum of request decode rates is \LongSumRate{}. This result demonstrates concurrent serving of the model across the eleven resident shards with the admission cost included in the headline throughput.
+\begin{figure}[ht]
+\centering\includegraphics[width=\linewidth]{figures/concurrency.pdf}
+\caption{Paired measurements across fifteen concurrency levels. Left: common-interval decode throughput and whole-phase throughput, with shading showing the two observed phase rates. Right: pooled request TTFT median and 95th percentile. The 88-stream point is the highest paired mean on the measured grid.}
+\label{fig:concurrency}
+\end{figure}
 
-At fifteen requests, the windowed burst completes all 1,920 requested output tokens at 22.521 whole-phase tokens/s. With one-second arrival spacing, median TTFT is 2.48\,s; the two isolated requests record 1.96 and 2.11\,s. These arrival patterns exercise the same stream/window mechanism under different admission loads.
+At 88 streams, the two phases each generate 11,264 tokens. Common-interval decode rates are 58.86 and 61.71 tokens/s; whole-phase rates are 46.03 and 47.72 tokens/s. Their paired means, \SurveyDecode{} and \SurveyPhase{} tokens/s, are the highest on the evaluated concurrency grid for both measures. This operating point assigns eight streams to each of eleven pipeline groups. At 176 streams the fleet sustains 57.72 aggregate decode tokens/s and 45.24 whole-phase tokens/s, while fifteen streams provide 24.60 and 22.12 tokens/s with \SurveyTTFT{}\,s median TTFT.
+
+The curve exposes a deployment-specific relationship between concurrency and the distributed execution schedule. The 88-stream alignment coincides with the highest observed throughput, and further concurrency redistributes work into larger per-group row counts. Throughput is nonmonotonic across that transition, while first-token latency grows as more requests enter the chain. These observations identify a useful measured operating point for this resident pipeline; they do not by themselves isolate the effects of row padding, expert routing and scheduling. The contribution is an empirical service envelope that connects the implemented architecture to explicit throughput and latency choices.
 
 \subsection{Effect of windowed admission}
 The reference fifteen-request burst configuration records median TTFTs of 31.52 and 31.23\,s and whole-phase rates of 15.678 and 17.005 tokens/s. The windowed configuration records 6.91\,s median TTFT and 22.521 whole-phase tokens/s. The median latency reduction is approximately 4.5-fold across these observed configurations.
@@ -193,7 +199,7 @@ The reference fifteen-request burst configuration records median TTFTs of 31.52 
 \label{fig:prefill}
 \end{figure}
 
-With the fused dense-layer implementation also enabled, two fifteen-request phases record whole-phase rates of 22.771 and 22.690 tokens/s, with TTFT medians of 6.24 and 5.68\,s. Their per-stream median decode rates are 1.654 and 1.636 tokens/s. Reporting both fleet and per-stream behavior makes the supported service regime explicit. These two phases include the recorded group-64 expert canary; the main windowed serving row in Table~\ref{tab:service} uses the earlier group-32 configuration.
+This supporting configuration comparison uses distinct prompt tags and precedes the finalized fixed-binary survey. It characterizes the admission design; Table~\ref{tab:service} characterizes the resulting deployment across concurrency levels. With one-second arrival spacing, the windowed configuration also records 2.48\,s median TTFT for fifteen requests capped at 96 output tokens.
 
 \section{Draft evaluation on deployed states}
 \label{sec:drafts}
@@ -249,10 +255,10 @@ EdgeMoE and PowerInfer exploit sparsity and memory placement on resource-constra
 Orca and SARATHI/Sarathi-Serve establish iteration-level scheduling and chunked prefill~\cite{orca,sarathi,sarathiserve}. We integrate those principles with a gigabit sparse-model pipeline, short-convolution state and a direct sampled-token return path. The draft evaluation contributes captured-state measurements of the deployed model, complementing speculative decoding, MTP and MoE-specific verification research~\cite{specdecode,mtp,moesd}. The evidence supports these architectural, implementation and empirical contributions without requiring a priority claim for the underlying algebra or scheduling primitives.
 
 \section{Conclusion}
-Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. The system combines compressed expert placement, a unified fused representation for dense and sparse blocks, and stream-oriented coordination across integrated GPUs sharing memory with CPUs. It serves 176 concurrent requests at \LongPhaseRate{} whole-phase tokens/s and fifteen-request bursts with 6.91\,s median first-token latency. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
+Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. The system combines compressed expert placement, a unified fused representation for dense and sparse blocks, and stream-oriented coordination across integrated GPUs sharing memory with CPUs. Its paired concurrency curve reaches \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s at 88 streams, with \SurveyTTFT{}\,s median first-token latency at fifteen streams. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
 
 \paragraph{Artifact.}
-The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.
+The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{3189a189fe3428f5a6315a7eb67b13148ec314e2}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

@@ -31,6 +31,14 @@ They live in files on the operator's Mac that this document names.
 
 ## 2. Known-good releases and the current experiment
 
+**Testing is paused again on the owner's instruction (2026-09-21, 19:12
+CDT): "it just crashed. hold on". Do not probe or resume fleet tests until
+the owner directs.** The watchdog stopped experiment 046 on an API timeout
+during the 88-stream explanation test. The local client has exited; fleet
+state has not been probed after the hold instruction. Thirty mixed-workload
+phases and three explanation phases are retained. See the experiment's
+`paused.json` and the private continuation file before continuing.
+
 Latest serving release: **1790016660** (2026-09-21), binary
 `~/inkling-release/builds/cascadia-639f0c02-streams`, with the existing
 `040_counts_041_attn.env` overrides and 032b run.sh. This adds the Streams

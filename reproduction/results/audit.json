@@ -1,7 +1,9 @@
 {
-  "source_commit": "d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651",
-  "evidence_hashes_verified": 357,
-  "phase_rows": 125,
+  "source_commit": "3189a189fe3428f5a6315a7eb67b13148ec314e2",
+  "evidence_hashes_verified": 417,
+  "phase_rows": 160,
+  "historical_phase_rows": 125,
+  "survey_phase_rows": 35,
   "aggregate_mismatches": [],
   "incomplete_or_failed_phases": [
     {
@@ -77,7 +79,7 @@
   ],
   "caveats": [
     "Sum of individual decode rates is not a simultaneous aggregate counter.",
-    "No per-request timing traces in phase summaries; no invented confidence intervals.",
+    "Historical phase summaries omit per-request traces; finalized survey traces are audited separately in survey_audit.json.",
     "Archived verdicts can be superseded; CLAIMS.md and AUDIT.md govern paper wording."
   ]
 }

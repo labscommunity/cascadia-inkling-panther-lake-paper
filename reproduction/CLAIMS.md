@@ -1,6 +1,6 @@
 # Contribution and quantitative claim map
 
-This map follows the manuscript's contribution-based organization. Experiment identifiers are source selectors, not the paper's narrative structure. The supporting evidence is frozen at Cascadia commit `d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651`.
+This map follows the manuscript's contribution-based organization. Experiment identifiers are source selectors, not the paper's narrative structure. The supporting evidence is frozen at Cascadia commit `3189a189fe3428f5a6315a7eb67b13148ec314e2`.
 
 Evidence types: **R** — retained structured/raw measurement; **J** — retained load-check or research summary; **C** — inspected implementation/configuration; **V** — model/vendor primary source; **D** — arithmetic derived from those inputs. These types describe provenance, not statistical confidence. [AUDIT.md](AUDIT.md) defines the metrics and reconstruction rules.
 
@@ -29,15 +29,20 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 | Stream-local KV/convolution state, group admission, short engine steps, direct return | [code map](CODE_MAP.md), engine and stage/attention functions; recorded mechanisms in 001,002a,005,006 | C; integrated runtime design |
 | Eight-row prefill windows and CPU row-parallel attention | [window configuration](evidence/source/autolab/experiments/024_prefill_windows/verdict.md), [attention configuration](evidence/source/autolab/experiments/011_parallel_attention/verdict.md) | C/J |
 | Full-chain readiness before admission | [readiness record](evidence/source/autolab/experiments/035_chain_readiness/verdict.md) | C/J; completed serving/runtime feature |
-| Table: long-generation 176, windowed burst 15, staggered 15, isolated A/B | [serving.csv](results/serving.csv), with source experiment/phase columns | R; every selected request completes; output caps 128/128/96/48/48 |
-| Long workload: 21,549 tokens,371.9 s, 57.948 whole-phase, 70.235 summed decode, mean TTFT 50.52 s | [011b phases](evidence/source/autolab/experiments/011b_long_generation/phases.json), `long176`; [server counter audit](results/server_counter_audit.json) | R/D; counter delta exactly matches client tokens |
-| Windowed 15-request burst: 1,920 tokens, 22.521 whole-phase, 24.626 sum, median TTFT 6.91 s | [024 phases](evidence/source/autolab/experiments/024_prefill_windows/phases.json), `mix15a` | R |
-| Staggered 15-request median TTFT 2.48 s; isolated 1.96/2.11 s | Same phases, `stag15`, `fresh1a`, `fresh1b` | R; arrival patterns/output caps differ |
+| Finalized survey: 33 phases, 1,592 requests, 203,776 tokens; two additional pilots | [survey_audit.json](results/survey_audit.json), [measurements](evidence/source/autolab/experiments/046_final_performance/measurements.json) | R/D; thirty mixed phases and three explanation-family phases; 35 records including pilots |
+| Paired curve at 1,2,4,6,8,11,15,22,32,48,64,88,96,128,176 streams | [concurrency.csv](results/concurrency.csv), reconstructed by [analyze_survey.py](scripts/analyze_survey.py) | R/D; arithmetic means of two phase rates; pooled request TTFT quantiles |
+| Highest measured paired mean at 88 streams: 60.286375 shared decode, 46.874876 whole-phase tokens/s | Same curve, concurrency=88; [raw events](evidence/requests/046_final_performance/) | R/D; common interval uses latest first event and earliest last event in each cohort |
+| 88-stream phases: 11,264 tokens each; shared rates 58.860866/61.711884; whole-phase 46.026388/47.723364 | [survey_phases.csv](results/survey_phases.csv), `mixed_a_c088`, `mixed_b_c088` | R/D; shared token counts 8,538/8,550; eight streams per each of eleven groups |
+| 176 streams: 57.715692 shared decode, 45.242551 whole-phase tokens/s | [concurrency.csv](results/concurrency.csv), concurrency=176 | R/D; final paired survey definition |
+| 15 streams: 24.604266 shared decode, 22.116880 whole-phase; pooled TTFT median 6.052471 s, p95 10.113574 s | Same curve, concurrency=15 | R/D; thirty requests across two phases |
+| Single-stream first/repeated pass: 5.676968/10.243011 shared decode; 5.194607/8.765184 whole-phase | [survey_phases.csv](results/survey_phases.csv), `mixed_a_c001`, `mixed_b_c001`; [text comparisons](evidence/source/autolab/experiments/046_final_performance/single-stream-comparison.json) | R/D; all 12 prompt/output pairs identical through 128 tokens; active phrase history and differing capture/order |
+| Survey protocol: fixed release 1790016660; INT4 group 32 experts; INT8 attention/head; 128 tokens; temperature 0; 15 ms arrival spacing | [performance harness](evidence/source/autolab/bench/performance_sweep.py), [survey data](evidence/source/autolab/experiments/046_final_performance/measurements.json), [protocol record](evidence/source/autolab/experiments/046_final_performance/report.md) | C/R; binary SHA-256 `9084392040688eaa6aa9ff6cf6d222f84e24e119e528d91920d12ddd106563c2`; ascent/reverse pairs plus 88 refinement |
+| Phrase learning active; capture writes on ascending 1–15, off thereafter; 79 unique prompts at 88 streams | [survey_phases.csv](results/survey_phases.csv), source harness and phase records | C/R/D; request history is part of the measured system |
+| Windowed 15-request burst: 1,920 tokens, 22.521 whole-phase, median TTFT 6.91 s | [024 phases](evidence/source/autolab/experiments/024_prefill_windows/phases.json), `mix15a` | R; earlier supporting configuration comparison |
+| Staggered 15-request median TTFT 2.48 s | Same phases, `stag15` | R; approximately one-second arrivals and 96-token output cap |
 | Reference 15-request medians 31.52/31.23 s and whole-phase 15.678/17.005 | [019 phases](evidence/source/autolab/experiments/019_baseline_15_streams/phases.json), `mix15a/b`; [prefill.csv](results/prefill.csv) | R; observational configuration comparison |
-| Approximately 4.5-fold median TTFT reduction | Reference 31.23–31.52 divided by 6.91 | D; different prompt tags, not a randomized identical-prompt estimate |
-| Fused dense configuration: whole-phase 22.771/22.690, TTFT 6.24/5.68, per-stream median 1.654/1.636 | [027 phases](evidence/source/autolab/experiments/027_rank0_dense_as_moe/phases.json), `mix15a/b` | R; group 64 canary included, disclosed in the paper |
-| Single-stream proposer≈3.1–3.4 explanation, 3.38 story, 3.67 code, 5.85 rewrite, 6.60 translation, 8.19 arithmetic, 10.95 true/false | [015 implementation summary](evidence/source/autolab/experiments/015_drafter_model/verdict.md); [015c phases](evidence/source/autolab/experiments/015c_ensemble/phases.json) | R/J; task-conditioned samples with related-family phrase history |
-| Greedy decoding, 12 prompt families, 15 ms burst spacing/~1 s staggered spacing, one event/token, prefix/known-answer checks | [frozen harness](evidence/source/autolab/bench/lab.py); [code map](CODE_MAP.md), emission and accounting | C; TTFT includes structural/reasoning tokens; functional checks are not a quality benchmark |
+| Approximately 4.5-fold median TTFT reduction | Reference 31.23–31.52 divided by 6.91 | D; different prompt tags |
+| Event multiplicities agree with API usage; short prefix/known-answer checks | [finalized harness](evidence/source/autolab/bench/performance_sweep.py), [historical harness](evidence/source/autolab/bench/lab.py); [code map](CODE_MAP.md) | C/R; first-token events include structural/reasoning tokens; functional checks are not a quality benchmark |
 
 ## C3. Draft evaluation aligned with deployed inference
 
@@ -54,6 +59,6 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 
 ## Artifact and related work
 
-The [manifest](evidence/manifest.json) records 357 evidence-file hashes. The reconstruction enumerates 125 phase records in 49 source directories and 34 raw telemetry archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the three paper charts are `dense`, `prefill` and `mtp`. A supporting `counter` chart accompanies the data audit.
+The [manifest](evidence/manifest.json) records 417 evidence-file hashes. The reconstruction enumerates 160 phase records in 50 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. A supporting `counter` chart accompanies the data audit.
 
 The [contribution assessment](../research/NOVELTY.md) maps the three contributions to the closest primary literature. The bibliography ledger contains 33 sources; the manuscript selects the sources relevant to its stated contributions.
