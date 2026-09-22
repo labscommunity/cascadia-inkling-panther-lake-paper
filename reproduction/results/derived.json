@@ -10,6 +10,7 @@
   "mtp_positions": 5724,
   "mtp_sequences": 36,
   "mtp_vocab65k": 0.6453529000698812,
+  "mtp_vocabulary_difference_pp": 2.271139063591887,
   "mtp_incremental_quantization_loss_pp": 0.17470300489168533,
   "phase_rows": 125,
   "experiment_directories": 49,

@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import importlib.util
 import json
+import re
 import statistics
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
@@ -180,6 +181,33 @@ def main():
                                     ttft_mean_s=p['ttft_mean_s'], stream_median=p['stream_tok_s_median']))
     csv_write('prefill.csv', prefill)
 
+    serving = []
+    for label, experiment, phase_name in [
+        ('Long-generation burst', '011b_long_generation', 'long176'),
+        ('Windowed burst', '024_prefill_windows', 'mix15a'),
+        ('Windowed staggered', '024_prefill_windows', 'stag15'),
+        ('Isolated request A', '024_prefill_windows', 'fresh1a'),
+        ('Isolated request B', '024_prefill_windows', 'fresh1b'),
+    ]:
+        p = one(experiment, phase_name)
+        serving.append(dict(workload=label, experiment=experiment, phase=phase_name,
+                            requests=p['streams'], output_cap=p['tokens_req'], completed=p['completed'],
+                            tokens=p['tokens'], phase_tok_s=p['aggregate_tok_s'], sum_rates=p['sum_stream_tok_s'],
+                            ttft_median_s=p.get('ttft_median_s'), ttft_mean_s=p['ttft_mean_s']))
+    csv_write('serving.csv', serving)
+
+    dense_rows = []
+    dense_verdict = (EXPS / '027_rank0_dense_as_moe/verdict.md').read_text()
+    pattern = r'^\| layer (\d+) \| ([\d.]+) \| ([\de.-]+) \| ([\d.]+) / ([\d.]+) ms \| ([\d.]+) / ([\d.]+) ms \|'
+    for match in re.finditer(pattern, dense_verdict, re.MULTILINE):
+        layer, cosine, error, fused1, fused2, matrix1, matrix2 = match.groups()
+        for rows, fused, matrix in [(1, fused1, matrix1), (2, fused2, matrix2)]:
+            dense_rows.append(dict(layer=int(layer), rows=rows, matrix_ms=float(matrix), fused_ms=float(fused),
+                                   reduction_pct=100 * (1 - float(fused) / float(matrix)),
+                                   cosine=float(cosine), relative_difference=float(error)))
+    assert len(dense_rows) == 4, 'Expected two layers with one-row and two-row dense measurements'
+    csv_write('dense.csv', dense_rows)
+
     head_before = statistics.mean(p['sum_stream_tok_s'] for p in phases('027_rank0_dense_as_moe') if p['streams'] == 15)
     head_after = statistics.mean(p['sum_stream_tok_s'] for p in phases('028_head_batching') if p['streams'] == 15)
     dense_before = statistics.mean(p['sum_stream_tok_s'] for p in phases('026_decode_kernel_group64') if p['streams'] == 15)
@@ -204,6 +232,7 @@ def main():
                    mtp_fleet_original=mtp['original_a1'], mtp_fleet_deployment=mtp['quantized_a1'],
                    mtp_positions=mtp['positions'], mtp_sequences=mtp['sequences'],
                    mtp_vocab65k=mtp['prefix']['65536'],
+                   mtp_vocabulary_difference_pp=100 * (mtp['original_a1'] - mtp['prefix']['65536']),
                    mtp_incremental_quantization_loss_pp=100 * (mtp['prefix']['65536'] - mtp['quantized_a1']),
                    phase_rows=len(phase_rows), experiment_directories=len(inventory),
                    telemetry_archives=len(telemetry), evidence_files=len(manifest['files']))

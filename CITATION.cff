@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "Private author-review manuscript; cite the version reviewed, not an assumed accepted publication."
-title: "A 975B Mixture-of-Experts Model on Eleven AI PCs: Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference"
+title: "Cascadia: Resident 975B MoE Inference on Eleven AI PCs"
 authors:
   - family-names: Berenbaum
     given-names: Tate
@@ -14,7 +14,7 @@ authors:
     given-names: Muthaiah
     affiliation: Intel Corporation
     email: muthaiah.venkatachalam@intel.com
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-09-21
 repository-code: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
@@ -26,7 +26,7 @@ keywords:
   - performance measurement
 preferred-citation:
   type: unpublished
-  title: "A 975B Mixture-of-Experts Model on Eleven AI PCs: Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference"
+  title: "Cascadia: Resident 975B MoE Inference on Eleven AI PCs"
   authors:
     - family-names: Berenbaum
       given-names: Tate
@@ -37,4 +37,4 @@ preferred-citation:
   year: 2026
   month: 9
   url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
-  notes: "Private author-review draft, version 0.1.0; not an accepted publication."
+  notes: "Private author-review draft, version 0.2.0; not an accepted publication."

@@ -1,0 +1,6 @@
+workload,experiment,phase,requests,output_cap,completed,tokens,phase_tok_s,sum_rates,ttft_median_s,ttft_mean_s
+Long-generation burst,011b_long_generation,long176,176,128,176,21549,57.948,70.235,,50.52
+Windowed burst,024_prefill_windows,mix15a,15,128,15,1920,22.521,24.626,6.91,6.37
+Windowed staggered,024_prefill_windows,stag15,15,96,15,1440,20.148,24.169,2.48,2.54
+Isolated request A,024_prefill_windows,fresh1a,1,48,1,48,3.961,4.628,1.96,1.96
+Isolated request B,024_prefill_windows,fresh1b,1,48,1,48,3.488,4.035,2.11,2.11

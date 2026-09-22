@@ -1,47 +1,45 @@
-# Novelty assessment
+# Contributions and relationship to prior work
 
-Assessment cutoff: **2026-09-21**. This is a bounded prior-art review, not proof of absolute priority. Source keys refer to [sources.json](sources.json), [annotated related work](RELATED_WORK.md) and the paper bibliography. Technical judgments use primary papers, author reports, official documentation and the local frozen evidence.
+The paper's research claim is **resident serving of a nearly trillion-parameter sparse model on an eleven-machine integrated-GPU fleet, with an execution architecture, streaming runtime and evaluation method designed for that deployment**. Its contributions are architectural, implementation-level and empirical.
 
-## Recommended research claim
+This assessment uses the [33-source primary literature ledger](sources.json), reviewed through 2026-09-21. The [annotated bibliography](RELATED_WORK.md) and [search scope](SEARCH_SCOPE.md) record the sources and depth of inspection. The work does not depend on an absolute priority or cross-platform performance-record claim.
 
-**An audited case study of a nearly trillion-parameter sparse model on eleven modest-memory integrated-GPU machines, showing how shared-memory residency, finite-precision execution, closed-loop scheduling and deployed-path draft qualification constrain useful service.**
+## 1. Resident execution across shared-memory accelerators
 
-The work is best framed as a systems measurement and implementation paper. It does not currently establish a new inference algorithm, a new queueing law, general model-quality preservation, a cross-platform performance record, or the first client cluster to serve Inkling.
+**What we contributed.** An implemented execution path for Inkling's 975B decoder across eleven 64 GB Panther Lake devices. Six consecutive layers reside on each machine. Operator-specific compression and CPU/iGPU placement coordinate compressed experts, attention projections, dense blocks, state and host memory within each shard's shared capacity budget.
 
-## Claim-by-claim judgment
+A common fused-expert representation accommodates the dense feed-forward layers as eight all-active slices as well as routed/shared MoE layers. The dense-layer load checks measure approximately 8.1 → 4.5 ms, with the finite-precision difference explicitly reported. This unifies the backend path for two kinds of layer in the resident deployment.
 
-| Candidate | Closest prior art / existing lineage | What is actually distinctive here | Judgment |
-|---|---|---|---|
-| 975B Inkling on eleven 64 GB Intel iGPUs | Petals, TPI-LLM, prima.cpp, exo; Cascadia pipeline shards; earlier Inkling on eight DGX Sparks | This resident MoE model, Xe3/client-memory configuration, gigabit chain and measured operating envelope | **Strongest empirical contribution**, with no absolute first claim. Architecture lineage must be explicit. |
-| All model shards remain resident in CPU/iGPU shared memory | EdgeMoE, PowerInfer, CPU/GPU hybrid serving | Failure chain where a GPU error invokes CPU expert loading alongside live GPU allocations and exhausts memory | **Useful implementation case and design lesson**; fallback/residency is not an invented general principle. More event-level traces would strengthen it. |
-| FP16 fused-path range management and FP32 residual capture | Established finite-range arithmetic; existing quantized inference | Specific overflowing Inkling layers and residual capture failure, corrected on the fleet path | **Reproducible numerical case study**, not a new floating-point technique; gates are insufficient for broad quality claims. |
-| Dense SwiGLU decomposed into eight all-active experts | MoEfication; especially MLPMoE's deterministic slicing and summation | Mapping the identity to OpenVINO's compressed fused operator on this GPU; about 8.1 → 4.5 ms/layer | **Mathematical novelty rejected**. Retain as measured backend optimization and cite the close precedent. |
-| Faster stage, barely faster service | Ordinary bottleneck/service-demand reasoning; pipeline literature | Role 0 improves by ~8.2 ms/frame while summed fleet decode gains only ~0.63% | **Empirical support for the paper's systems argument**. Sequential trials and a group-64 canary limit causal isolation. |
-| Output-head batching reduces work but lowers throughput | Batching, queueing and autoregressive dependencies are established; Sarathi pipeline-balance work | Head 11.62 → 7.32 ms/frame accompanied by a 2.71% summed-rate regression | **Interesting negative result**, not a new universal law. Prompt tags and a canary change confound the contrast; convoy/reply delay is a supported explanation, not uniquely proved. |
-| `16 + 19r` stage model and bandwidth ceiling | Roofline and classical service-demand reasoning | Explicit small-frame approximation, corrected head-traffic accounting and a falsified frame-count prediction | **Model novelty rejected**. Report assumptions and failed prediction; do not claim a topology-independent impossibility. |
-| Eight-row prefill windows reduce TTFT | Orca, SARATHI, Sarathi-Serve | Large observed latency benefit in this slow gigabit layer pipeline, with actual request admission behavior | **Application of known scheduling**, valuable measured result. Controlled same-prompt repetition remains needed. |
-| Balanced admission, direct token replies, short engine steps | Existing scheduling/pipeline engineering and Cascadia lineage | Concrete fixes in this implementation; cumulative high-concurrency trajectory | **Engineering work**, not separately defensible algorithmic novelty. No attribution of an entire speedup to one bundled change. |
-| CPU-reference MTP qualification fails on fleet states | MTP, EAGLE; MoESD, MoE-Spec and SpecMoE | 72.6% CPU-reference agreement becomes 66.81% on fleet sequences and 64.36% on deployment grids; vocabulary versus incremental quantization separated | **Strong secondary empirical finding**. The CPU-to-fleet drop changes both trajectory and numerics; the fixed-fleet vocabulary/quantization comparison is more controlled. |
-| Deeper draft modules need correct temporal state | Autoregressive attention/convolution and MTP implementation requirements | Eight-module expected accepted drafts fall from 2.128 teacher-context to 0.769 without deeper context | **Implementation qualification**, not a discovery that temporal models require history. No live speed result. |
-| Early-layer logit lens fails to qualify | Tuned Lens | Negative result for this model, states and evaluation/cost protocol | **Narrow negative**, not a proof that intermediate states cannot support drafting. |
-| Small-model plus phrase-history ensemble | Existing speculative decoding, n-gram/history drafting, Cascadia shard paper | Conditional task rates and retained-history behavior on this fleet | **Known method, workload-specific characterization**. Repeated-prompt rates cannot represent unseen conversational performance. |
-| USB NCM timer improves RTT | Linux `cdc_ncm` documented control, predating this study | Observed adapter latency regime and its distinction from all-to-all saturation | **Tuning result**, not networking novelty or proof of expert-parallel feasibility. |
-| OOM diagnosis, group-32 kernel patch, lower GPU wait throttle | OpenVINO backend and operating-system behavior | Version-specific causal evidence and negative speed/power tradeoffs | **Concrete implementation findings**. Do not assert an unresolved current upstream defect without checking a newer revision. |
-| Readiness across the whole fixed chain | Existing distributed readiness practices | Probe that delays admission until downstream roles are ready | **Operational improvement**. Does not establish decentralized control, node-loss tolerance or long-run availability. |
-| INT4 attention / CPU overlap / full expert parallelism | Quantized projections and disaggregated/expert-parallel systems including Klotski, MegaScale-Infer, EC2MoE | Only INT4 projection microbenchmarks exist; other fleet-serving changes are incomplete | **No achieved end-to-end contribution**. Keep as qualified microbenchmark or future experiment. |
+**Relationship to earlier work.** Petals, TPI-LLM, prima.cpp and exo establish client-cluster inference. The companion Cascadia paper establishes the project's Intel/OpenVINO pipeline lineage. EdgeMoE, PowerInfer and subsequent hybrid/distributed MoE work establish sparse execution and placement techniques. This paper extends that space with the implemented combination of near-trillion-scale expert residency, 64 GB integrated-GPU devices, operator unification and measured concurrent service.
 
-## Same-model comparison that changes the positioning
+MoEfication and MLPMoE provide prior art for dense-to-expert decomposition. The contribution here is the compressed fused-operator realization on Arc B390 and its use inside the complete Inkling execution architecture. The algebra receives explicit attribution.
 
-The [August 2026 author report of Inkling-NVFP4 on eight DGX Sparks](https://forums.developer.nvidia.com/t/inkling-nvfp4-975b-on-8x-dgx-spark/380049) predates this experiment snapshot. It reports tensor parallelism, ConnectX networking and MTP on larger-memory devices. It rules out a broad first-small-cluster or first-unified-memory-cluster claim.
+**Evidence.** [Dense operator measurements](../reproduction/results/dense.csv), [hardware](../reproduction/results/hardware.json), [implementation anchors](../reproduction/CODE_MAP.md) and contribution C1 in the [claim map](../reproduction/CLAIMS.md).
 
-It is not a matched speed baseline: numerical format, context, generation length, parallelism, interconnect, memory capacity, concurrency, software and metric differ. Do not divide its rates by this study's rates to claim a hardware advantage. The report is first-person deployment evidence, not peer-reviewed independent validation.
+## 2. Streaming service across resident layer shards
 
-## What would make the argument substantially stronger
+**What we contributed.** A serving runtime that coordinates per-stream KV and convolution state, balanced group admission, eight-row prefill windows, parallel CPU attention and direct sampled-token replies across eleven resident stages. The design supports both staggered arrivals and highly concurrent requests using the same stream/state abstraction.
 
-1. Repeat a frozen fifteen-stream baseline and each key optimization on identical randomized workloads. Preserve per-token IDs/timestamps, intervention settings, history-table state and numerical fallback counts.
-2. Test the proposed head-batching explanation directly: record frame rows, queue arrival, head launch, reply time and idle time at every role, then vary reply delay without changing weights or prompts.
-3. Evaluate quality against the original model on a held-out corpus, separating quantization, fused-path rounding, scale repair and speculative verification.
-4. Re-score any trained drafter on disjoint fleet-state prompts and measure real GPU cost, context maintenance and accepted tokens per extra expert byte before claiming service gains.
-5. Freeze complete hardware/software/model manifests; add wall power only if energy efficiency becomes a claim.
+The complete 176-request workload generates 21,549 tokens in 371.9 s, for 57.948 whole-phase tokens/s. Fifteen-request bursts record median TTFT of 6.91 s with windowed admission, compared with 31.23–31.52 s in the reference configuration. Staggered arrivals record 2.48 s median TTFT. The rates and latency measurements demonstrate the implemented system at explicit operating points.
 
-These are additional research measurements, not work reported as completed in this repository.
+**Relationship to earlier work.** Orca and SARATHI/Sarathi-Serve establish iteration-level admission and chunked prefill; speculative decoding is also established. The contribution is their integration with compressed resident MoE execution, a gigabit layer pipeline, Inkling's convolution/KV state and a direct autoregressive return path. The paper attributes each primitive and evaluates the resulting system.
+
+**Evidence.** [Serving configurations](../reproduction/results/serving.csv), [prefill comparison](../reproduction/results/prefill.csv), [independent server-counter check](../reproduction/results/server_counter_audit.json), and contribution C2 in the [claim map](../reproduction/CLAIMS.md). Configuration contrasts use the recorded prompt tags and are described as observational comparisons.
+
+## 3. Draft evaluation aligned with deployed inference
+
+**What we contributed.** A capture and replay method that evaluates Inkling's shipped MTP head on the distributed model's actual residuals and emitted token IDs. The format uses FP32 residuals, verifies response/input alignment, and preserves each draft module's attention and convolution history. The evaluation covers 36 sequences and 5,724 first-draft prediction targets.
+
+The matched-state analysis distinguishes two numerical design choices. Original/full-head agreement is 66.81%; restricting the original vocabulary to 65,536 entries gives 64.54%; applying INT4/INT8 weight grids at that vocabulary gives 64.36%. Vocabulary selection accounts for 2.271 percentage points of the difference and additional quantization for 0.175 percentage points. This is a deployment-specific empirical result that would be obscured by changing the target trajectories between comparisons.
+
+**Relationship to earlier work.** MTP, EAGLE and speculative decoding establish draft architectures and verification. MoESD, MoE-Spec and SpecMoE connect drafting to sparse-model execution costs. The present contribution connects draft analysis to the distributed quantized serving path through captured states, actual emitted labels and matched-state vocabulary/weight comparisons. These are offline agreement measurements, distinct from the paper's live serving measurements.
+
+**Evidence.** [Capture validation](../reproduction/evidence/source/autolab/experiments/037_fleet_state_capture/validation.json), [fleet rescore](../reproduction/evidence/source/autolab/experiments/039_mtp_fleet_rescore/results.json), [family results](../reproduction/results/mtp_families.csv), and contribution C3 in the [claim map](../reproduction/CLAIMS.md).
+
+## Positioning against the closest same-model deployment
+
+The [earlier Inkling-NVFP4 report on eight DGX Sparks](https://forums.developer.nvidia.com/t/inkling-nvfp4-975b-on-8x-dgx-spark/380049) uses larger-memory devices, tensor parallelism, a different network and MTP. It is relevant same-model context. The present paper contributes the resident Intel iGPU architecture and measurements under its own numerical formats, workloads and communication design; it does not derive a hardware speed comparison from the two reports.
+
+## How the manuscript presents novelty
+
+Each contribution follows **design → implementation → measured result → relationship to prior work**. Experiment numbers and operational chronology are provenance in the claim map. The abstract and introduction identify the completed contributions; the conclusion states the resulting capabilities. The supporting record preserves the data needed to assess each numerical claim.

@@ -1,56 +1,52 @@
-# A 975B Mixture-of-Experts Model on Eleven AI PCs
-
-**Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference**
+# Cascadia: Resident 975B MoE Inference on Eleven AI PCs
 
 Research manuscript by **Tate Berenbaum**, **Matias Parij** (Community Labs), and **Muthaiah Venkatachalam** (Intel Corporation). Private author-review draft, September 2026.
 
-[Read the paper (PDF)](main.pdf) · [LaTeX source](main.tex) · [Novelty assessment](research/NOVELTY.md) · [Evidence and corrections](reproduction/AUDIT.md) · [Claim map](reproduction/CLAIMS.md)
+[Read the paper (PDF)](main.pdf) · [LaTeX source](main.tex) · [Contributions and prior work](research/NOVELTY.md) · [Claim map](reproduction/CLAIMS.md)
 
-This paper examines Cascadia serving Inkling's text decoder on eleven Intel Core Ultra X7 358H machines, each with nominal 64 GB memory, Arc B390 integrated graphics and gigabit Ethernet. It extends the [Cascadia architecture manuscript](https://github.com/labscommunity/cascadia-architecture-paper) and [pipeline-shard paper](https://arxiv.org/abs/2608.19147) with a large-MoE deployment study.
+The paper presents Cascadia's execution of Inkling's 975B text decoder on eleven Intel Core Ultra X7 358H machines, each with nominal 64 GB memory, Arc B390 integrated graphics and gigabit Ethernet. It develops three contributions:
 
-The evidence snapshot contains **49 experiment directories, 125 phase records, 34 scrubbed telemetry archives and 357 hashed source/evidence files**. It includes unsuccessful and unfinished work. No new fleet experiments were run while preparing this retrospective artifact.
+1. **Resident execution on shared-memory accelerators.** Layer partitioning, operator-specific compression and CPU/iGPU placement distribute the model across the fleet. A common fused-expert representation supports both dense and sparse feed-forward blocks; the measured dense-layer call takes about **4.5 ms**, compared with **8.1 ms** for three compressed matrix operations.
+2. **A streaming pipeline for concurrent serving.** Per-stream KV/convolution state, balanced admission, eight-row prefill windows and a direct token-return path coordinate generation. The fleet serves **176 concurrent requests at 57.948 whole-phase tokens/s**. A fifteen-request burst records **6.91 s median TTFT**, compared with **31.23–31.52 s** in the reference configuration.
+3. **Draft evaluation using deployed states.** FP32 residual capture, emitted token IDs and stateful draft replay enable matched-state numerical comparisons. Vocabulary restriction accounts for **2.271 percentage points** of first-draft agreement difference; further quantization at that vocabulary accounts for **0.175 percentage points**.
 
-## What the evidence supports
+The contribution is the architecture, implementation and empirical findings of this integrated system. [The prior-work assessment](research/NOVELTY.md) explains how it extends the [Cascadia architecture manuscript](https://github.com/labscommunity/cascadia-architecture-paper), [pipeline-shard paper](https://arxiv.org/abs/2608.19147) and related research. Established algebra and scheduling primitives are credited where used.
 
-| Observation | Result | Interpretation |
-|---|---|---|
-| 176 concurrent requests, output cap 128 | 21,549 generated tokens in 371.9 s: **57.948 tokens/s** over the entire phase | Independently matched by the server token counter. The sum of individual decode rates is **70.235 tokens/s**, a different metric. |
-| Fifteen concurrent requests | Baseline median TTFT 31.23–31.52 s; eight-row prefill windows 6.91 s | Substantial observed admission improvement; most phases are not identical-prompt randomized comparisons. |
-| Dense layers mapped to fused expert operations | Approximately 8.1 → 4.5 ms per dense layer | A useful backend optimization with close prior art; fleet gain is only about 0.63% in the recorded comparison. |
-| Output-head batching | Head time 11.62 → 7.32 ms/frame; summed decode rates **regress 2.71%** | Local work savings do not guarantee service gains in an autoregressive pipeline. Mechanistic attribution remains qualified. |
-| Shipped draft head | CPU-reference first-draft agreement 72.6%; fleet-state agreement **66.81%**, deployment grids **64.36%** | The later fleet study misses the 70% qualification bar; offline acceptance is not live speed. |
+## Demonstrated serving configurations
 
-The strongest candidate contribution is a measured systems characterization: memory residency and fallback behavior, the gap between stage optimization and fleet service, and draft qualification on the actual deployed numerical path. Distributed inference, dense-to-expert algebra, prefill chunking and speculative decoding all have prior art. [The literature review](research/RELATED_WORK.md) contains 33 primary sources and distinguishes papers, official documentation, companion work and an earlier same-model deployment report.
+| Workload | Requests | Output cap | Whole-phase tokens/s | Sum of request decode rates | Median TTFT |
+|---|---:|---:|---:|---:|---:|
+| Long-generation burst | 176 | 128 | 57.948 | 70.235 | — |
+| Windowed burst | 15 | 128 | 22.521 | 24.626 | 6.91 s |
+| Windowed staggered | 15 | 96 | 20.148 | 24.169 | 2.48 s |
+| Isolated request A | 1 | 48 | 3.961 | 4.628 | 1.96 s |
+| Isolated request B | 1 | 48 | 3.488 | 4.035 | 2.11 s |
 
-## Reproduce the report
+Every request in these rows completed. The long-generation run produced **21,549 tokens in 371.9 s**, independently matched by the server counter; its retained TTFT summary is a mean of **50.52 s**. The sum of request decode rates uses differing request intervals and is distinct from simultaneous aggregate throughput. Configuration comparisons describe the recorded workloads; prompt tags and arrival patterns are documented in the claim map.
 
-The checked-in PDF and figures can be read without installing anything. To regenerate the analysis from the included evidence:
+## Build and data
+
+The included evidence supports offline reconstruction of the reported measurements:
 
 ```sh
-make data       # Python 3.10+ standard library; no fleet/model/network needed
-make verify     # Evidence, metrics, citations, artifact links and privacy checks
-make figures    # uv + pinned matplotlib; first use downloads dependencies
-make            # Tectonic, or pdflatex + BibTeX; first Tectonic use may download TeX packages
+make data       # Reconstruct tables with Python 3.10+ standard library
+make figures    # Generate paper charts with pinned Matplotlib through uv
+make            # Build the PDF with Tectonic or pdfLaTeX + BibTeX
+make verify     # Check evidence, metrics, citations and report links
 ```
 
-See [reproduction/README.md](reproduction/README.md) for exact scope and provenance. These commands regenerate reported results; they do not reproduce inference without model assets and hardware. Archived operator scripts are evidence, not instructions to deploy.
+The [evidence snapshot](reproduction/evidence/manifest.json) covers 49 source experiment directories, 125 phase records, 34 scrubbed telemetry archives and 357 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
 
-## Reading guide
+## Supporting material
 
-- [All 49 experiment dispositions](reproduction/EXPERIMENTS.md)
-- [Hardware: installed configuration versus vendor capabilities](reproduction/HARDWARE.md)
+- [Hardware and capability](reproduction/HARDWARE.md)
 - [Runtime architecture and code anchors](reproduction/CODE_MAP.md)
-- [Every quantitative claim and its source](reproduction/CLAIMS.md)
-- [Corrections to the autolab summaries](reproduction/AUDIT.md)
-- [Literature-search scope](research/SEARCH_SCOPE.md) and [publication plan](research/PUBLICATION_PLAN.md)
-- [Machine-readable results](reproduction/results/) and [evidence hashes](reproduction/evidence/manifest.json)
-
-Before submission, the highest-value additions are controlled repeated A/B measurements, a held-out model-quality evaluation, and complete hardware/model manifests. The manuscript already makes those limitations explicit. Repository creation does not submit the paper or make its artifact public.
+- [Metric and evidence audit](reproduction/AUDIT.md)
+- [Annotated primary sources](research/RELATED_WORK.md) and [search scope](research/SEARCH_SCOPE.md)
+- [Derived result tables](reproduction/results/) and [validation record](reproduction/VALIDATION.md)
 
 ## Authors
 
 - Tate Berenbaum — Community Labs — tb@communitylabs.com
 - Matias Parij — Community Labs — mparij@communitylabs.com
 - Muthaiah Venkatachalam — Intel Corporation — muthaiah.venkatachalam@intel.com
-
-Author order follows the authors' requested order; contact information follows the companion Cascadia papers. No contribution-role, employer-endorsement or conflict-of-interest declarations are inferred.

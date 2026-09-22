@@ -2,12 +2,11 @@
 \usepackage{arxiv}
 \usepackage{xurl}
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows.meta,fit}
+\usetikzlibrary{positioning,arrows.meta}
 \usepackage{tabularx}
 \setlength{\emergencystretch}{2em}
 \input{generated/numbers}
-\newcommand{\expid}[1]{\texttt{#1}}
-\title{A 975B Mixture-of-Experts Model on Eleven AI PCs:\\Memory, Scheduling, and Numerical Limits of Integrated-GPU Inference}
+\title{Cascadia: Resident 975B MoE Inference\\on Eleven AI PCs}
 \author{
 Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
 \and Matias Parij\\Community Labs\\\texttt{mparij@communitylabs.com}
@@ -18,313 +17,242 @@ Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
 \maketitle
 
 \begin{abstract}
-Can a fleet of client machines serve a nearly trillion-parameter mixture-of-experts model, and which constraints remain once its weights fit? We study Cascadia running the text path of Inkling, a 975B-total/41B-active-parameter model, across eleven Intel Core Ultra X7 358H systems with 64\,GB of nominal memory each and gigabit Ethernet. Six consecutive decoder layers reside on each machine; integrated GPUs execute compressed projections and fused expert operations while CPUs maintain attention and sequence state. A 176-request run generates \LongTokens{} tokens in \LongSeconds{} seconds: \LongPhaseRate{} tokens/s including admission, compared with \LongSumRate{} tokens/s when summing individual decode rates. At fifteen concurrent requests, eight-row prefill windows reduce observed median first-token latency from 31.2--31.5\,s to 6.91\,s. The study documents memory-residency failures caused by fallback execution, a dense-to-fused-expert kernel mapping that improves a stage without materially improving fleet throughput, and output-head batching that reduces head work but regresses summed decode rates by \HeadRegression\%. Offline qualification also weakens a promising draft-head result: first-draft agreement is \MTPFleet\% on fleet sequences and \MTPDeployment\% on proposed deployment grids. We contribute a hardware-specific systems characterization and an audited evidence package, distinguishing measured serving results from backend microbenchmarks and unimplemented projections. The experiment sequence is exploratory; broad model-quality and controlled repetition studies remain outstanding.
+Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. The work contributes a compressed execution architecture that fits six consecutive decoder layers per machine, a streaming pipeline that coordinates prompt admission and concurrent decoding, and a method for evaluating draft heads against states and token IDs captured from the deployed numerical path. A unified fused-expert representation accommodates both sparse and dense feed-forward layers, reducing the measured dense-layer call time from approximately 8.1 to 4.5\,ms. The fleet generates \LongTokens{} tokens in \LongSeconds{}\,s at 176 concurrent requests, yielding \LongPhaseRate{} tokens/s over the full serving phase. At fifteen requests, eight-row prefill windows deliver median first-token latency of 6.91\,s, compared with 31.2--31.5\,s in the reference configuration. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
 \end{abstract}
 
 \section{Introduction}
-Mixture-of-experts (MoE) models separate parameter capacity from per-token arithmetic, but all potentially selected experts still require storage. Inkling has 975B total parameters and 41B active parameters per token~\cite{inkling}. Quantization makes the model smaller, yet its exported weights exceed the memory of an individual client machine. A fleet can supply the capacity. It does not automatically supply low latency: with layer pipeline parallelism, one token visits machines in sequence, and their memory bandwidths cannot simply be added to predict its completion time.
+The sparse activation of mixture-of-experts (MoE) models changes the relationship between parameter capacity and computation. Inkling has 975B total parameters but activates 41B per token~\cite{inkling}. Serving such a model requires access to its expert weights even though each token selects only a subset. A collection of AI PCs offers a useful combination of distributed memory capacity, integrated matrix-compute accelerators and general-purpose CPU cores. Realizing that combination requires a serving architecture designed around shared CPU--GPU memory and sequential autoregressive dependencies.
 
-We examine an eleven-machine deployment of Cascadia on Panther Lake processors. The motivating workloads changed during the campaign: an initial emphasis on aggregate throughput at large concurrency gave way to interactive service for up to fifteen simultaneous requests. That change exposed different constraints. At high concurrency, moving expert computation to integrated GPUs and parallelizing CPU attention increased throughput. Near one request per pipeline stage, prefill admission, frame-size variation, output-head work, and the prompt dependence of speculation became more visible.
+Cascadia distributes Inkling's text decoder across eleven Intel Panther Lake machines. Each machine holds six consecutive decoder layers and executes its own portion of the model on the local CPU and integrated GPU. Compressed projections and fused expert operations execute on the GPU, while the CPU manages attention state, routing and stream coordination. Independent requests occupy different pipeline stages concurrently. A direct token-return connection closes the autoregressive loop, and bounded prefill windows allow prompt processing to progress through the same chain.
 
-Our contribution is an empirical characterization of this operating point, with three connected results. First, we show how a resident compressed MoE is executed across integrated GPUs sharing memory with CPUs, including the failure modes of duplicate expert storage and finite-range arithmetic. Second, we measure the gap between local kernel improvements and useful service improvements in a closed autoregressive pipeline. Third, we qualify drafting on states from the deployed numerical path and demonstrate why CPU-reference acceptance and incomplete temporal state can overstate its promise. Each contribution is tied to retained measurements or code; the accompanying audit preserves negative and incomplete experiments.
+The research contribution is the design and evaluation of this integrated serving system at nearly trillion-parameter scale on 64\,GB client devices. The work develops three aspects that are closely coupled in this setting:
 
-This is an extension of the Cascadia pipeline-shard and architecture papers~\cite{shards,architecture}, not a claim to invent distributed client inference, prefill chunking, dense-to-expert algebra, or speculative decoding. The related-work search also found an earlier public Inkling deployment on eight DGX Spark machines~\cite{sparkinkling}. Our distinction is the measured combination of a large sparse model, eleven modest-memory Intel integrated GPUs, a gigabit network, and the resulting capacity--latency--throughput constraints. We make no priority claim for being the first consumer or unified-memory cluster to serve this model.
+\begin{enumerate}
+\item \textbf{Resident execution across shared-memory accelerators.} We combine layer partitioning, operator-specific compression and CPU--GPU placement to keep the model distributed across the fleet. A common fused-expert representation supports both sparse MoE blocks and the model's dense feed-forward blocks. The measured dense-layer implementation takes approximately 4.5\,ms per call, compared with 8.1\,ms for three compressed matrix operations.
+\item \textbf{A streaming pipeline for concurrent sparse-model service.} We integrate per-stream attention and convolution state, balanced admission, eight-row prefill windows and a direct sampled-token return path. The resulting system supports both latency-sensitive arrivals and 176 concurrent requests, with \LongPhaseRate{} tokens/s measured over a complete long-generation phase and 6.91\,s median first-token latency in a fifteen-request burst.
+\item \textbf{Draft evaluation aligned with deployed inference.} We capture FP32 residuals together with the fleet's emitted token IDs and replay each draft module's temporal state. On 36 sequences, the resulting analysis separates vocabulary selection from additional weight quantization: restricting the head to 65,536 tokens changes first-draft agreement by 2.271 percentage points, while quantization at that vocabulary changes it by a further 0.175 percentage points.
+\end{enumerate}
 
-\section{Hardware and execution architecture}
+These contributions extend Cascadia's earlier pipeline-shard and architecture work~\cite{shards,architecture}. The new setting combines a much larger sparse model, compressed expert residency, dense/sparse operator unification and evaluation on distributed quantized states. We position the individual mechanisms relative to consumer-cluster inference, MoE execution and speculative decoding in Section~\ref{sec:related}.
+
+\section{System architecture}
 \label{sec:architecture}
 
-\subsection{Machine capability versus installed configuration}
-% Claims H01--H06.
-Intel specifies the Core Ultra X7 358H with sixteen cores and threads: four performance, eight efficient, and four low-power efficient cores. Its Arc B390 GPU has twelve Xe cores; the family uses Xe3 graphics. The SKU supports LPDDR5X up to 9600\,MT/s and an NPU rated at 50 INT8 TOPS~\cite{intel358h,intelxe3}. These specifications describe available hardware, not the measured speed of the application. The NPU does not execute this study's Inkling path.
+\subsection{Panther Lake as a shared-memory inference platform}
+Intel's Core Ultra X7 358H provides sixteen cores and threads: four performance cores, eight efficient cores and four low-power efficient cores. Its Arc B390 GPU has twelve Xe cores and uses the Xe3 graphics architecture. The processor supports LPDDR5X up to 9600\,MT/s and includes an NPU rated at 50 INT8 TOPS~\cite{intel358h,intelxe3}. Cascadia uses the CPU and integrated GPU for this deployment. CPU state processing and GPU matrix operations draw on the same local memory capacity and bandwidth.
 
 \begin{table}[ht]
 \centering\small
 \begin{tabularx}{\linewidth}{lX}
 \toprule
-Property & Evidence-backed deployment description\\
+Component & Deployment configuration\\
 \midrule
-Fleet & Eleven machines, each nominally 64\,GB; all report a Core Ultra X7 358H and 16 logical CPUs.\\
-OS memory & 62,757\,MiB on installed boxes 0--7; 62,615\,MiB on boxes 8--10, approximately 61.15--61.29\,GiB each.\\
-Execution & Linux; retained static telemetry reports kernel \texttt{7.0.0-31-generic}. The deployment packages and plugin patch identify OpenVINO 2026.3.1.\\
-Network & All interfaces report 1000\,Mb/s. Boxes 0--7 use USB NCM adapters; boxes 8--10 report PCIe-style interfaces.\\
-Power configuration & Boxes 0--7 report platform PL1/PL2 of 25/31\,W. Boxes 8--10 report a different platform configuration (PL1 field 0, PL2 148\,W). These are configuration fields, not wall power.\\
-Memory frequency & 8533\,MT/s is reported for a separate reference machine in the lab notes. Per-machine fleet memory timings were not captured.\\
-Context and accelerators & Installer default: 1024 sequence positions. Text serving uses CPU and iGPU; no NPU, vision, audio, or million-token-context result is established.\\
+Fleet & Eleven Core Ultra X7 358H machines, each with nominal 64\,GB memory; 704\,GB nominal capacity across the fleet.\\
+CPU and GPU & Sixteen logical CPUs and an Arc B390 integrated GPU per machine.\\
+Usable memory & Operating-system reports of 62,757 or 62,615\,MiB per machine, approximately 61.15--61.29\,GiB.\\
+Runtime & Linux, with recorded kernel \texttt{7.0.0-31-generic}; OpenVINO 2026.3.1 GPU execution and Rust serving/state management.\\
+Network & Gigabit Ethernet; eight USB NCM interfaces and three PCIe-style interfaces.\\
+Partition & Eleven pipeline roles, each owning six consecutive decoder layers.\\
+Serving path & Text generation; deployment default of 1024 sequence positions, evaluated with short prompts and outputs.\\
 \bottomrule
 \end{tabularx}
-\caption{Installed hardware from experiment \expid{011b}'s raw telemetry, with software and configuration context from the pinned source. Device identity and network identifiers are scrubbed. Full firmware and graphics-driver inventory remains a reproduction gap.}
+\caption{The hardware and execution configuration used in the study. Vendor accelerator and memory-rate specifications describe hardware capability; serving performance is measured separately.}
 \label{tab:hardware}
 \end{table}
 
-The devices share a processor SKU, but are not interchangeable performance samples. Power configurations and adapters differ, and the original entry machine has a history of losing accessibility under load. Later experiments move pipeline role 0 to installed box 8 and role 8 to installed box 0. All analyses must therefore distinguish an installed box from the pipeline role it currently performs. Nominal memory capacity is also distinct from the operating system's reported usable memory and from the GPU allocation budget.
+The fleet's aggregate capacity is distributed across independent address spaces. Model partitioning assigns weights and sequence state to each machine; network transfers carry the intermediate activations needed by the next stage. The system therefore exploits local shared memory within a machine and explicit message passing between machines.
 
-\subsection{Model partition and device placement}
-% Claims A01--A04.
-The model's public card identifies a 66-layer sparse decoder with six selected experts from a pool of 256 plus two shared experts~\cite{inklingcard}. Cascadia's manifest and implementation specify hidden width 6144; the first two layers have dense feed-forward blocks of width 24,576, and the remaining 64 have expert width 3072. Attention combines sliding and global layers, learned relative-position bias, and short convolutions. This path does not use rotary position embeddings.
+\subsection{Model structure and partitioning}
+Inkling's decoder has 66 layers. Its first two feed-forward blocks are dense, with intermediate width 24,576; the remaining 64 use routed and shared experts with intermediate width 3072. Each sparse layer selects six experts from a pool of 256 and also executes two shared experts. The hidden width is 6144. Attention combines sliding and global layers, learned relative-position bias and short convolutions~\cite{inklingcard}.
 
-Each pipeline role owns six consecutive layers. Role 0 also embeds inputs, admits requests and schedules frames. Role 10 applies the final normalization and vocabulary projection and samples tokens. Forward frames carry FP32 residuals, slot identifiers and positions over TCP; at width 6144 the residual payload alone is 24,576 bytes per row. A dedicated return connection delivers sampled token IDs from the final role to role 0. This is a fixed inference chain with an ingress/coordinator role, not a measurement of the companion architecture paper's complete decentralized control and trust system.
+Pipeline role 0 owns layers 0--5, token embedding and request admission. Roles 1--9 each own six intermediate layers. Role 10 owns layers 60--65, final normalization, vocabulary projection and sampling. Forward messages contain FP32 residuals, stream-slot identifiers and positions. A width-6144 residual occupies 24,576 bytes per row before message metadata. The final role returns sampled token IDs directly to role 0, which schedules the next decoding step.
 
 \begin{figure}[ht]
 \centering
-\resizebox{\linewidth}{!}{\begin{tikzpicture}[>=Latex, node distance=0.35cm, every node/.style={font=\small}, box/.style={draw,rounded corners,align=center,minimum height=1.2cm,inner sep=6pt}]
-\node[box,fill=blue!7] (r0) {Role 0: layers 0--5\\API, admission, embed\\optional lone-stream drafter};
-\node[box,fill=blue!7,right=of r0] (mid) {Roles 1--9\\six layers per machine\\independent stream slots};
-\node[box,fill=blue!7,right=of mid] (last) {Role 10: layers 60--65\\final norm, head, sample};
-\draw[->,thick] (r0) -- (mid);
-\draw[->,thick] (mid) -- (last);
-\draw[->,thick] (last.south) -- ++(0,-0.45) -| node[pos=.25,below]{direct token-ID reply; next token closes the loop} (r0.south);
-\node[box,fill=orange!8,below=1.15cm of mid,minimum width=12cm] (devices) {Inside a machine: iGPU compressed projections + fused experts; CPU attention, routing, KV/conv state\\CPU and iGPU consume the same LPDDR memory capacity and bandwidth; NPU unused};
-\draw[dashed] (mid.south) -- (devices.north);
+\resizebox{\linewidth}{!}{\begin{tikzpicture}[>=Latex,node distance=0.35cm,every node/.style={font=\small},box/.style={draw,rounded corners,align=center,minimum height=1.2cm,inner sep=6pt}]
+\node[box,fill=blue!7] (first) {Role 0: layers 0--5\\admission, embedding\\per-stream scheduling};
+\node[box,fill=blue!7,right=of first] (middle) {Roles 1--9\\six layers per machine\\independent stream state};
+\node[box,fill=blue!7,right=of middle] (last) {Role 10: layers 60--65\\final norm, head, sampling};
+\draw[->,thick] (first) -- (middle);
+\draw[->,thick] (middle) -- (last);
+\draw[->,thick] (last.south) -- ++(0,-0.45) -| node[pos=.25,below]{direct token-ID return closes the autoregressive loop} (first.south);
+\node[box,fill=orange!8,below=1.15cm of middle,minimum width=12cm] {Within each machine: iGPU compressed projections and fused experts\\CPU attention, routing, KV/convolution state and coordination; shared local memory};
 \end{tikzpicture}}
-\caption{Measured execution path. Independent streams occupy different stages concurrently. Speculative positions can overlap for a lone stream, but ordinary consecutive tokens depend on the return path. Physical box identity is separate from pipeline role.}
+\caption{Cascadia's resident streaming pipeline. Different requests can occupy different stages concurrently; consecutive ordinary tokens of one request depend on the sampled-token return.}
 \label{fig:architecture}
 \end{figure}
 
-Expert weights use group-32 four-bit quantization. Attention projections and the output head use eight-bit weights. OpenVINO's fused expert path performs half-precision arithmetic; routing and sequence-state logic remain in Rust. Intended steady operation places all MoE layers on the iGPUs, but some recorded runs still contain nonfinite-output fallbacks. Thus ``iGPU-backed'' is more accurate than claiming every operation in every measured run executed on the GPU.
+\section{Resident execution of dense and sparse layers}
+\label{sec:resident}
 
-The all-fused configuration allocates roughly 52\,GiB of GPU page budget per machine, with a larger budget for the final role, and removes the large resident CPU expert copies. The observed ability to hold six MoE layers on a Linux rank is a fleet result. Earlier Windows single-machine notes use a different memory budget and a different paging regime; they are contextual evidence, not a matched baseline for the eleven-machine study.
+\subsection{Compression and placement as one design}
+The execution architecture assigns numerical formats by operator. Expert weights use group-32 four-bit quantization; attention projections and the output head use eight-bit weights. OpenVINO's fused-expert path performs half-precision arithmetic, while the Rust runtime maintains routing decisions, attention and convolution history, and the FP32 residual stream.
 
-\subsection{Scheduling and numerical safeguards}
-The scheduler maintains stream slots and multiple frames in flight. Admission to the least populated group corrects an initial imbalance that left several groups unused. A direct final-to-first reply avoids relaying replies through every intermediate worker. Short engine steps make the submission lock available sooner, and admission can proceed while the first role waits for replies. Eight-row prefill windows subsequently allow different chunks of a prompt to occupy different stages.
+This placement keeps the GPU's compressed expert representation resident while avoiding a second large resident CPU expert cache in normal operation. The configuration budgets approximately 52\,GiB for GPU pages on each machine, with a larger allocation on the final role. Per-layer scaling of the expert up-projection and corresponding output compensation manage the range of the fused arithmetic. The relevant allocation unit is the entire layer shard: expert storage, projections, sequence state and host working memory share one physical capacity budget.
 
-For a lone request, the runtime can propose tokens from request history, a persisted phrase table, or a small external model. Verification uses the target path, and rejected predictions rewind both KV and convolution state. Multi-stream MTP execution was not deployed in the measured campaign. Gate results and numerical compatibility checks below must not be confused with preservation of the original BF16 model's output distribution.
+The contribution is a resident execution architecture for this model and client-memory setting. It combines local placement with distributed partitioning: the cluster supplies weight capacity, each integrated GPU supplies compressed projection/expert execution, and CPU cores maintain the stateful operations that connect successive tokens. Recorded profiles include fallback counters alongside GPU timings, so residency and execution placement remain observable properties of the implementation.
 
-\section{Evidence and measurement methodology}
-\label{sec:method}
-% Claims M01--M06.
-The artifact freezes Cascadia commit \path{d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651}, with a September 21, 2026 cutoff. It covers \ExperimentCount{} experiment directories, \PhaseCount{} retained phase records and \TelemetryCount{} raw telemetry archives. Directories include proposals and interrupted work; they are not \ExperimentCount{} successful experiments. Original and scrubbed hashes are retained for \EvidenceFiles{} evidence files. Scripts reproduce tables and figures without access to the model or fleet.
-
-\paragraph{Two throughput measures.}
-For request $i$, let $n_i$ be generated tokens, $f_i$ its first-token time and $l_i$ its last-token time. The harness records
-\begin{equation}
- Q_{\rm phase}=\frac{\sum_i n_i}{t_{\rm phase,end}-t_{\rm phase,start}},\qquad
- S_{\rm decode}=\sum_{i:n_i>1}\frac{n_i-1}{l_i-f_i}.
- \label{eq:metrics}
-\end{equation}
-$Q_{\rm phase}$ includes the admission ramp and completion tail. $S_{\rm decode}$ sums rates measured over different request intervals; it is not a synchronized steady-state token counter. Historical records call it ``steady.'' We instead use its explicit definition. The script independently recomputes every retained $Q_{\rm phase}$ from unrounded phase timestamps; all agree within the stored three-decimal rounding.
-
-\paragraph{Token and latency semantics.}
-The historical client counts nonfinal SSE events with nonempty delta objects. In the inspected sparse-MoE stream paths, including speculative emission, each generated token produces one chunk with \texttt{n\_tokens=1}; the final marker has zero tokens. Structural tokens can carry empty visible text while still having a delta object. Accordingly, counts include model tokens such as reasoning and framing tokens, and TTFT is time to the first such event, not necessarily time to the first visible answer word. The \expid{011b} server counter increases by exactly the client token count, an independent check for that run. Future harnesses should consume explicit token counts and preserve per-token timestamps rather than relying on a backend-specific chunk contract.
-
-\paragraph{Workloads and arrival pattern.}
-Requests use temperature zero and short prompts from fixed examples or deterministic family templates. Mixed phases rotate through twelve families, including explanation, code, arithmetic, story, rewriting and translation. The default ``burst'' launch staggers requests by 15\,ms; explicitly staggered phases use approximately one second. Prompts labeled fresh are generated from experiment tags, so most before/after phases are not identical-prompt pairs. Repeated prompts train the persisted phrase proposer. We expose output caps, concurrency, completion counts and prompt-history limitations alongside results.
-
-\paragraph{Correctness checks.}
-The serial gate compares three 32-token references, but its acceptance predicate is weaker than full equality: it requires nonbroken outputs and sufficient matching prefixes on at least two prompts. The concurrent gate also checks prefixes. Selected configurations answer twelve simple known-answer questions correctly; these are smoke tests, not a benchmark of general capability. Several half-precision runs diverge from a reference after a shared prefix. Throughout this paper, a gate pass means that check passed, not that all outputs are bit-identical or that quantization is quality-neutral.
-
-\paragraph{Telemetry and uncertainty.}
-Profiles report computation, projection, expert, head and wait times. Repeated relay records are deduplicated and assigned to the operator clock using receipt age; installed-box and pipeline-role identifiers remain separate. This repairs a known final-rank clock jump. Per-frame timings are averages over retained decode windows, not hardware performance-counter measurements. Most configurations have one or two phase runs, accumulated during an exploratory campaign with evolving software and thermal state. We report observations without inventing confidence intervals or treating thousands of correlated token positions as independent replicates. Five incomplete or failed phase records are retained and excluded from headline success claims.
-
-\section{Measured service behavior}
-\label{sec:service}
-
-\subsection{Capacity and high-concurrency throughput}
-% Claims P01--P03.
-The model is served by the whole fleet, not replicated eleven times. Table~\ref{tab:throughput} follows the principal 176-stream configurations. The progression moves from CPU experts to partial and then full iGPU expert execution, moves dense blocks to the iGPU, and parallelizes the CPU attention work across independent rows. Configuration changes are cumulative and sometimes bundled, so the sequence does not identify the isolated causal contribution of each feature.
-
-\begin{table}[ht]
-\centering\small
-\begin{tabular}{llrrrr}
-\toprule
-Exp. & Configuration & Cap & Completed & $Q_{\rm phase}$ & $S_{\rm decode}$\\
-\midrule
-005 & CPU experts; short engine steps & 48 & 176/176 & 19.414 & 29.566\\
-007 & Partial fused iGPU experts & 32 & 176/176 & 26.839 & 44.624\\
-008b & All MoE layers on iGPU path & 32 & 176/176 & 32.651 & 55.609\\
-009 & Dense blocks also on iGPU & 32 & 176/176 & 34.847 & 57.917\\
-011 & Parallel attention over rows & 32 & 176/176 & 37.024 & 64.175\\
-011b & Same family, longer generations & 128 & 176/176 & \LongPhaseRate & \LongSumRate\\
-\bottomrule
-\end{tabular}
-\caption{Observed 176-stream throughput in generated tokens/s. Cap is requested maximum output tokens per stream; early stopping can reduce total output. The first row uses a different cap, and the final row measures a longer phase. No controlled fleet-scaling multiplier is inferred.}
-\label{tab:throughput}
-\end{table}
-
-\begin{figure}[ht]
-\centering\includegraphics[width=\linewidth]{figures/throughput.pdf}
-\caption{The two throughput definitions differ materially during admission-heavy phases. Values are regenerated from retained phase JSON rather than copied from the leaderboard.}
-\end{figure}
-
-In \expid{011b}, all 176 requests complete, generating \LongTokens{} tokens over \LongSeconds{} seconds. Mean TTFT is \LongTTFT{}\,s. Raw server counters independently record the same token total. Figure~\ref{fig:counter} shows why the whole-phase rate remains below the decode plateau. In a separate audit calculation, disjoint blocks of five roughly two-second polls, selected when both endpoints have at least 170 requests in flight, have median \CounterMedian{} tokens/s but mean \CounterMean{}. The subset still contains prefill ramp-up: requests in flight are not synonymous with requests decoding. The historical 70.5-token/s server median used another sampling alignment; we do not present either selection as a replicated benchmark.
-
-\begin{figure}[ht]
-\centering\includegraphics[width=\linewidth]{figures/counter.pdf}
-\caption{Independent server token-counter reconstruction for \expid{011b}. The trace includes admission, the decode plateau and the completion tail. Bins are disjoint five-poll intervals anchored at the first retained poll.}
-\label{fig:counter}
-\end{figure}
-
-Additional concurrency is not a free improvement. A complete 352-stream run in \expid{009} records 54.9 summed decode tokens/s, below its 176-stream result, with substantial memory pressure. Earlier 264- and 352-request attempts lose client connections and are explicitly excluded as successful full-concurrency runs. These observations demonstrate the configuration's limits; they are not a general statement about the GPU's maximum serving concurrency.
-
-\subsection{Fifteen streams and time to first token}
-% Claims P04--P06.
-At fifteen streams, \expid{019} records summed decode rates of 22.544 and 23.383 tokens/s, whole-phase rates of 15.678 and 17.005, and median TTFTs of 31.52 and 31.23\,s. Each phase requests 128 output tokens per stream. With eight-row prefill windows, \expid{024}'s corresponding burst completes at 22.521 whole-phase tokens/s and 24.626 summed decode tokens/s, with median TTFT 6.91\,s and maximum 10.03\,s. This is an observed approximately 4.5-fold reduction in median TTFT across these phases, not a randomized same-prompt estimate.
-
-One-second arrival staggering in \expid{024} produces median TTFT 2.48\,s, and two isolated requests record 1.96 and 2.11\,s. Later fifteen-stream configurations generally remain around 24--25 summed decode tokens/s. In \expid{027}, the two per-stream median decode rates are 1.654 and 1.636 tokens/s, so fleet aggregate throughput should not be mistaken for fast individual conversation. The fifteen-stream target of 60 tokens/s was not achieved.
-
-\begin{figure}[ht]
-\centering\includegraphics[width=\linewidth]{figures/prefill.pdf}
-\caption{Recorded burst-phase medians and whole-phase throughput at fifteen streams. Each dot is one phase, not a confidence interval. Tags and software differ across experiments; \expid{035} adds readiness protection, not a claimed throughput gain.}
-\label{fig:prefill}
-\end{figure}
-
-\subsection{Single-stream speed depends on the text}
-The ensemble proposer in \expid{015c} yields approximately 3.1--3.4 tokens/s on explanation prompts, 3.38 on a story, 3.67 on code, 5.85 on rewriting, 6.60 on translation, 8.19 on arithmetic and 10.95 on a true/false prompt. These are small task-conditioned samples, not task-wide means. They mix accepted history proposals and small-model proposals; some prompt families were previously observed during collection.
-
-Transferring retained phrase history in \expid{038} improves several repeated requests, including code from 5.225 to 10.600 tokens/s. The baseline requests themselves update the table and the release changes capture behavior. This validates retained-history functionality but does not isolate the merge's causal effect or establish an unseen-prompt improvement. We exclude these repeated-prompt rates from general single-stream capability claims.
-
-\section{Local improvements and closed-pipeline limits}
-\label{sec:limits}
-
-\subsection{A dense block through a fused expert operator}
-% Claims K01--K03.
-A dense SwiGLU block can be partitioned along its intermediate dimension:
+\subsection{A common fused representation for dense and sparse blocks}
+The two dense feed-forward blocks can use the same fused-expert operator family as the sparse layers. Partitioning the intermediate dimension into eight slices of width 3072 gives
 \begin{equation}
  W_d[\operatorname{SiLU}(W_gx)\odot W_ux]
  =\sum_{j=1}^{8}W_{d,j}[\operatorname{SiLU}(W_{g,j}x)\odot W_{u,j}x].
  \label{eq:dense}
 \end{equation}
-All slices remain active with unit routing weights. The algebra is established, including especially close prior work in MLPMoE~\cite{mlpmoe} and broader dense-to-expert work in MoEfication~\cite{moefication}. Cascadia uses it to access a favorable compressed fused-expert implementation for the two dense layers.
+Every slice is active with unit weight. The dense block thus matches the backend's expert width without introducing a learned router or dropping intermediate activations. The algebra follows established dense-to-expert decompositions~\cite{moefication,mlpmoe}; our implementation maps that representation onto the compressed fused operator used by the resident Inkling shard.
 
-Experiment \expid{027} measures approximately 8.1\,ms per dense layer with three compressed matrix operations versus 4.5\,ms through eight fused slices. The two FP16 paths differ by relative error $5.7$--$5.9\times10^{-4}$ in the retained load checks; the real-arithmetic identity does not imply bitwise identity after regrouping finite-precision operations. Role 0's measured computation falls from 51.9 to 43.7\,ms per frame. The mean summed fifteen-stream decode rate rises only from 24.6355 to 24.790, approximately 0.63\%. The comparison still includes the earlier group-64 canary, so it is not the final unchanged-weight serving baseline. The local improvement shifts which stage matters without proportionately accelerating the fleet.
-
-\subsection{Sharing output-head calls saves work but delays replies}
-% Claims K04--K05.
-In \expid{028}, the last stage combines output-head work for waiting frames. Across the two fifteen-stream phases, $S_{\rm decode}$ falls from mean 24.790 in \expid{027} to 24.119, a \HeadRegression\% regression. The archived verdict rounds this differently. Corrected decode-window telemetry for phase A reports head time falling from 11.62 to 7.32\,ms per frame, while computation remains about 36 and 35\,ms respectively. Figure~\ref{fig:head} makes the mismatch between local work reduction and service throughput explicit.
-
-\begin{figure}[ht]
-\centering\includegraphics[width=\linewidth]{figures/head_batching.pdf}
-\caption{Reconstructed role profiles after deduplication and clock alignment. Output-head work decreases under batching, yet summed decode rates regress. These bars omit communication and waiting and should not be read as full request latency.}
-\label{fig:head}
-\end{figure}
-
-An autoregressive request cannot create its next frame until its current token returns. Delaying a reply can remove useful work from other stages even if it reduces output-head traffic. At fifteen streams in eleven groups, frames also alternate between one and two rows. FIFO queueing behind longer frames can produce convoy effects. These mechanisms are consistent with the observed regression, but the experiment does not uniquely identify their individual contributions. In particular, it also removes the previous group-64 canary, and prompt tags differ. We report the observation and a scheduling explanation, not a universal prohibition on head batching.
-
-\subsection{A useful model, and an explicit failed prediction}
-% Claims B01--B04.
-For small frames, the journal's empirical stage approximation is
-\begin{equation}
- t(r)\simeq16+19r\quad\text{milliseconds},\qquad 1\lesssim r\lesssim3.
- \label{eq:stage}
-\end{equation}
-It summarizes fixed per-frame projection and operator costs plus row-dependent expert and CPU work on the constrained middle stages. It is neither a fitted universal hardware law nor a model of large batches. For $C$ streams in $F$ equal-sized frames across $D$ stages, an idealized cycle-time lower bound is
-\begin{equation}
- T_{\rm cycle}\geq\max\left(\sum_{j=1}^{D}t_j(C/F),\; F\max_jt_j(C/F)\right).
- \label{eq:cycle}
-\end{equation}
-The first term expresses one frame's sequential traversal; the second expresses the busiest stage's work per cycle. Unequal frame sizes, communication, admission and scheduling add delay. We use this classical service-demand reasoning to organize evidence, not as a new queueing theorem.
-
-A journal calculation predicted that reducing $F$ from eleven to ten would improve fifteen-stream service. Experiment \expid{034} uses the same prompt tag, phase names and binary and falsifies that prediction: the two phases change from 24.580/24.679 to 24.596/24.444 summed tokens/s. At 176 streams the change is 67.974 to 64.846, a \InflightRegression\% regression. Eleven frames are restored. The model identifies relevant terms but does not resolve scheduling interactions well enough to optimize frame count without measurement.
-
-\subsection{Memory-traffic estimates are conditional bounds}
-The export-size accounting in the lab notes estimates about 16.76\,GB of active expert weights, 8.59\,GB of attention projections, 0.52\,GB of dense weights and 1.24\,GB of output-head weights for one unshared full-model token: approximately 27.1\,GB. Quantization scales and zero points are included in the expert estimate. These are logical weight bytes, not measured DRAM transactions; caches, reuse and extra reads can change physical traffic. This is the distinction required by bandwidth-oriented performance modeling~\cite{roofline}.
-
-A pipeline token visits the layer partitions sequentially. Even though eleven memory buses exist, a single ordinary token cannot read every layer on all buses at once. Concurrent requests fill the pipeline; speculative positions provide another opportunity to overlap work, at the cost of rejected computation.
-
-Using the notes' approximate layout, a six-MoE-layer stage at $C=15,F=11$ accounts for $11(0.78)+15(1.57)\simeq32.1$\,GB of logical weight reads per cycle. The final stage additionally applies an approximately 1.236\,GB head per frame, increasing this estimate to about 45.7\,GB. Omitting the head underestimates that stage's service demand. Under the explicit assumptions of no inter-frame weight reuse, one head read per frame and 136.5\,GB/s sustained bandwidth, its byte-only ceiling would be roughly 45 tokens/s, before CPU work and other overheads. The 136.5 value itself assumes 8533\,MT/s on a 128-bit interface; it is not an independently measured fleet-wide sustained bandwidth. We therefore do not claim a topology-independent physical impossibility of 60 tokens/s. We conclude that the measured configuration is well short of that target and that improving it requires changing service demand or scheduling, not merely increasing nominal concurrency.
-
-The notes' earlier characterization of 60--65\,GB/s as the memory-bus limit was also too strong. It described a particular CPU expert path. The output head moves logical weight bytes at approximately 108\,GB/s by byte/time accounting. The fact that one kernel reaches that rate does not prove every other kernel can reach it, but it disproves treating a slower kernel's effective rate as the platform's peak bandwidth.
-
-\section{Failure analysis and negative experiments}
-\label{sec:failures}
-
-\subsection{Fallback can destroy unified-memory residency}
-% Claims F01--F03.
-An iGPU allocation and a CPU expert cache consume the same physical memory. In \expid{007}, nonfinite results on one layer trigger CPU fallbacks and an additional expert cache, leaving very little memory on the affected machine. Attenuating the relevant up-projection scales and restoring output scale permits subsequent all-fused operation, but does not establish general equivalence to the original high-precision model.
-
-Experiments \expid{021} and \expid{022} initially appear to show a GPU-kernel crash. Later journal evidence in \expid{025} identifies a different chain: a failed GPU inference call, repeated CPU fallback, duplicate expert residency, swap exhaustion and an operating-system OOM kill. The lower-level source investigation also identifies a group-size/subgroup compatibility restriction. A patch that enables group-32 execution passes the retained load checks in \expid{029}, but one-row calls still take approximately 3.0--3.2\,ms. Correcting compatibility does not itself accelerate the operator.
-
-This supports a specific design lesson: fallback must be budgeted together with the allocations that remain alive. A fallback that preserves a numerical result can still remove the memory headroom needed to keep a pipeline resident. The study does not establish that the identified restriction remains present in newer OpenVINO versions; the evidence is tied to the recorded 2026.3.1 plugin hash.
-
-\subsection{Several plausible sources of idle time did not pay}
-% Claims N01--N04.
 \begin{table}[ht]
 \centering\small
-\begin{tabularx}{\linewidth}{lXX}
+\begin{tabular}{lrrrr}
 \toprule
-Experiment & Hypothesis or intervention & Observed limit\\
+Dense layer & Three matrix calls & Fused slices & Time reduction & Relative difference\\
 \midrule
-020 & Reuse projection input tensors & No material improvement in the recorded comparison; attention profiling shows substantial device execution.\\
-023 & Overlap GPU calls with two stage threads & Approximately 1.04--1.10$\times$ device-call improvement, below the predeclared 1.25$\times$ threshold.\\
-026, 029 & Use MoE-specific decode kernels & Group-64 changes weights; group-32 compatibility patch is not faster at one row.\\
-029 & Sleep while waiting for GPU completion & Lower busy CPU usage and package power, but about 2.3\,ms more per frame on the canary role.\\
-034 & Reduce circulating frames to ten & Fifteen-stream rates essentially unchanged; 176-stream rate regresses.\\
+Layer 0 & 8.15\,ms & 4.51\,ms & 44.7\% & $5.7\times10^{-4}$\\
+Layer 1 & 8.11\,ms & 4.45\,ms & 45.1\% & $5.9\times10^{-4}$\\
 \bottomrule
-\end{tabularx}
-\caption{Negative results delimit the tested implementations. They do not prove that overlap, specialized kernels or power-aware waits can never help on other workloads. Per-role comparisons also contain layer and device differences.}
+\end{tabular}
+\caption{One-row load checks for the dense blocks. Relative difference compares the two FP16 execution paths. Equation~\ref{eq:dense} preserves the real-arithmetic function; the measured differences reflect finite-precision execution.}
+\label{tab:dense}
 \end{table}
 
-\subsection{Network behavior depends on the communication pattern}
-% Claims N05--N06.
-Disabling the documented USB NCM aggregation timer~\cite{cdc} reduces reported small-payload round-trip latency from about 3.3\,ms to 0.2--0.3\,ms when both endpoints are configured; 12\,kB probes remain slower. This is an application of an existing driver control. It is not proof that the complete inference round trip improves by the same factor.
+\begin{figure}[ht]
+\centering\includegraphics[width=.88\linewidth]{figures/dense.pdf}
+\caption{Dense-block execution using three compressed matrix operations or eight all-active fused slices. The operator improvement holds for the measured one- and two-row calls.}
+\label{fig:dense}
+\end{figure}
 
-The separate all-to-all probe in \expid{018} uses 100\,kB request/reply messages with the model idle. At a target of 30\,MB/s per box, all eleven participate; at 50\,MB/s, achieved rates plateau around 41--45\,MB/s and high-percentile delays increase. Earlier low-rate steps have only a subset of machines and must not be labeled eleven-node tests. The rank grouping of losses is consistent with a shared bottleneck between switch groups, but the physical wiring was not verified. Nor was full-model expert-parallel inference measured on this fleet: a communication probe is not an expert-parallel serving result.
+The two-row measurements are 8.41\,ms per layer with the matrix-call path and 4.47/4.48\,ms with fused slices. At the stage level, role 0's observed computation changes from 51.9 to 43.7\,ms per frame. These are operator and stage measurements; the complete serving rates reported in Section~\ref{sec:performance} characterize the distributed system separately.
 
-\subsection{Role relocation and readiness are operational results}
-Experiment \expid{032} moves logical roles while preserving installed-box identity and the existing ingress relay. It reduces role 0's stage time, but leaves the suspect entry machine and its relay responsibilities in the deployment. Subsequent short successful load tests do not establish a hardware repair or sustained availability. Experiment \expid{035} adds a stateless full-chain readiness probe before request admission; the retained integration-test account exercises delayed startup without generation traffic. Neither result warrants importing the architecture paper's broad node-loss or decentralized-availability claims into this eleven-stage chain.
+\subsection{Weight traffic and the role of concurrent requests}
+Using the exported compressed sizes, an unshared full-model token accounts for approximately 16.76\,GB of active expert weights, 8.59\,GB of attention projections, 0.52\,GB of dense weights and 1.24\,GB of output-head weights: about 27.1\,GB in total. These are logical weight bytes, including expert scale/zero-point overhead, rather than a count of physical DRAM transactions. Caching and reuse across rows determine how those bytes translate into memory traffic~\cite{roofline}.
 
-\section{Draft-head qualification on the deployed numerical path}
-\label{sec:mtp}
-% Claims D01--D06.
-Speculative decoding and learned feature proposals are established techniques~\cite{specdecode,eagle}, as is multi-token prediction~\cite{mtp}. The question here is whether Inkling's shipped head is useful for this particular quantized fleet and its available stage slack.
+The layout makes two forms of parallelism explicit. Within a stage, a multi-row frame shares projection work and allows CPU attention to run across independent streams. Across stages, different frames use different memory buses concurrently. Consequently, aggregate service is a property of the distribution of requests over the pipeline as well as of the local kernels. This motivates the stream and admission design below.
 
-Experiment \expid{033} evaluates eight chained MTP modules on 36 CPU-reference sequences: three prompts from each of twelve families, with 160 generated positions per sequence. First-draft agreement is reported as 0.726. The CPU-generated text diverges from the fleet path, so \expid{039} repeats qualification on captured fleet states and actual emitted token IDs. The table below reports offline agreement, not live speculative acceptance or runtime speed.
+\section{Streaming service across the fleet}
+\label{sec:streaming}
+
+\subsection{Stateful streams and direct token return}
+Each request occupies a stream slot with its own position, KV cache and convolution state. Frames group rows from independent slots, and each stage applies its local layers before forwarding the residuals. Role 0 admits work into the least populated group and advances the engine in short steps, allowing request submission to proceed while other frames are circulating.
+
+The direct final-to-first connection carries sampled token IDs without requiring a reverse traversal through the intermediate workers. Receipt of an ID makes the next token of that stream schedulable. This explicit return path lets ingress interleave admission, forward progress and completion handling within the same serving loop. A full-chain readiness probe establishes downstream readiness before admission begins.
+
+\subsection{Prefill windows and parallel attention}
+Prompts enter as windows of at most eight rows. Consecutive windows can occupy different pipeline stages, and admission can proceed while ingress waits for token replies. The window size bounds the prefill work presented to a stage at one time. During decoding, independent rows provide parallel CPU work for attention even while the integrated GPU handles compressed projections and experts.
+
+Chunked prefill and iteration-level scheduling have established precedents~\cite{orca,sarathi,sarathiserve}. The contribution here is their realization within a resident sparse-model pipeline whose stages maintain both KV and convolution state, share memory between CPU and GPU, and communicate over gigabit Ethernet. Prefill, decode, row-parallel attention and direct token return are coordinated in one runtime.
+
+\subsection{Verified proposals for individual streams}
+For an individual active request, the serving loop can propose tokens using request history, a persisted phrase table and a small external draft model. The table is used for sufficiently confident contexts, with the model supplying other proposals. The target model verifies the proposed sequence; rejected positions rewind both KV and convolution state before decoding continues. This extends the existing speculative-decoding approach~\cite{specdecode,shards} to Inkling's stateful layer implementation.
+
+Observed single-stream decode rates vary with the text: approximately 3.1--3.4 tokens/s on explanation prompts, 3.38 on a story, 3.67 on code, 5.85 on rewriting, 6.60 on translation, 8.19 on arithmetic and 10.95 on a true/false prompt. These are task-conditioned samples. Related prompt families had contributed phrase history, so the values characterize the evaluated proposer and workload together.
+
+\section{Evaluation of concurrent serving}
+\label{sec:performance}
+
+\subsection{Measurement protocol}
+The evaluation uses the recorded eleven-machine deployment with greedy generation, short prompts drawn from fixed examples and twelve deterministic task families, and explicit output caps. Burst arrivals are spaced by approximately 15\,ms; the staggered workload uses approximately one-second spacing. Before/after configuration measurements generally use distinct prompt tags and are reported as observed configuration comparisons. Individual phases, rather than token positions, are the units of repetition.
+
+For request $i$, let $n_i$ be generated tokens, $f_i$ its first-token time and $l_i$ its last-token time. We distinguish
+\begin{equation}
+ Q_{\rm phase}=\frac{\sum_i n_i}{t_{\rm end}-t_{\rm start}},\qquad
+ S_{\rm decode}=\sum_{i:n_i>1}\frac{n_i-1}{l_i-f_i}.
+ \label{eq:metrics}
+\end{equation}
+$Q_{\rm phase}$ measures complete service, including admission and completion. $S_{\rm decode}$ summarizes individual request decode rates over their respective intervals. The latter intervals can differ, so $S_{\rm decode}$ is reported separately from simultaneous aggregate throughput.
+
+The inspected stream path emits one counted event per model token, including reasoning and structural tokens. Time to first token (TTFT) refers to the first such event. Software profiles supply frame-weighted stage timings; profile windows are deduplicated and aligned using receipt times, with physical device identity kept separate from pipeline role. Short serial/concurrent prefix checks and twelve known-answer questions provide functional validation. The evaluation characterizes serving and numerical agreement; these checks are not a general model-quality benchmark.
+
+\subsection{Demonstrated serving configurations}
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrrrrr}
+\toprule
+Workload & Requests & Cap & $Q_{\rm phase}$ & $S_{\rm decode}$ & Median TTFT\\
+\midrule
+Long-generation burst & 176 & 128 & 57.948 & 70.235 & ---\\
+Windowed burst & 15 & 128 & 22.521 & 24.626 & 6.91\,s\\
+Windowed staggered & 15 & 96 & 20.148 & 24.169 & 2.48\,s\\
+Isolated request A & 1 & 48 & 3.961 & 4.628 & 1.96\,s\\
+Isolated request B & 1 & 48 & 3.488 & 4.035 & 2.11\,s\\
+\bottomrule
+\end{tabular}
+\caption{Completed serving workloads. Rates are generated tokens/s; cap is maximum requested output tokens per request. The configurations and arrival patterns differ. For the long-generation workload, the retained TTFT summary is a mean of 50.52\,s.}
+\label{tab:service}
+\end{table}
+
+All 176 requests in the long-generation workload complete, producing \LongTokens{} tokens in \LongSeconds{} seconds. The server's token counter independently increases by the same number of tokens. Whole-phase throughput is \LongPhaseRate{} tokens/s, while the sum of request decode rates is \LongSumRate{}. This result demonstrates concurrent serving of the model across the eleven resident shards with the admission cost included in the headline throughput.
+
+At fifteen requests, the windowed burst completes all 1,920 requested output tokens at 22.521 whole-phase tokens/s. With one-second arrival spacing, median TTFT is 2.48\,s; the two isolated requests record 1.96 and 2.11\,s. These arrival patterns exercise the same stream/window mechanism under different admission loads.
+
+\subsection{Effect of windowed admission}
+The reference fifteen-request burst configuration records median TTFTs of 31.52 and 31.23\,s and whole-phase rates of 15.678 and 17.005 tokens/s. The windowed configuration records 6.91\,s median TTFT and 22.521 whole-phase tokens/s. The median latency reduction is approximately 4.5-fold across these observed configurations.
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\linewidth]{figures/prefill.pdf}
+\caption{Fifteen-request bursts with an output cap of 128: reference admission and eight-row prefill windows. Each point is a retained phase. The comparison reports observed configurations with different prompt tags.}
+\label{fig:prefill}
+\end{figure}
+
+With the fused dense-layer implementation also enabled, two fifteen-request phases record whole-phase rates of 22.771 and 22.690 tokens/s, with TTFT medians of 6.24 and 5.68\,s. Their per-stream median decode rates are 1.654 and 1.636 tokens/s. Reporting both fleet and per-stream behavior makes the supported service regime explicit. These two phases include the recorded group-64 expert canary; the main windowed serving row in Table~\ref{tab:service} uses the earlier group-32 configuration.
+
+\section{Draft evaluation on deployed states}
+\label{sec:drafts}
+
+\subsection{Capturing the serving model's actual computation}
+A draft head consumes internal representations whose values depend on the serving model's quantization and execution path. We evaluate Inkling's shipped multi-token prediction (MTP) head using states generated by the distributed fleet itself. The capture format records FP32 residuals together with positions, input token IDs and actual emitted token IDs. FP32 accommodates the observed pre-final-normalization range, which includes a sampled magnitude of 4,272,968.
+
+The corpus consists of 36 sequences, three from each of twelve task families, with 160 generated positions per sequence. The 5,760 emitted tokens provide 5,724 first-draft prediction targets. All captured residuals pass finite-value checks, prompt token IDs match the rendered inputs, and decoded full responses match the completion API output. Actual emitted IDs define the evaluation labels, preserving the numerical decisions made by the deployed model.
+
+Each of the eight MTP modules maintains its own attention and convolution history. Replay can supply true-token context or self-fed context while preserving the module-specific temporal state. This gives a controlled basis for studying the draft's representation, vocabulary and numerical format independently of request-serving timing.
+
+\subsection{Separating vocabulary and weight-format effects}
+On the same captured fleet states, the original full head yields \MTPFleet\% first-draft agreement. Restricting the original head to a prefix of 65,536 vocabulary entries yields 64.54\%. Applying INT4 feed-forward and INT8 projection/head weight grids at that vocabulary yields \MTPDeployment\%.
 
 \begin{table}[ht]
 \centering\small
 \begin{tabular}{lr}
 \toprule
-Calculation & First-draft agreement\\
+Draft calculation on captured fleet states & First-draft agreement\\
 \midrule
-CPU-reference sequences, original head (033, rounded) & 72.6\%\\
-Fleet sequences, original head (039) & \MTPFleet\%\\
-Fleet sequences, original head restricted to 65,536 tokens & 64.54\%\\
-Fleet sequences, INT4/INT8 weights and 65k head & \MTPDeployment\%\\
+Original weights, full head & \MTPFleet\%\\
+Original weights, 65,536-token head & 64.54\%\\
+INT4/INT8 weight grids, 65,536-token head & \MTPDeployment\%\\
 \bottomrule
 \end{tabular}
-\caption{The fleet rescore uses 5,724 first-draft targets from 36 sequences. The CPU-to-fleet difference combines trajectory and numerical-path changes and is not an isolated quantization ablation. The deployment-grid calculation uses FP32 arithmetic, not actual GPU execution.}
-\label{tab:mtp}
+\caption{Matched-state draft evaluation over 5,724 prediction targets. The weight-grid calculation uses FP32 arithmetic offline; the table measures agreement with emitted fleet IDs, not live speculative throughput.}
+\label{tab:drafts}
 \end{table}
 
-The original and deployment-grid fleet agreements both miss the study's 0.70 qualification bar. On the same fleet states, restricting the original vocabulary accounts for most of the subsequent decrease; additional quantization contributes approximately 0.175 percentage points. The deployed-grid agreement varies by family, including about 0.482 for story, 0.746 for code and 0.748 for arithmetic. Only three sequences represent each family, so these are descriptive slices.
+Vocabulary selection accounts for 2.271 percentage points of the agreement difference, and additional weight quantization at the fixed vocabulary accounts for 0.175 percentage points. This decomposition identifies vocabulary size as the larger contributor in this specific deployment-format comparison. It provides a concrete basis for treating vocabulary footprint and draft-weight precision as separate design choices.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\linewidth]{figures/mtp.pdf}
-\caption{First-draft agreement on fleet sequences, regenerated from \expid{039}. No bars represent live serving speed. The qualification threshold is a study decision, not a universal break-even acceptance rate.}
+\caption{First-draft agreement by task family on captured fleet states. Each family contains three sequences. The two calculations share the same prediction targets and differ in draft weights and vocabulary.}
+\label{fig:mtp}
 \end{figure}
 
-Temporal state matters as well as first-draft accuracy. Each chained module has its own attention and convolution history. In the fleet rescore, expected accepted drafts across eight modules are reported as 2.128 with teacher context, 2.007 with self-fed context, and 0.769 without deeper-module context. A single exported module cannot inherit an eight-module projection. MoESD and more recent MoE-specific speculative systems already show that verification cost and expert activation affect benefit~\cite{moesd,moespec,specmoe}; this experiment adds deployment-specific evidence, not a new general principle.
+The deployment-grid calculation records agreement of 0.746 for code, 0.748 for arithmetic and 0.482 for story. Across the eight-module chain, the reported expected number of accepted drafts is 2.128 with true-token context and 2.007 with self-fed context. These are descriptive offline measurements on the evaluated corpus. They complement the live phrase/model proposer results by exposing the draft head's behavior on the distributed model's actual states.
 
-Capturing states exposes another numerical boundary. The first FP16 capture format overflows; a sampled pre-final-normalization residual reaches magnitude 4,272,968. The corrected format stores FP32 residuals. All 36 captured responses pass the retained finite-value and API-text checks before rescoring. Reapplying the original BF16 output head agrees with actual fleet token IDs at only 92.12\% of positions, further motivating use of emitted IDs as the target. That agreement is not a general quality score.
+\subsection{Contribution to draft evaluation}
+MTP and feature-based drafting are established approaches~\cite{mtp,eagle}. MoE-specific speculative systems further connect acceptance, expert activation and verification cost~\cite{moesd,moespec,specmoe}. Our contribution is an evaluation method and empirical decomposition tied to the numerical path of a distributed, compressed Inkling deployment: capture its residuals and emitted IDs, replay the draft's full temporal state, and compare vocabulary and weight formats on those same labels. This connects model-level draft analysis to the exact serving configuration being studied.
 
-Finally, intermediate-boundary vocabulary probes in \expid{033} do not qualify as drafters under the study's cost model. Raw top-one agreement rounds to zero through the first five boundaries; affine probes improve it but remain below the stated break-even bars. This is a negative result for the evaluated protocol, not a claim that intermediate states contain no predictive information or a replacement for tuned-lens research~\cite{tunedlens}.
-
-\section{Related work and scope of novelty}
+\section{Relationship to prior work}
 \label{sec:related}
-Petals, TPI-LLM, prima.cpp and exo establish distributed inference on consumer or edge devices~\cite{petals,tpi,prima,exo}. The existing Cascadia shard paper establishes this project's Intel/OpenVINO pipeline and speculation lineage~\cite{shards}. Our fixed resident MoE fleet supplies a different model and hardware operating point; pipeline partitioning itself is not new.
 
-EdgeMoE and PowerInfer address memory and sparsity on resource-constrained hardware~\cite{edgemoe,powerinfer}. Klotski studies expert-aware multi-batch scheduling, MegaScale-Infer disaggregates attention and expert work, and EC2MoE studies edge/cloud pipeline collaboration~\cite{klotski,megascale,ec2moe}. Contemporary CPU/discrete-GPU hybrid work also measures prefill, concurrency and overlap~\cite{hybrid2026}. These systems rule out broad claims to have discovered that MoE serving is memory-sensitive or that expert placement must account for communication.
+\paragraph{Client-cluster inference.}
+Petals, TPI-LLM, prima.cpp and exo demonstrate inference across consumer or edge devices~\cite{petals,tpi,prima,exo}. Cascadia's earlier work develops Intel/OpenVINO pipeline shards and the broader distributed architecture~\cite{shards,architecture}. The present work extends that lineage to a resident 975B sparse decoder on eleven 64\,GB integrated-GPU machines, including compressed expert placement and dense/sparse operator unification. A reported Inkling deployment on eight DGX Sparks uses tensor parallelism, NVFP4, MTP and a different memory/interconnect configuration~\cite{sparkinkling}. The systems establish distinct deployment designs; the present evaluation uses the Intel fleet's own workloads and numerical formats.
 
-Orca and SARATHI/Sarathi-Serve provide the scheduling context~\cite{orca,sarathi,sarathiserve}: iteration-level admission, prefill chunking and pipeline balance are established. Likewise, the dense-block decomposition in Equation~\ref{eq:dense} has close prior art~\cite{moefication,mlpmoe}. The evidence supports a measured compiler-path optimization, not a new transformation.
+\paragraph{Sparse execution and operator representation.}
+EdgeMoE and PowerInfer exploit sparsity and memory placement on resource-constrained hardware~\cite{edgemoe,powerinfer}; Klotski, MegaScale-Infer, EC2MoE and CPU/GPU hybrid serving examine expert-aware execution and distribution~\cite{klotski,megascale,ec2moe,hybrid2026}. Cascadia combines a resident layer partition with a CPU/iGPU split inside each shard. MoEfication and MLPMoE establish dense-to-expert decompositions~\cite{moefication,mlpmoe}. The measured contribution here is using all-active slices to map Inkling's dense blocks onto the same compressed fused operator family as its sparse blocks on Arc B390.
 
-The closest same-model deployment lead is the August 2026 first-person report of Inkling-NVFP4 on eight DGX Sparks~\cite{sparkinkling}. It uses larger memory per device, a different interconnect, tensor parallelism, another numerical format and MTP. Its reported performance is neither a matched baseline nor independently reproduced here. It nevertheless makes a broad ``first small cluster running Inkling'' claim untenable.
-
-The defensible novelty is therefore empirical and integrative: the residency and fallback behavior of a nearly trillion-parameter sparse model on this integrated-GPU fleet; the measured disconnect between per-stage work reduction and closed-loop service improvement; and the qualification gap between CPU-reference and actual deployed-path drafting. We describe these as candidate systems findings supported by a bounded literature search through September 21, 2026. Search absence cannot establish absolute priority.
-
-\section{Limitations and next measurements}
-\label{sec:limitations}
-The campaign is a single deployment, with short synthetic prompts, evolving software, thermal and power heterogeneity, and limited independent repetition. Prefix gates and simple question checks do not establish full model quality. The artifact does not provide every original weight manifest, GPU driver/firmware identifier or MTP tensor capture, and does not support complete end-to-end reproduction from the repository alone. It does support regeneration and inspection of the reported measurements.
-
-The most useful next experiment is a frozen, randomized A/B repetition of the fifteen-stream baseline, prefill windows and head batching with identical prompts, a controlled proposer history, full token-ID traces, and TTFT/inter-token-latency distributions. A separate evaluation should compare the deployed numerical path to the original model on a held-out quality corpus and longer contexts. Complete per-box hardware, driver and memory-timing inventories and wall-power measurements would enable reliable efficiency analysis. Such measurements were not run for this retrospective paper preparation.
-
-INT4 attention is only a microbenchmark result: \expid{041} reports 39.0--43.2\% shorter projection calls on two layers at one or two rows, with approximately 9.6--9.7\% relative RMS output difference on random inputs. No end-to-end fleet gain or model-quality outcome is established. The expert-usage collection in \expid{040} is interrupted, and fleet-trained drafting, an INT4 serving canary, CPU/GPU overlap and full expert-parallel serving remain proposals or unfinished work at the cutoff. They do not appear as achieved capabilities.
-
-The dataset does not establish purchase cost, energy per token, million-token context, multimodal support, sustained availability, or superiority to datacenter hardware. All power numbers refer to telemetry domains, and all comparisons across hardware would require matched workloads and numerical formats.
+\paragraph{Streaming and draft evaluation.}
+Orca and SARATHI/Sarathi-Serve establish iteration-level scheduling and chunked prefill~\cite{orca,sarathi,sarathiserve}. We integrate those principles with a gigabit sparse-model pipeline, short-convolution state and a direct sampled-token return path. The draft evaluation contributes captured-state measurements of the deployed model, complementing speculative decoding, MTP and MoE-specific verification research~\cite{specdecode,mtp,moesd}. The evidence supports these architectural, implementation and empirical contributions without requiring a priority claim for the underlying algebra or scheduling primitives.
 
 \section{Conclusion}
-Eleven 64\,GB Panther Lake machines can supply the memory and execution resources to serve Inkling's large text decoder. The measured result depends strongly on concurrency and metric: \LongPhaseRate{} tokens/s over a complete 176-request phase, versus roughly 22--23 whole-phase tokens/s in the improved fifteen-request phases and much lower individual stream rates. The study's reusable findings concern how unified-memory residency, operator dispatch, numerical range, return-path scheduling and deployment-specific draft qualification interact. Retaining failed hypotheses and reconstructing the measurements narrows the claims while making the system easier to understand and reproduce.
+Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. The system combines compressed expert placement, a unified fused representation for dense and sparse blocks, and stream-oriented coordination across integrated GPUs sharing memory with CPUs. It serves 176 concurrent requests at \LongPhaseRate{} whole-phase tokens/s and fifteen-request bursts with 6.91\,s median first-token latency. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
 
-\paragraph{Artifact availability.}
-Paper source, derived tables, scrubbed telemetry, evidence hashes and offline reconstruction scripts are maintained at \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The repository is private during author review. \path{reproduction/CLAIMS.md} maps quantitative statements to evidence; \path{reproduction/AUDIT.md} records corrections and limitations; \path{research/NOVELTY.md} records prior-art judgments. Public artifact availability is pending an author-controlled release.
+\paragraph{Artifact.}
+The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

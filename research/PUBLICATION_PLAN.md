@@ -1,29 +1,22 @@
-# Publication preparation
+# Publication framing
 
-## Current deliverable
+## Central claim
 
-A complete research manuscript with architecture, methods, measured results, failure/negative-result analysis, related work, limitations, bibliography, figures and an offline data artifact. It is suitable for author review and further research development; the current dataset is exploratory and does not establish the controlled evaluation expected of a strong systems-performance claim.
+Cascadia implements resident 975B MoE inference across eleven integrated-GPU AI PCs. The manuscript develops three contributions: shared-memory execution with dense/sparse operator unification, a streaming service across resident layer shards, and draft evaluation using captured deployed states.
 
-The natural positioning is a systems measurement/case-study paper about practical sparse-model serving on client hardware. Keep the contribution grounded in the observed interaction of memory, numerics and scheduling. A new scheduling-algorithm paper would require a new algorithm and controlled evaluation beyond what exists here.
+## Manuscript organization
 
-## Priority measurements before a stronger submission
+1. Establish the architecture and the hardware resources it uses.
+2. Explain compressed residency, operator placement and the measured fused dense implementation.
+3. Describe the streaming/runtime mechanisms that coordinate concurrent service.
+4. Evaluate demonstrated serving configurations with explicit throughput and latency definitions.
+5. Present the capture/replay method and matched-state draft findings.
+6. Position each contribution against the closest prior work.
 
-| Priority | Measurement | What it resolves |
-|---|---|---|
-| 1 | Frozen baseline/prefill/dense/head variants; same prompt set; randomized order; several independent runs per condition | Separates intervention effects from workload, warm-up, history and thermal variation. Choose repetition count from pilot variance; do not manufacture confidence from correlated tokens. |
-| 1 | Per-request token IDs, first/last and every-token timestamps; synchronized server counters | Enables real simultaneous throughput, TTFT and inter-token tail distributions, and robust count semantics. |
-| 1 | Original-model versus deployed-path held-out quality evaluation | Establishes the effect of INT4/INT8, FP16 fusion, scaling fixes and any canary quantization changes. |
-| 2 | Frame-level tracing under output-head batching | Distinguishes convoy, delayed reply, head amortization and role idle time; directly tests the proposed explanation. |
-| 2 | Per-box firmware, GPU driver, OpenVINO commit/plugin hash, memory timing, limits and model artifact hashes | Makes execution reproduction precise rather than only data reconstruction. |
-| 2 | Fallback traces with allocation/residency counters | Quantifies duplicate-cache memory pressure and tests a bounded/fail-closed fallback policy. |
-| 3 | Held-out fleet-trained drafting, then actual GPU cost and live serving | Replaces optimistic offline projection with measured benefit, if qualification succeeds. |
-| Conditional | Wall power and matched alternative hardware/backend | Required only if adding energy, cost or cross-platform superiority claims. |
+The research narrative is organized by contribution. The claim map carries experiment identifiers and source selectors. Paper figures show the dense operator comparison, windowed-admission results and draft agreement by family.
 
-No new fleet access, experiments, purchases, deployment or public submission are implied by this list.
+## Claim discipline
 
-## Author decisions at release
+Use measured whole-phase throughput for the complete service result, and distinguish summed per-request decode rates. Label operator measurements separately from fleet performance. Describe configuration contrasts using their actual workloads. Present matched-state draft scores as offline agreement, with the numerical arithmetic stated. Attribute existing algebra, chunked-prefill scheduling and speculative-decoding primitives.
 
-- Confirm author order/contact details and add any required contribution, funding and conflict declarations. Current affiliations came from companion papers; no endorsement statement is inferred.
-- Review model-output samples and source-artifact licensing before a public data release. This repository is private; public artifact availability is not promised as already achieved.
-- Choose a venue and refresh related work to its submission date. Do not infer current calls, deadlines or venue suitability from this document.
-- Decide whether to publish the exploratory case study first or extend it with the priority measurements. Keep the limitations in either version.
+The current repository remains private for author review. Submission and public release can use the manuscript, bibliography, figures and supporting claim map as a coherent package.

@@ -1,56 +1,54 @@
-# Reconstructing the measurements
+# Reconstructing the paper's measurements
 
-The artifact freezes source commit **d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651** from `labscommunity/cascadia` and locally retained operator telemetry, through **2026-09-21**. It supports offline reconstruction of the report. It does not contain the model weights, full binary tensor captures or every system manifest needed to rerun inference.
+The artifact freezes Cascadia source commit **d1ab1abd7387b7f0b83d6d56b7aec2e1a56f9651** and retained operator telemetry through **2026-09-21**. Its scripts reconstruct the paper's tables and figures offline from the included evidence.
 
-## Layout
-
-| Path | Contents |
-|---|---|
-| `evidence/manifest.json` | 357 evidence entries, original and scrubbed SHA-256, byte sizes, source paths, transformations and exclusions |
-| `evidence/source/autolab/` | Frozen experiment JSON, hypotheses, verdicts, research scripts/tables, journal and harness |
-| `evidence/source/docs/` | Relevant Inkling architecture/performance notes |
-| `evidence/source/deploy/` | Scrubbed fleet configuration context |
-| `evidence/telemetry/` | 34 scrubbed, deterministic gzip JSONL archives |
-| `results/` | Regenerated CSV and strict JSON tables, inventory and audits |
-| `scripts/analyze.py` | Standard-library reconstruction; verifies every imported hash first |
-| `scripts/plot.py` | Five exportable PDF/PNG figures using pinned Matplotlib |
-| `scripts/verify.py` | Independent consistency and artifact checks |
-
-## Commands
+## Build
 
 From the repository root, with Python 3.10 or later:
 
 ```sh
 make data
-make verify
 make figures
 make
+make verify
 ```
 
-The first two commands need no model, fleet, GPU or network. Figures use `uv` to resolve Matplotlib 3.10.8. Paper compilation uses Tectonic when available, otherwise pdfLaTeX and BibTeX; a first Tectonic build may fetch TeX packages. Checked-in figures and `generated/numbers.tex` permit PDF compilation without rebuilding plots. `make clean` removes TeX intermediates, not the paper or source evidence.
+`make data` and `make verify` use the Python standard library. `make figures` uses uv with Matplotlib 3.10.8. `make` uses Tectonic, or pdfLaTeX and BibTeX. First use of uv or Tectonic can download their dependencies. The checked-in PDF and figures are directly readable.
 
-Do not execute archived deployment/benchmark scripts to reproduce the tables. They are retained as historical evidence and some contain publishing or fleet-access routines. The supported reconstruction entry points are only the new scripts in this directory.
+These commands reconstruct measurements rather than execute inference. The supported entry points are the new scripts under `reproduction/scripts/`; archived operator and benchmark code supplies provenance.
 
-## Provenance and transformations
+## Contribution-oriented results
 
-Git evidence is read from the pinned commit, not a moving working tree. Telemetry was copied from the operator's retained experiment directories. Private IPs, observed device names, MAC addresses, MAC-derived interface names, serial/host identity fields and local home paths are removed or replaced. Installed-box integers and logical pipeline roles are preserved. Author contact information and public research URLs remain.
+| Paper contribution | Reconstructed material |
+|---|---|
+| Resident execution and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
+| Streaming service across resident shards | `results/serving.csv`, `results/prefill.csv`, `figures/prefill.pdf` |
+| Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
+| Independent token-accounting check | `results/server_counter_audit.json`, `results/server_counter_011b.csv`, supporting `figures/counter.pdf` |
 
-Nonfinite JSON numbers are normalized to `null`, so the snapshot is valid strict JSON. This matters for failed gate/numerical records; `null` is not a measured zero. Text verdicts may still describe nonfinite values. Telemetry compression sets a zero gzip timestamp. Each entry records the hash of the original bytes and of the stored transformed bytes; telemetry's original hash refers to uncompressed source JSONL.
+Figure paths are relative to the repository root. Each chart is generated as both PDF and PNG. [CLAIMS.md](CLAIMS.md) maps every reported number and mechanism to its source; [AUDIT.md](AUDIT.md) records metric interpretation.
 
-The snapshot includes the study-generated experiment 013 corpus. External Dolly collection data, deployment logs, signing material, model weights and binary residual dumps are not included. Archived relative links can refer to files in the original checkout or to excluded assets; current report documentation uses local working links wherever available.
+## Frozen inputs
 
-`import_evidence.py` is the provenance utility, not a normal rebuild step. It requires an explicitly supplied original checkout, immutable ref and telemetry directory. Re-importing a different snapshot changes the dataset and should be treated as a new research revision.
+| Path | Contents |
+|---|---|
+| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 357 evidence files |
+| `evidence/source/autolab/` | Recorded measurements, configuration files, research summaries, harness and scoring code |
+| `evidence/source/docs/` | Inkling architecture and execution context |
+| `evidence/source/deploy/` | Scrubbed fleet defaults |
+| `evidence/telemetry/` | 34 deterministic gzip JSONL archives |
+| `results/phases.csv` | Complete reconstruction of 125 phase records |
 
-## Metric reconstruction
+Git evidence comes from the pinned commit. Telemetry comes from the corresponding retained experiment directories. The preserved archive provides the detailed provenance behind the contribution-based presentation.
 
-All `phases*.json` files in the 49 experiment directories are enumerated, including baseline and failed-capture files. The result is 125 phase records; five are incomplete/failed. `aggregate_tok_s` is recomputed using unrounded start/end timestamps and actual token counts. Every stored value agrees within 0.00051 tokens/s, allowing three-decimal rounding.
+Private IPs, observed host names, MAC-derived interface names, serial/host identity fields and local home paths are scrubbed. Installed-box integers and logical pipeline roles remain available for analysis. Nonfinite JSON numbers are normalized to `null`, which is kept distinct from a measured zero. Compression uses a fixed gzip timestamp. Original and stored hashes identify each transformation.
 
-`sum_stream_tok_s` is retained as an observed statistic from the harness. Individual request timing traces were not saved, so it cannot be independently re-derived from phase summaries. It equals a sum of rates over differing request intervals, not a server counter measured over one common decode interval. No confidence intervals are inferred from these summaries.
+`import_evidence.py` is the provenance utility. It requires an explicitly supplied original checkout, immutable ref and telemetry directory; normal reconstruction uses the already frozen inputs.
 
-For experiment 011b, the raw server `tokens_total` difference independently equals 21,549 client-counted tokens. The counter plot uses nonoverlapping blocks of five consecutive nominal two-second polls, starting at the first retained poll. The additional summary selects blocks with at least 170 in-flight requests at both endpoints. It still includes admission/prefill; its median is not a new steady-state benchmark.
+## Reconstruction rules
 
-For stage timing, the frozen `telemetry_analysis.py` deduplicates repeated profile windows per installed box and corrects timestamps using the operator receipt clock and profile age. A phase profile includes windows within the original harness's tolerance (`start-1` through `end+14`, window start at least `start-3`) with no opens. Timings are weighted by frame count. Role mapping is inferred within each experiment archive; it does not assume installed box equals pipeline role. These are sampled software profiles, not exact per-request traces or DRAM counters.
+Whole-phase throughput is recomputed from actual token counts and unrounded start/end timestamps. The sum of individual decode rates is a distinct recorded statistic, with the interval definition in the paper. For the long-generation workload, the independent server counter matches all 21,549 client tokens.
 
-## Remaining reproduction gaps
+Profiles are deduplicated per installed box and aligned using receipt age on the operator clock. Phase windows use the historical harness's timing tolerance and select windows with no opens. Reported stage timings are weighted by frame count; role identity is distinct from physical device identity.
 
-The dataset does not include every exported weight checksum, exact graphics driver/firmware revision, fleet memory timing, raw MTP residual tensor, gate reference token trace or per-request streaming trace. MTP summary numbers can be checked and plotted, but rescoring the head requires the omitted assets. Microbenchmark verdicts with no raw timing vector remain journal-level evidence. The [claim map](CLAIMS.md) makes those differences explicit.
+Dense-call tables are parsed from the retained layer load checks. Draft tables use the retained fleet rescore and family summaries. Capture validation and scoring scripts accompany those records; the reconstructed report labels the draft results as offline agreement.

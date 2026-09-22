@@ -80,13 +80,27 @@ def main():
     close(derived['mtp_fleet_original'], mtp['original_a1'])
     close(derived['mtp_fleet_deployment'], mtp['quantized_a1'])
     close(derived['mtp_incremental_quantization_loss_pp'], 100 * (mtp['prefix']['65536'] - mtp['quantized_a1']))
+    close(derived['mtp_vocabulary_difference_pp'], 100 * (mtp['original_a1'] - mtp['prefix']['65536']))
+    serving = list(csv.DictReader((RESULTS / 'serving.csv').open()))
+    assert len(serving) == 5
+    for row in serving:
+        original = phase(row['experiment'], row['phase'])
+        assert original['completed'] == original['streams'] == int(row['requests'])
+        assert original['tokens'] == int(row['tokens'])
+        assert original['tokens_req'] == int(row['output_cap'])
+        close(float(row['phase_tok_s']), original['aggregate_tok_s'])
+        close(float(row['sum_rates']), original['sum_stream_tok_s'])
+    dense = list(csv.DictReader((RESULTS / 'dense.csv').open()))
+    assert {(r['layer'], r['rows']) for r in dense} == {('0', '1'), ('0', '2'), ('1', '1'), ('1', '2')}
+    for row in dense:
+        close(float(row['reduction_pct']), 100 * (1 - float(row['fused_ms']) / float(row['matrix_ms'])))
     profiles = list(csv.DictReader((RESULTS / 'profiles.csv').open()))
     swapped = [r for r in profiles if r['experiment'] == '032_role_swap' and r['role'] == '0']
     assert swapped and all(r['installed_box'] == '8' for r in swapped)
     for exp in ['027_rank0_dense_as_moe', '028_head_batching']:
         selected = [r for r in profiles if r['experiment'] == exp and r['phase'] == 'mix15a' and r['role'] == '10']
         assert len(selected) == 1 and float(selected[0]['head_ms']) > 0
-    print('PASS: headline derived comparisons and post-swap role identity are consistent.')
+    print('PASS: contribution tables, derived comparisons and pipeline-role identity are consistent.')
 
     main_tex = (ROOT / 'main.tex').read_text()
     sources = load(ROOT / 'research/sources.json')
