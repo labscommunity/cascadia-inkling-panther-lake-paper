@@ -4,16 +4,23 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta}
 \usepackage{tabularx}
-\setlength{\emergencystretch}{2em}
+\hypersetup{
+  pdftitle={Cascadia: Resident 975B MoE Inference on Eleven AI PCs},
+  pdfauthor={Tate Berenbaum; Matias Parij; Muthaiah Venkatachalam}
+}
+\setlength{\emergencystretch}{1.5em}
 \input{generated/numbers}
 \input{generated/survey}
 \input{generated/concurrency_rows}
 \input{generated/speculation}
 \title{Cascadia: Resident 975B MoE Inference\\on Eleven AI PCs}
 \author{
-Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
-\and Matias Parij\\Community Labs\\\texttt{mparij@communitylabs.com}
-\and Muthaiah Venkatachalam\\Intel Corporation\\\texttt{muthaiah.venkatachalam@intel.com}
+  \begin{tabular}{@{}c@{\hspace{3em}}c@{}}
+    Tate Berenbaum & Matias Parij \\
+    Not Community Labs Inc. & Not Community Labs Inc. \\[0.75em]
+    \multicolumn{2}{c}{Muthaiah Venkatachalam} \\
+    \multicolumn{2}{c}{Intel Corporation}
+  \end{tabular}
 }
 \date{September 2026}
 \begin{document}

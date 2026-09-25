@@ -4,17 +4,14 @@ title: "Cascadia: Resident 975B MoE Inference on Eleven AI PCs"
 authors:
   - family-names: Berenbaum
     given-names: Tate
-    affiliation: Community Labs
-    email: tb@communitylabs.com
+    affiliation: Not Community Labs Inc.
   - family-names: Parij
     given-names: Matias
-    affiliation: Community Labs
-    email: mparij@communitylabs.com
+    affiliation: Not Community Labs Inc.
   - family-names: Venkatachalam
     given-names: Muthaiah
     affiliation: Intel Corporation
-    email: muthaiah.venkatachalam@intel.com
-version: 0.5.1
+version: 0.5.2
 date-released: 2026-09-25
 repository-code: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
@@ -37,4 +34,4 @@ preferred-citation:
   year: 2026
   month: 9
   url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
-  notes: "Private author-review draft, version 0.5.1; not an accepted publication."
+  notes: "Private author-review draft, version 0.5.2; not an accepted publication."

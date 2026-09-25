@@ -1,6 +1,6 @@
 # Cascadia: Resident 975B MoE Inference on Eleven AI PCs
 
-Research manuscript by **Tate Berenbaum**, **Matias Parij** (Community Labs), and **Muthaiah Venkatachalam** (Intel Corporation). Private author-review draft, September 2026.
+Research manuscript by **Tate Berenbaum**, **Matias Parij** (Not Community Labs Inc.), and **Muthaiah Venkatachalam** (Intel Corporation). Private author-review draft, September 2026.
 
 [Read the paper (PDF)](main.pdf) · [LaTeX source](main.tex) · [Contributions and prior work](research/NOVELTY.md) · [Claim map](reproduction/CLAIMS.md)
 
@@ -67,6 +67,6 @@ The [evidence snapshot](reproduction/evidence/manifest.json) covers 50 source ex
 
 ## Authors
 
-- Tate Berenbaum — Community Labs — tb@communitylabs.com
-- Matias Parij — Community Labs — mparij@communitylabs.com
-- Muthaiah Venkatachalam — Intel Corporation — muthaiah.venkatachalam@intel.com
+- Tate Berenbaum — Not Community Labs Inc.
+- Matias Parij — Not Community Labs Inc.
+- Muthaiah Venkatachalam — Intel Corporation

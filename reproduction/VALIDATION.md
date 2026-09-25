@@ -1,11 +1,12 @@
 # Artifact validation record
 
-GPU speculative-decoding revision **0.5.1**, validated **2026-09-25** with Python **3.14.4**, uv **0.11.12**, Tectonic **0.16.9** and cffconvert **2.0.0** on macOS. Existing charts retain their validated Matplotlib **3.10.8** renderings.
+Formatting revision **0.5.2**, validated **2026-09-25** with Python **3.14.4**, uv **0.11.12**, Tectonic **0.16.9** and cffconvert **2.0.0** on macOS. Numerical reconstruction results and Matplotlib **3.10.8** chart renderings are retained from the preceding revision and checked by the artifact verifier.
 
 Evidence source: Cascadia commit **3189a189fe3428f5a6315a7eb67b13148ec314e2** on `autolab/inkling-fleet-perf`.
 
 Completed checks:
 
+- Matched the companion architecture paper's author-block layout and line-breaking tolerance; the two papers use identical `arxiv.sty` files. Removed author email addresses from the manuscript, README and citation metadata; set Tate Berenbaum and Matias Parij's affiliation to **Not Community Labs Inc.** Added explicit PDF title/author metadata and inspected the rendered title page.
 - Reconstructed all **35 finalized-survey records** from raw event traces: **1,605 requests and 204,192 token events**, including pilots. Every request's token count matches final API usage; every common-interval and whole-phase rate matches its source record.
 - Reconstructed the **15-point paired concurrency curve**, phase-rate means and pooled TTFT quantiles. Verified the 88-stream means of **60.286375 decode tokens/s** and **46.874876 whole-phase tokens/s** and fifteen-stream median TTFT of **6.052471 s**.
 - Verified the report's survey totals excluding pilots: **33 phases, 1,592 requests and 203,776 output tokens**.
@@ -25,4 +26,4 @@ Completed checks:
 - Built the **17-page PDF** with resolved references and no overfull boxes; visually inspected Section 4.3's scenario diagram, latency equation, full GPU comparison table and supporting GPU results. Tectonic's `inputenc` warning reflects its UTF-8 engine.
 - Validated `CITATION.cff` against schema 1.2.0 and confirmed that the GitHub repository remains private.
 
-This revision makes the fused-iGPU deployment the central performance evidence in Section 4.3. The table includes all twelve final GPU prompt pairs; the text adds GPU phrase-transfer comparisons, structured requests and explanation-family rates. Earlier CPU-expert on/off observations and the historical copy-model check remain in the supporting artifact. All new calculations use the existing 421-file frozen evidence snapshot; no fleet execution or new inference measurements were performed. Repeated-prompt behavior, concurrent throughput and offline draft agreement retain their distinct scopes. The supporting code map links the proposer, target-token encoding, asynchronous verification and state rewind at the pinned commit.
+This revision aligns the title-page formatting and author affiliations with the companion Cascadia architecture paper. The evidence snapshot and reported numerical results retain their existing provenance. Section 4.3 continues to present all twelve final fused-iGPU prompt pairs, phrase-history transfer comparisons and structured/explanation request rates.
