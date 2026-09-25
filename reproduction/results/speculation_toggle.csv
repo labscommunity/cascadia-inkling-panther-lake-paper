@@ -1,0 +1,4 @@
+prompt_id,prompt,output_cap,disabled_tok_s,enabled_tok_s,ratio,gain_pct,reference_match
+0,Sky explanation,32,1.659,1.772,1.0681133212778782,6.811332127787817,True
+1,Capital of France,32,1.676,1.91,1.139618138424821,13.961813842482096,True
+5,Six times seven,32,1.6,2.125,1.328125,32.8125,True

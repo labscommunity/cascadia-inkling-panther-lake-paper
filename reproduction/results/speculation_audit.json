@@ -1,0 +1,67 @@
+{
+  "toggle": {
+    "source_before": "002a_return_link",
+    "source_after": "002b_speculation",
+    "same_binary": "6bad6fd8",
+    "execution": "Earlier CPU-expert configuration with iGPU attention projections and output head.",
+    "output_cap": 32,
+    "requests_per_prompt_per_condition": 1,
+    "comparisons": [
+      {
+        "prompt_id": 0,
+        "prompt": "Sky explanation",
+        "output_cap": 32,
+        "disabled_tok_s": 1.659,
+        "enabled_tok_s": 1.772,
+        "ratio": 1.0681133212778782,
+        "gain_pct": 6.811332127787817,
+        "reference_match": true
+      },
+      {
+        "prompt_id": 1,
+        "prompt": "Capital of France",
+        "output_cap": 32,
+        "disabled_tok_s": 1.676,
+        "enabled_tok_s": 1.91,
+        "ratio": 1.139618138424821,
+        "gain_pct": 13.961813842482096,
+        "reference_match": true
+      },
+      {
+        "prompt_id": 5,
+        "prompt": "Six times seven",
+        "output_cap": 32,
+        "disabled_tok_s": 1.6,
+        "enabled_tok_s": 2.125,
+        "ratio": 1.328125,
+        "gain_pct": 32.8125,
+        "reference_match": true
+      }
+    ],
+    "interpretation": "Sequential same-binary toggle observations, not randomized repeated estimates."
+  },
+  "copy": {
+    "source": "002b_speculation",
+    "phase": "echo",
+    "measured_decode_tok_s": 2.793,
+    "summary_confirmed_inflight": 47,
+    "tokens": 96,
+    "effective_hit_fraction": 0.4895833333333333,
+    "illustrative_stage_s": 0.0585,
+    "illustrative_stages": 11,
+    "illustrative_round_s": 0.6435000000000001,
+    "predicted_decode_tok_s": 2.8003850529447796,
+    "predicted_speedup": 1.8020477815699658,
+    "interpretation": "First-order latency model; stage interval and hit count from retained summary; no matched copy-task disabled timing."
+  },
+  "repeat": {
+    "first_decode": 5.676967862223407,
+    "repeat_decode": 10.243010727462607,
+    "decode_ratio": 1.8043101486663855,
+    "first_phase": 5.19460681227384,
+    "repeat_phase": 8.765184248371728,
+    "phase_ratio": 1.6873624058824457,
+    "identical_outputs": 12,
+    "interpretation": "Speculation enabled in both passes; history/order and capture-state contrast, not an on/off ablation."
+  }
+}

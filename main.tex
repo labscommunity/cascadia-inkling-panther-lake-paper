@@ -8,6 +8,7 @@
 \input{generated/numbers}
 \input{generated/survey}
 \input{generated/concurrency_rows}
+\input{generated/speculation}
 \title{Cascadia: Resident 975B MoE Inference\\on Eleven AI PCs}
 \author{
 Tate Berenbaum\\Community Labs\\\texttt{tb@communitylabs.com}
@@ -181,10 +182,67 @@ Prompts enter as windows of at most eight rows. Consecutive windows can occupy d
 
 Chunked prefill and iteration-level scheduling have established precedents~\cite{orca,sarathi,sarathiserve}. The contribution here is their realization within a resident sparse-model pipeline whose stages maintain both KV and convolution state, share memory between CPU and GPU, and communicate over gigabit Ethernet. Prefill, decode, row-parallel attention and direct token return are coordinated in one runtime.
 
-\subsection{Verified proposals for individual streams}
-For an individual active request, the serving loop can propose tokens using request history, a persisted phrase table and a small external draft model. The table is used for sufficiently confident contexts, with the model supplying other proposals. The target model verifies the proposed sequence; rejected positions rewind both KV and convolution state before decoding continues. This extends the existing speculative-decoding approach~\cite{specdecode,shards} to Inkling's stateful layer implementation.
+\subsection{Speculative decoding scenarios and measured gains}
+\label{sec:speculation}
+A lone active request ordinarily waits for a token to traverse all eleven stages before its next token can enter the pipeline. Cascadia overlaps this dependency by injecting proposed future input tokens behind the confirmed input, as separate frames in the same pipeline. Each returning target-model reply verifies the input of the following frame. A matching proposal retains computation already in flight; a mismatch discards that frame and its speculative successors, drains their replies and rewinds every stage's KV and short-convolution state to the confirmed prefix. Generation resumes with the target's token. Emitted tokens therefore come from target replies, with agreement assessed under the greedy serving configuration. This asynchronous implementation extends established speculative decoding and Cascadia's earlier pipelined speculation~\cite{specdecode,shards} to Inkling's stateful layers.
 
-The finalized survey evaluates twelve single-stream prompts twice, producing text-identical 128-token outputs for every pair. Aggregate decode rate over the serial requests' decode intervals is 5.68 tokens/s in the first pass and 10.24 in the repeated pass; whole-phase rates are 5.19 and 8.77 tokens/s. Phrase learning remains active between passes, and capture instrumentation differs as described below. These paired observations characterize service with accumulated prompt history; they do not isolate a kernel speedup or estimate performance on unseen prompts.
+\paragraph{Proposal scenarios.}
+Copying and recurring phrases can obtain proposals directly from request-local history or a persisted phrase table. The hybrid proposer favors a request-local four-token suffix match or a shared three-token context seen at least twice with at least 90\% next-token agreement. For other contexts, a rank-0 CPU draft model, Qwen3-0.6B in Q4\_K\_M format, can supply continuations. Its text is encoded with Inkling's tokenizer before injection. Figure~\ref{fig:speculation} illustrates complete agreement, partial agreement and ordinary progress when no proposal is ready. A mismatch preserves the verified prefix while restoring both forms of temporal state. When another request awaits admission, the runtime returns to its ordinary concurrent-stream path.
+
+\begin{figure}[ht]
+\centering
+\resizebox{\linewidth}{!}{\begin{tikzpicture}[>=Latex,every node/.style={font=\small},token/.style={draw,rounded corners,minimum width=.7cm,minimum height=.55cm}]
+\node[anchor=east] at (0,.65) {Proposed frame inputs:};
+\foreach \x/\p in {0.65/1,1.55/2,2.45/3,3.35/4}
+  \node at (\x,.65) {$p+\p$};
+\node[anchor=east] at (0,0) {Matching continuation};
+\foreach \x/\t in {0.65/A,1.55/B,2.45/C,3.35/D}
+  \node[token,fill=green!12] at (\x,0) {\t};
+\draw[->] (3.9,0) -- (4.5,0);
+\node[anchor=west] at (4.6,0) {retain each frame as its input is verified};
+\node[anchor=east] at (0,-.85) {Partial agreement};
+\foreach \x/\t in {0.65/A,1.55/B}
+  \node[token,fill=green!12] at (\x,-.85) {\t};
+\foreach \x/\t in {2.45/X,3.35/Y}
+  \node[token,fill=orange!20] at (\x,-.85) {\t};
+\draw[->] (3.9,-.85) -- (4.5,-.85);
+\node[anchor=west,align=left] at (4.6,-.85) {retain A, B; discard X, Y;\\rewind and resume with target token C};
+\node[anchor=east] at (0,-1.75) {No proposal ready};
+\node[token,fill=gray!8] at (.65,-1.75) {--};
+\draw[->] (1.15,-1.75) -- (4.5,-1.75);
+\node[anchor=west] at (4.6,-1.75) {advance on the next target reply};
+\end{tikzpicture}}
+\caption{Speculative pipeline scenarios, assuming the target continuation is A, B, C, D. Letters denote symbolic token IDs. Frames enter successively and their inputs are verified by preceding target replies; proposed tokens are never emitted without verification.}
+\label{fig:speculation}
+\end{figure}
+
+\paragraph{Why correct proposals improve latency.}
+Let $L$ denote full-pipeline latency, $T$ the inter-frame interval and $a$ the fraction of output positions with correct inputs already in flight. A first-order model gives throughput $Q_{\mathrm{spec}}$ and speedup $S$ over ordinary decoding:
+\begin{equation}
+Q_{\mathrm{spec}}\approx\frac{1}{aT+(1-a)L},\qquad
+S\approx\frac{L}{aT+(1-a)L}.
+\label{eq:speculation}
+\end{equation}
+Correct proposals can replace full round trips with shorter inter-frame intervals. In an earlier CPU-expert run, the summary records 47 such positions in a 96-token copying request and a stage interval of 58.5\,ms. With $L\approx11T=643.5$\,ms, Equation~\ref{eq:speculation} gives \SpecCopyPrediction{} tokens/s, close to the measured 2.79 tokens/s. The illustration omits additional drafting, queueing and rewind costs; $a$ measures useful in-flight work, rather than conditional draft acceptance or offline MTP agreement.
+
+\paragraph{Measured on/off gains.}
+An earlier eleven-stage configuration provides a same-binary comparison with speculation disabled and enabled. It uses CPU experts and iGPU attention projections/output head, preceding the fused-expert engine in Section~\ref{sec:resident}. Table~\ref{tab:speculation} reports the same three prompts with a 32-token output cap in each condition. Recorded checks mark every response as an exact match to its reference. Decode rates increase by 6.8--32.8\%. These are sequential observations with one request per prompt per condition; they establish the observed gains for those requests, rather than a distribution of speedups across workloads.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Prompt & Disabled & Enabled & Rate ratio & Gain\\
+\midrule
+\SpeculationRows
+\bottomrule
+\end{tabular}
+\caption{Single-request decode tokens/s with speculation off/on in the earlier CPU-expert configuration. Each rate uses the interval from first to last output token; the same binary and settings are used except for enabling speculation.}
+\label{tab:speculation}
+\end{table}
+
+\paragraph{Structured and repeated workloads.}
+The hybrid proposer also supports varied structured continuations. Retained 128-token single-request examples with related-family history achieve 3.67 decode tokens/s for code, 6.60 for translation and 10.95 for true/false completion. These are absolute serving rates for distinct prompts. In the finalized fused-engine survey, twelve single-stream prompts produce text-identical 128-token outputs in both passes. Decode rate rises from 5.68 to 10.24 tokens/s, a \SpecRepeatRatio{}$\times$ observed ratio; whole-phase rate rises from 5.19 to 8.77 tokens/s (\SpecRepeatPhaseRatio{}$\times$). Speculation is enabled in both passes, phrase history accumulates, and residual-capture writes differ as described below. This comparison characterizes repeated-prompt service with the deployed engine. The on/off comparison, repeated-prompt ratios and concurrent-serving rates measure separate aspects of the system; the peak cohort throughput in Section~\ref{sec:performance} is not a speculative-decoding speedup.
 
 \section{Evaluation of concurrent serving}
 \label{sec:performance}

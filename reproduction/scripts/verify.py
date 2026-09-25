@@ -89,6 +89,34 @@ def main():
         assert row['output_sha256_first'] == row['output_sha256_repeat']
     print('PASS: finalized paired curve, pooled latencies, survey counts and repeated-output hashes agree.')
 
+    spec = load(RESULTS / 'speculation_audit.json')
+    toggle = list(csv.DictReader((RESULTS / 'speculation_toggle.csv').open()))
+    assert len(toggle) == 3
+    gates = [load(EXPS / name / 'gate.json')['prompts']
+             for name in ['002a_return_link', '002b_speculation']]
+    for row in toggle:
+        off, on = [next(p for p in g if p['i'] == int(row['prompt_id'])) for g in gates]
+        assert off['exact'] and on['exact']
+        assert off['match_chars'] == off['of'] == on['match_chars'] == on['of']
+        close(float(row['disabled_tok_s']), off['tok_s'])
+        close(float(row['enabled_tok_s']), on['tok_s'])
+        close(float(row['gain_pct']), 100 * (on['tok_s'] / off['tok_s'] - 1))
+    first, repeat = [next(p for p in survey if p['phase'] == name)
+                     for name in ['mixed_a_c001', 'mixed_b_c001']]
+    close(spec['repeat']['decode_ratio'], repeat['steady_aggregate_tok_s']/first['steady_aggregate_tok_s'])
+    close(spec['repeat']['phase_ratio'], repeat['aggregate_tok_s']/first['aggregate_tok_s'])
+    copy = spec['copy']
+    assert copy['summary_confirmed_inflight'] == 47 and copy['tokens'] == 96
+    close(copy['measured_decode_tok_s'], phase('002b_speculation', 'echo')['sum_stream_tok_s'])
+    close(copy['predicted_decode_tok_s'], 1/((47/96)*.0585+(49/96)*11*.0585))
+    for row in csv.DictReader((RESULTS / 'speculation_families.csv').open()):
+        original = phase('015c_ensemble', row['phase'])
+        assert original['completed'] == original['streams'] == 1
+        assert original['tokens'] == int(row['output_tokens']) == 128
+        close(float(row['decode_tok_s']), original['sum_stream_tok_s'])
+        close(float(row['phase_tok_s']), original['tokens']/(original['end']-original['start']))
+    print('PASS: speculation on/off gains, family rates, repeated-prompt ratios and illustrative model reconstruct.')
+
     with gzip.open(EVIDENCE / 'telemetry/011b_long_generation.jsonl.gz', 'rt') as f:
         stats = [r['stats'] for line in f if 'stats' in (r := strict_load(line))]
     long = phase('011b_long_generation', 'long176')

@@ -23,6 +23,7 @@ These commands reconstruct measurements rather than execute inference. The suppo
 |---|---|
 | Custom resident engine and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
 | Streaming service across resident shards | `results/concurrency.csv`, `results/survey_phases.csv`, `results/prefill.csv`, `figures/concurrency.pdf`, `figures/prefill.pdf` |
+| Speculative decoding scenarios and gains | `results/speculation_toggle.csv`, `results/speculation_families.csv`, `results/speculation_audit.json`, `generated/speculation.tex` |
 | Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
 | Independent token-accounting check | `results/survey_audit.json`; historical `results/server_counter_audit.json` and supporting `figures/counter.pdf` |
 
@@ -58,3 +59,5 @@ The paired curve averages phase rates and pools request TTFT quantiles. Capture 
 Profiles are deduplicated per installed box and aligned using receipt age on the operator clock. Phase windows use the historical harness's timing tolerance and select windows with no opens. Reported stage timings are weighted by frame count; role identity is distinct from physical device identity.
 
 Dense-call tables are parsed from the retained layer load checks. Draft tables use the retained fleet rescore and family summaries. Capture validation and scoring scripts accompany those records; the reconstructed report labels the draft results as offline agreement.
+
+`analyze_speculation.py` checks the earlier on/off configuration difference and exact-reference gate records, derives rate ratios, and reconstructs the copy-task latency illustration. It also selects completed hybrid-proposer examples and derives the finalized first/repeated ratios. [AUDIT.md](AUDIT.md#speculative-decoding-scenarios-and-comparisons) records the configuration, workload and measurement scope for each.

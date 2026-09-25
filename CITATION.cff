@@ -14,8 +14,8 @@ authors:
     given-names: Muthaiah
     affiliation: Intel Corporation
     email: muthaiah.venkatachalam@intel.com
-version: 0.4.0
-date-released: 2026-09-22
+version: 0.5.0
+date-released: 2026-09-25
 repository-code: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 keywords:
@@ -37,4 +37,4 @@ preferred-citation:
   year: 2026
   month: 9
   url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
-  notes: "Private author-review draft, version 0.4.0; not an accepted publication."
+  notes: "Private author-review draft, version 0.5.0; not an accepted publication."

@@ -18,6 +18,12 @@ Section 3 explains the exporter, routing interface, resident runtime and numeric
 
 OpenVINO supplies the compressed MoE primitive and graph lowering. The paper attributes those mechanisms and the prior art for equivalent rescaling and dense-to-expert decomposition; its contribution is the implemented engine and measured results in this deployment. [Implementation anchors](reproduction/CODE_MAP.md) and the [novelty assessment](research/NOVELTY.md) connect that claim to source evidence.
 
+## Speculative decoding scenarios
+
+Section 4.3 illustrates matching proposals, partial agreement and target-only progress, explains how in-flight verification reduces pipeline latency, and reports measured gains. A same-binary speculation off/on comparison in the earlier CPU-expert configuration records **6.8%, 14.0% and 32.8%** decode-rate gains on three short prompts, with all responses recorded as exact reference matches. The finalized fused-engine survey records **1.80× decode** and **1.69× whole-phase** first/repeated-prompt rate ratios across twelve identical output pairs. Both final passes enable speculation; their contrast includes accumulated history and differing capture settings.
+
+The [speculation audit](reproduction/AUDIT.md#speculative-decoding-scenarios-and-comparisons), [derived measurements](reproduction/results/speculation_audit.json) and [runtime anchors](reproduction/CODE_MAP.md) distinguish measured on/off gains, repeated-prompt behavior and the illustrative latency model.
+
 ## Finalized performance measurements
 
 The fixed-binary survey measures fifteen concurrency levels twice, using twelve prompt families and 128 output tokens per request. Selected operating points:
