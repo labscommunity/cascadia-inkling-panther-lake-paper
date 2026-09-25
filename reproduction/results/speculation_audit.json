@@ -1,4 +1,197 @@
 {
+  "gpu": {
+    "source": "046_final_performance",
+    "first_phase": "mixed_a_c001",
+    "repeat_phase": "mixed_b_c001",
+    "execution": "Fused iGPU target experts, dense layers, attention projections and output head; CPU draft model.",
+    "comparisons": [
+      {
+        "family": "explanation",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 5.086205594183845,
+        "repeat_decode_tok_s": 14.698022611115322,
+        "ratio": 2.88978145671554,
+        "gain_pct": 188.97814567155402,
+        "identical_output": true
+      },
+      {
+        "family": "code",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 7.06599364112236,
+        "repeat_decode_tok_s": 8.050278866681936,
+        "ratio": 1.1392989118800327,
+        "gain_pct": 13.929891188003275,
+        "identical_output": true
+      },
+      {
+        "family": "arithmetic",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 8.87701996069009,
+        "repeat_decode_tok_s": 10.064910621955086,
+        "ratio": 1.1338163783032262,
+        "gain_pct": 13.381637830322624,
+        "identical_output": true
+      },
+      {
+        "family": "story",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 5.307229002451595,
+        "repeat_decode_tok_s": 10.955153837516026,
+        "ratio": 2.064194673426652,
+        "gain_pct": 106.41946734266519,
+        "identical_output": true
+      },
+      {
+        "family": "tips",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 3.554645867918747,
+        "repeat_decode_tok_s": 11.656693442788079,
+        "ratio": 3.279284034449569,
+        "gain_pct": 227.9284034449569,
+        "identical_output": true
+      },
+      {
+        "family": "table",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 3.7604408297101113,
+        "repeat_decode_tok_s": 8.656464222669573,
+        "ratio": 2.301981234295047,
+        "gain_pct": 130.1981234295047,
+        "identical_output": true
+      },
+      {
+        "family": "rewrite",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 7.364891757191849,
+        "repeat_decode_tok_s": 9.582399817834663,
+        "ratio": 1.30109173817489,
+        "gain_pct": 30.10917381748901,
+        "identical_output": true
+      },
+      {
+        "family": "facts",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 6.11646480872296,
+        "repeat_decode_tok_s": 10.123354086898834,
+        "ratio": 1.6550988853007822,
+        "gain_pct": 65.50988853007821,
+        "identical_output": true
+      },
+      {
+        "family": "poem",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 5.127445901265389,
+        "repeat_decode_tok_s": 11.686606431452432,
+        "ratio": 2.2792256917948808,
+        "gain_pct": 127.92256917948808,
+        "identical_output": true
+      },
+      {
+        "family": "instructions",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 4.6193544448344905,
+        "repeat_decode_tok_s": 9.655182959251217,
+        "ratio": 2.0901585004043044,
+        "gain_pct": 109.01585004043044,
+        "identical_output": true
+      },
+      {
+        "family": "translation",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 7.999795873849378,
+        "repeat_decode_tok_s": 9.233247766182199,
+        "ratio": 1.1541854207011537,
+        "gain_pct": 15.418542070115372,
+        "identical_output": true
+      },
+      {
+        "family": "true_false",
+        "prompt_index": 0,
+        "output_tokens": 128,
+        "first_decode_tok_s": 10.9211510344857,
+        "repeat_decode_tok_s": 11.52774242633342,
+        "ratio": 1.0555428077070161,
+        "gain_pct": 5.554280770701614,
+        "identical_output": true
+      }
+    ],
+    "largest_ratio": 3.279284034449569,
+    "largest_ratio_family": "tips",
+    "interpretation": "Same-binary first/repeated observations with identical 128-token outputs; speculation on in both passes, accumulated history and differing capture writes."
+  },
+  "phrase_transfer": {
+    "source": "038_phrase_transfer",
+    "comparisons": [
+      {
+        "phase": "fam0explain",
+        "before_decode_tok_s": 4.116,
+        "after_decode_tok_s": 7.73,
+        "ratio": 1.8780369290573375,
+        "gain_pct": 87.80369290573375,
+        "output_tokens": 128
+      },
+      {
+        "phase": "fam3story",
+        "before_decode_tok_s": 4.26,
+        "after_decode_tok_s": 7.219,
+        "ratio": 1.6946009389671364,
+        "gain_pct": 69.46009389671363,
+        "output_tokens": 128
+      },
+      {
+        "phase": "fam1code",
+        "before_decode_tok_s": 5.225,
+        "after_decode_tok_s": 10.6,
+        "ratio": 2.028708133971292,
+        "gain_pct": 102.87081339712918,
+        "output_tokens": 128
+      },
+      {
+        "phase": "fam2arith",
+        "before_decode_tok_s": 9.865,
+        "after_decode_tok_s": 10.024,
+        "ratio": 1.016117587430309,
+        "gain_pct": 1.6117587430309,
+        "output_tokens": 128
+      },
+      {
+        "phase": "fam6rewrite",
+        "before_decode_tok_s": 5.869,
+        "after_decode_tok_s": 8.234,
+        "ratio": 1.402964729936957,
+        "gain_pct": 40.2964729936957,
+        "output_tokens": 128
+      },
+      {
+        "phase": "fam11truefalse",
+        "before_decode_tok_s": 4.909,
+        "after_decode_tok_s": 10.767,
+        "ratio": 2.1933183947850887,
+        "gain_pct": 119.33183947850887,
+        "output_tokens": 128
+      }
+    ],
+    "interpretation": "Fused-iGPU serving before/after phrase-history merge; same binary, already-seen prompts, further learning and capture disabled at transfer."
+  },
+  "gpu_explanation": {
+    "source": "046_final_performance",
+    "phase": "family_00_a_c001",
+    "requests": 3,
+    "median_decode_tok_s": 11.268344531341409,
+    "fastest_decode_tok_s": 15.041537248796427,
+    "interpretation": "Absolute request rates for three 128-token prompts; no disabled-speculation counterpart."
+  },
   "toggle": {
     "source_before": "002a_return_link",
     "source_after": "002b_speculation",

@@ -20,9 +20,9 @@ OpenVINO supplies the compressed MoE primitive and graph lowering. The paper att
 
 ## Speculative decoding scenarios
 
-Section 4.3 illustrates matching proposals, partial agreement and target-only progress, explains how in-flight verification reduces pipeline latency, and reports measured gains. A same-binary speculation off/on comparison in the earlier CPU-expert configuration records **6.8%, 14.0% and 32.8%** decode-rate gains on three short prompts, with all responses recorded as exact reference matches. The finalized fused-engine survey records **1.80× decode** and **1.69× whole-phase** first/repeated-prompt rate ratios across twelve identical output pairs. Both final passes enable speculation; their contrast includes accumulated history and differing capture settings.
+Section 4.3 illustrates matching proposals, partial agreement and state rewind, then reports the **fused-iGPU engine's performance**. Its full twelve-prompt table includes first/repeated decode rates of **3.55→11.66 tokens/s (3.28×)** for tips, **5.09→14.70 (2.89×)** for explanation and **3.76→8.66 (2.30×)** for table generation. All twelve prompt/output pairs are identical through 128 tokens. Across the serial requests, the ratios are **1.80× decode** and **1.69× whole-phase throughput**. Both passes enable speculation; the contrast includes accumulated history and differing capture settings.
 
-The [speculation audit](reproduction/AUDIT.md#speculative-decoding-scenarios-and-comparisons), [derived measurements](reproduction/results/speculation_audit.json) and [runtime anchors](reproduction/CODE_MAP.md) distinguish measured on/off gains, repeated-prompt behavior and the illustrative latency model.
+Additional GPU results show **2.03×** code and **2.19×** true/false rate ratios around a phrase-history transfer, and **11.27 tokens/s median / 15.04 fastest** across three finalized explanation requests. The [GPU comparison table](reproduction/results/speculation_gpu.csv), [phrase-transfer data](reproduction/results/speculation_phrase_transfer.csv) and [measurement audit](reproduction/AUDIT.md#speculative-decoding-scenarios-and-comparisons) document the scope of each result. Earlier CPU-expert on/off checks remain supporting evidence.
 
 ## Finalized performance measurements
 

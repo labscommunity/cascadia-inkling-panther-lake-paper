@@ -223,26 +223,30 @@ Q_{\mathrm{spec}}\approx\frac{1}{aT+(1-a)L},\qquad
 S\approx\frac{L}{aT+(1-a)L}.
 \label{eq:speculation}
 \end{equation}
-Correct proposals can replace full round trips with shorter inter-frame intervals. In an earlier CPU-expert run, the summary records 47 such positions in a 96-token copying request and a stage interval of 58.5\,ms. With $L\approx11T=643.5$\,ms, Equation~\ref{eq:speculation} gives \SpecCopyPrediction{} tokens/s, close to the measured 2.79 tokens/s. The illustration omits additional drafting, queueing and rewind costs; $a$ measures useful in-flight work, rather than conditional draft acceptance or offline MTP agreement.
+Correct proposals can replace full round trips with shorter inter-frame intervals. Fused iGPU execution reduces the stage-computation cost, while effective proposals overlap successive positions across the eleven devices. The illustration omits additional drafting, queueing and rewind costs; $a$ measures useful in-flight work, rather than conditional draft acceptance or offline MTP agreement.
 
-\paragraph{Measured on/off gains.}
-An earlier eleven-stage configuration provides a same-binary comparison with speculation disabled and enabled. It uses CPU experts and iGPU attention projections/output head, preceding the fused-expert engine in Section~\ref{sec:resident}. Table~\ref{tab:speculation} reports the same three prompts with a 32-token output cap in each condition. Recorded checks mark every response as an exact match to its reference. Decode rates increase by 6.8--32.8\%. These are sequential observations with one request per prompt per condition; they establish the observed gains for those requests, rather than a distribution of speedups across workloads.
+\paragraph{Measured gains with the fused iGPU engine.}
+Table~\ref{tab:speculation} reports all twelve paired single-stream prompts from the finalized GPU deployment. Target experts, dense layers, attention projections and the output head use the iGPU engine; the small external drafter runs on the CPU. Each prompt produces the same complete 128-token output in both passes, with the serving binary and model fixed. The largest observed per-request rate ratio is \SpecGPUMaxRatio{}$\times$ for tips (3.55 to 11.66 tokens/s); explanation reaches 14.70 tokens/s from 5.09 (2.89$\times$), and table generation rises from 3.76 to 8.66 (2.30$\times$). Showing every pair makes the workload dependence explicit.
 
 \begin{table}[ht]
 \centering\small
 \begin{tabular}{lrrrr}
 \toprule
-Prompt & Disabled & Enabled & Rate ratio & Gain\\
+Prompt family & First pass & Repeated pass & Rate ratio & Gain\\
 \midrule
-\SpeculationRows
+\SpecGPUComparisonRows
 \bottomrule
 \end{tabular}
-\caption{Single-request decode tokens/s with speculation off/on in the earlier CPU-expert configuration. Each rate uses the interval from first to last output token; the same binary and settings are used except for enabling speculation.}
+\caption{Fused-iGPU target inference: first/repeated decode tokens/s for one prompt from each family, 128 output tokens per request. All twelve pairs have identical prompts and complete output text. Speculation is enabled in both passes; these are observed repeated-prompt gains with accumulated history and differing capture state.}
 \label{tab:speculation}
 \end{table}
 
-\paragraph{Structured and repeated workloads.}
-The hybrid proposer also supports varied structured continuations. Retained 128-token single-request examples with related-family history achieve 3.67 decode tokens/s for code, 6.60 for translation and 10.95 for true/false completion. These are absolute serving rates for distinct prompts. In the finalized fused-engine survey, twelve single-stream prompts produce text-identical 128-token outputs in both passes. Decode rate rises from 5.68 to 10.24 tokens/s, a \SpecRepeatRatio{}$\times$ observed ratio; whole-phase rate rises from 5.19 to 8.77 tokens/s (\SpecRepeatPhaseRatio{}$\times$). Speculation is enabled in both passes, phrase history accumulates, and residual-capture writes differ as described below. This comparison characterizes repeated-prompt service with the deployed engine. The on/off comparison, repeated-prompt ratios and concurrent-serving rates measure separate aspects of the system; the peak cohort throughput in Section~\ref{sec:performance} is not a speculative-decoding speedup.
+Across the twelve serial requests, decode throughput rises from 5.68 to 10.24 tokens/s (\SpecRepeatRatio{}$\times$); whole-phase throughput rises from 5.19 to 8.77 (\SpecRepeatPhaseRatio{}$\times$). These phase rates account for the requests' actual durations rather than averaging their individual speedups. Both passes enable speculation and phrase learning. The first study pass already has prior history; further history accumulates before the repeat, and residual-capture writes are disabled between passes. The comparison characterizes the GPU system's observed repeated-prompt service, with one observation per prompt per pass, rather than isolating a speculation on/off effect.
+
+\paragraph{Reusable history and structured GPU workloads.}
+An additional fused-iGPU comparison illustrates reuse of learned phrases after transferring history to the current entry role. Merging the phrase tables increases retained contexts from 24,453 to 194,299. For six previously seen 128-token prompts measured before and after the merge, code rises from 5.23 to 10.60 tokens/s (2.03$\times$) and true/false from 4.91 to 10.77 (2.19$\times$). The binary remains unchanged; repeated requests also train the table, and capture is disabled with the transfer. These observations establish reusable history within GPU serving, with those timing influences included.
+
+The hybrid proposer also serves structured requests with related-family history: retained GPU examples reach 6.60 tokens/s for translation, 8.19 for arithmetic and 10.95 for true/false completion. A separate finalized explanation-family phase contains three 128-token single-stream requests with median \SpecGPUExplainMedian{} tokens/s and fastest rate \SpecGPUExplainMax{} tokens/s. These are absolute request rates on the stated prompts. The GPU comparisons concern lone-stream speculation; the peak concurrent throughput in Section~\ref{sec:performance} measures a separate serving regime. The artifact retains the earlier CPU-expert on/off checks as supporting protocol evidence.
 
 \section{Evaluation of concurrent serving}
 \label{sec:performance}

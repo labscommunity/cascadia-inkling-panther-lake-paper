@@ -105,6 +105,31 @@ def main():
                      for name in ['mixed_a_c001', 'mixed_b_c001']]
     close(spec['repeat']['decode_ratio'], repeat['steady_aggregate_tok_s']/first['steady_aggregate_tok_s'])
     close(spec['repeat']['phase_ratio'], repeat['aggregate_tok_s']/first['aggregate_tok_s'])
+    gpu_rows = list(csv.DictReader((RESULTS / 'speculation_gpu.csv').open()))
+    assert len(gpu_rows) == len(spec['gpu']['comparisons']) == 12
+    for row in gpu_rows:
+        pair = next(r for r in comparison['comparisons'] if r['family'] == row['family'])
+        assert pair['identical_prompt'] and pair['identical_output']
+        close(float(row['first_decode_tok_s']), pair['decode_tok_s_first'])
+        close(float(row['repeat_decode_tok_s']), pair['decode_tok_s_repeat'])
+        ratio = pair['decode_tok_s_repeat']/pair['decode_tok_s_first']
+        close(float(row['ratio']), ratio)
+        close(float(row['gain_pct']), 100*(ratio-1))
+    close(spec['gpu']['largest_ratio'], max(float(r['ratio']) for r in gpu_rows))
+    assert spec['gpu']['largest_ratio_family'] == 'tips'
+    transfer = list(csv.DictReader((RESULTS / 'speculation_phrase_transfer.csv').open()))
+    assert len(transfer) == 6
+    for row in transfer:
+        before = phase('038_phrase_transfer', row['phase'], 'phases-baseline.json')
+        after = phase('038_phrase_transfer', row['phase'])
+        close(float(row['before_decode_tok_s']), before['sum_stream_tok_s'])
+        close(float(row['after_decode_tok_s']), after['sum_stream_tok_s'])
+        close(float(row['ratio']), after['sum_stream_tok_s']/before['sum_stream_tok_s'])
+    explanation = next(p for p in survey if p['phase'] == 'family_00_a_c001')
+    rates = [r['decode_tok_s'] for r in explanation['request_metrics']]
+    assert len(rates) == spec['gpu_explanation']['requests'] == 3
+    close(spec['gpu_explanation']['median_decode_tok_s'], statistics.median(rates))
+    close(spec['gpu_explanation']['fastest_decode_tok_s'], max(rates))
     copy = spec['copy']
     assert copy['summary_confirmed_inflight'] == 47 and copy['tokens'] == 96
     close(copy['measured_decode_tok_s'], phase('002b_speculation', 'echo')['sum_stream_tok_s'])
@@ -115,7 +140,7 @@ def main():
         assert original['tokens'] == int(row['output_tokens']) == 128
         close(float(row['decode_tok_s']), original['sum_stream_tok_s'])
         close(float(row['phase_tok_s']), original['tokens']/(original['end']-original['start']))
-    print('PASS: speculation on/off gains, family rates, repeated-prompt ratios and illustrative model reconstruct.')
+    print('PASS: all GPU prompt pairs, phrase-transfer ratios, explanation rates and earlier speculation evidence reconstruct.')
 
     with gzip.open(EVIDENCE / 'telemetry/011b_long_generation.jsonl.gz', 'rt') as f:
         stats = [r['stats'] for line in f if 'stats' in (r := strict_load(line))]
@@ -179,6 +204,10 @@ def main():
     assert r'\newcommand{\SurveyDecode}{60.29}' in survey_macros
     assert r'\newcommand{\SurveyPhase}{46.87}' in survey_macros
     assert r'\newcommand{\SurveyTTFT}{6.05}' in survey_macros
+    spec_macros = (ROOT / 'generated/speculation.tex').read_text()
+    assert r'\newcommand{\SpecGPUMaxRatio}{3.28}' in spec_macros
+    assert r'\newcommand{\SpecGPUExplainMedian}{11.27}' in spec_macros
+    assert r'\newcommand{\SpecGPUExplainMax}{15.04}' in spec_macros
     assert len((ROOT / 'generated/concurrency_rows.tex').read_text().splitlines()) == 18
     print(f'PASS: {len(cited)} cited sources resolve within the 36-source ledger; figures and PDF exist.')
 

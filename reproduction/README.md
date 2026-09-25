@@ -23,7 +23,7 @@ These commands reconstruct measurements rather than execute inference. The suppo
 |---|---|
 | Custom resident engine and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
 | Streaming service across resident shards | `results/concurrency.csv`, `results/survey_phases.csv`, `results/prefill.csv`, `figures/concurrency.pdf`, `figures/prefill.pdf` |
-| Speculative decoding scenarios and gains | `results/speculation_toggle.csv`, `results/speculation_families.csv`, `results/speculation_audit.json`, `generated/speculation.tex` |
+| Speculative decoding scenarios and GPU gains | `results/speculation_gpu.csv`, `results/speculation_phrase_transfer.csv`, `results/speculation_families.csv`, `results/speculation_audit.json`, `generated/speculation.tex`; earlier CPU checks in `results/speculation_toggle.csv` |
 | Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
 | Independent token-accounting check | `results/survey_audit.json`; historical `results/server_counter_audit.json` and supporting `figures/counter.pdf` |
 
@@ -60,4 +60,4 @@ Profiles are deduplicated per installed box and aligned using receipt age on the
 
 Dense-call tables are parsed from the retained layer load checks. Draft tables use the retained fleet rescore and family summaries. Capture validation and scoring scripts accompany those records; the reconstructed report labels the draft results as offline agreement.
 
-`analyze_speculation.py` checks the earlier on/off configuration difference and exact-reference gate records, derives rate ratios, and reconstructs the copy-task latency illustration. It also selects completed hybrid-proposer examples and derives the finalized first/repeated ratios. [AUDIT.md](AUDIT.md#speculative-decoding-scenarios-and-comparisons) records the configuration, workload and measurement scope for each.
+`analyze_speculation.py` reconstructs all twelve final fused-iGPU first/repeated prompt pairs, six GPU phrase-history transfer comparisons and the three-request explanation median/maximum. It checks paired rates against survey request records and verifies complete-output hash equality for the final pairs. It also retains the earlier on/off checks, structured examples and copy-task model calculation as supporting evidence. [AUDIT.md](AUDIT.md#speculative-decoding-scenarios-and-comparisons) records the configuration, workload and measurement scope for each.

@@ -3,6 +3,7 @@
 import csv
 import json
 import re
+import statistics
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -58,6 +59,40 @@ def main():
     repeat = next(p for p in survey if p['phase']=='mixed_b_c001')
     equality = load(EXPS / '046_final_performance/single-stream-comparison.json')
     assert equality['identical_outputs'] == equality['identical_prompts'] == 12
+    gpu_rows = []
+    for pair in equality['comparisons']:
+        assert pair['identical_prompt'] and pair['identical_output']
+        assert pair['tokens_first'] == pair['tokens_repeat'] == 128
+        assert pair['output_sha256_first'] == pair['output_sha256_repeat']
+        for record, suffix in [(first, 'first'), (repeat, 'repeat')]:
+            request = next(r for r in record['request_metrics']
+                           if (r['family'], r['prompt_index']) == (pair['family'], pair['prompt_index']))
+            assert request['decode_tok_s'] == pair[f'decode_tok_s_{suffix}']
+        ratio = pair['decode_tok_s_repeat']/pair['decode_tok_s_first']
+        gpu_rows.append(dict(family=pair['family'], prompt_index=pair['prompt_index'], output_tokens=128,
+                             first_decode_tok_s=pair['decode_tok_s_first'],
+                             repeat_decode_tok_s=pair['decode_tok_s_repeat'],
+                             ratio=ratio, gain_pct=100*(ratio-1), identical_output=True))
+    csv_write('speculation_gpu.csv', gpu_rows)
+    gpu_peak = max(gpu_rows, key=lambda r: r['ratio'])
+
+    transfer_before = load(EXPS / '038_phrase_transfer/phases-baseline.json')
+    transfer_after = load(EXPS / '038_phrase_transfer/phases.json')
+    transfer_rows = []
+    for initial in transfer_before:
+        later = next(p for p in transfer_after if p['phase'] == initial['phase'])
+        for p in [initial, later]:
+            assert p['streams'] == p['completed'] == 1 and p['tokens'] == 128 and not p['errors']
+        ratio = later['sum_stream_tok_s']/initial['sum_stream_tok_s']
+        transfer_rows.append(dict(phase=initial['phase'], before_decode_tok_s=initial['sum_stream_tok_s'],
+                                  after_decode_tok_s=later['sum_stream_tok_s'], ratio=ratio,
+                                  gain_pct=100*(ratio-1), output_tokens=128))
+    assert len(transfer_rows) == 6
+    csv_write('speculation_phrase_transfer.csv', transfer_rows)
+    explanation = next(p for p in survey if p['phase'] == 'family_00_a_c001')
+    assert len(explanation['request_metrics']) == 3
+    assert all(r['tokens'] == 128 and r['family'] == 'explanation' for r in explanation['request_metrics'])
+    explanation_rates = [r['decode_tok_s'] for r in explanation['request_metrics']]
     echo = phase(after, 'echo')
     # This count/stage interval comes from the retained load-study summary;
     # the resulting model prediction is explicitly distinct from a timing measurement.
@@ -70,6 +105,16 @@ def main():
     round_s = stages*stage_s
     predicted = 1/(fraction*stage_s+(1-fraction)*round_s)
     result = dict(
+        gpu=dict(source='046_final_performance', first_phase=first['phase'], repeat_phase=repeat['phase'],
+                 execution='Fused iGPU target experts, dense layers, attention projections and output head; CPU draft model.',
+                 comparisons=gpu_rows, largest_ratio=gpu_peak['ratio'], largest_ratio_family=gpu_peak['family'],
+                 interpretation='Same-binary first/repeated observations with identical 128-token outputs; speculation on in both passes, accumulated history and differing capture writes.'),
+        phrase_transfer=dict(source='038_phrase_transfer', comparisons=transfer_rows,
+                             interpretation='Fused-iGPU serving before/after phrase-history merge; same binary, already-seen prompts, further learning and capture disabled at transfer.'),
+        gpu_explanation=dict(source='046_final_performance', phase=explanation['phase'], requests=3,
+                             median_decode_tok_s=statistics.median(explanation_rates),
+                             fastest_decode_tok_s=max(explanation_rates),
+                             interpretation='Absolute request rates for three 128-token prompts; no disabled-speculation counterpart.'),
         toggle=dict(source_before=before, source_after=after, same_binary='6bad6fd8',
                     execution='Earlier CPU-expert configuration with iGPU attention projections and output head.',
                     output_cap=32, requests_per_prompt_per_condition=1, comparisons=rows,
@@ -92,6 +137,14 @@ def main():
     tex.extend(['}', r'\newcommand{\SpecRepeatRatio}{'+f'{result["repeat"]["decode_ratio"]:.2f}'+'}',
                 r'\newcommand{\SpecRepeatPhaseRatio}{'+f'{result["repeat"]["phase_ratio"]:.2f}'+'}',
                 r'\newcommand{\SpecCopyPrediction}{'+f'{predicted:.2f}'+'}'])
+    tex.append(r'\newcommand{\SpecGPUComparisonRows}{%')
+    for r in gpu_rows:
+        label = r['family'].replace('_', '/').capitalize()
+        tex.append(f'{label} & {r["first_decode_tok_s"]:.2f} & {r["repeat_decode_tok_s"]:.2f} & '
+                   f'{r["ratio"]:.2f}' + r'$\times$ & +' + f'{r["gain_pct"]:.1f}' + r'\% \\')
+    tex.extend(['}', r'\newcommand{\SpecGPUMaxRatio}{'+f'{gpu_peak["ratio"]:.2f}'+'}',
+                r'\newcommand{\SpecGPUExplainMedian}{'+f'{statistics.median(explanation_rates):.2f}'+'}',
+                r'\newcommand{\SpecGPUExplainMax}{'+f'{max(explanation_rates):.2f}'+'}'])
     (ROOT / 'generated/speculation.tex').write_text('\n'.join(tex)+'\n')
     print(json.dumps(result, indent=2))
 
