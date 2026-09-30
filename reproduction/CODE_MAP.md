@@ -1,6 +1,6 @@
 # Runtime architecture and implementation anchors
 
-All links in this ledger pin Cascadia commit **3189a189fe3428f5a6315a7eb67b13148ec314e2**. Code inspection establishes what a path implements, not that every option was enabled in every experiment. Per-experiment overrides and retained measurements establish actual use.
+All links in this ledger pin Cascadia commit **3189a189fe3428f5a6315a7eb67b13148ec314e2** (the commit whose serving binary the survey used; the evidence snapshot is pinned to the later `eb7fb6381e62c1a33ec7038422bf6e8c52c77416`, which adds the context-length records and, behind environment switches that default off, the context probe, per-window progress chunks and prompt-window warm-up used by that test). Code inspection establishes what a path implements, not that every option was enabled in every experiment. Per-experiment overrides and retained measurements establish actual use.
 
 | Mechanism | Pinned implementation | Interpretation |
 |---|---|---|

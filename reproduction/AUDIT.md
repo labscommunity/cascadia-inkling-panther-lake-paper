@@ -4,7 +4,7 @@ The manuscript reports implemented designs and measured capabilities. This docum
 
 ## Finalized concurrency survey
 
-The evidence snapshot pins Cascadia commit `3189a189fe3428f5a6315a7eb67b13148ec314e2`. The survey uses serving release `1790016660` and binary SHA-256 `9084392040688eaa6aa9ff6cf6d222f84e24e119e528d91920d12ddd106563c2`. The model and binary remain fixed across its phases. The [collection record](evidence/source/autolab/experiments/046_final_performance/collection-environment.json) records the eleven-device, eleven-group, 66-layer configuration.
+The evidence snapshot pins Cascadia commit `eb7fb6381e62c1a33ec7038422bf6e8c52c77416` (the survey below was collected at `3189a189fe3428f5a6315a7eb67b13148ec314e2`; the later commit adds the context-length records and the two engine additions they required, with the survey's serving binary unchanged). The survey uses serving release `1790016660` and binary SHA-256 `9084392040688eaa6aa9ff6cf6d222f84e24e119e528d91920d12ddd106563c2`. The model and binary remain fixed across its phases. The [collection record](evidence/source/autolab/experiments/046_final_performance/collection-environment.json) records the eleven-device, eleven-group, 66-layer configuration.
 
 The [35 survey records](results/survey_phases.csv) comprise thirty mixed-workload phases, three explanation-family phases and two pilots. Excluding pilots, the totals are **33 phases, 1,592 requests and 203,776 generated tokens**. The [concurrency curve](results/concurrency.csv) uses only the thirty mixed phases: two phases at each of fifteen levels from 1 to 176 streams. Explanation-family measurements cover 1, 15 and 64 streams; they are retained separately from the mixed curve.
 
@@ -51,6 +51,10 @@ For all 125 historical phase records, recomputing `aggregate_tok_s` from token c
 The reference and windowed fifteen-request configurations use the same 128-token cap but distinct prompt tags. Their comparison is observational: median TTFT changes from 31.23–31.52 s to 6.91 s. The staggered fifteen-request workload uses approximately one-second arrivals and a 96-token cap, yielding 2.48 s median TTFT.
 
 Dense-layer times come from retained one-/two-row load checks. `dense.csv` computes reductions of 44.7%/45.1% for one row, with FP16 path differences of 5.7e-4/5.9e-4. The role 0 profile comparison is a separate stage measurement; operator savings are not an isolated fleet-throughput multiplier.
+
+## Context length
+
+The context measurements (Section 5.4) are single-stream requests served through the API with 96 output tokens, on a test release that raised the position budget to $2^{20}$, kept 16 stream slots, raised the API's prompt cap, sent prompts as 64-row windows, and reverted afterwards. First-token time is the client's time to the first content delta; prefill rate divides the API's prompt token count by it; decode rate divides delivered tokens minus one by the interval between first and last delta. Repeats are separate requests with distinct code words. The code check counts the code anywhere in the delivered output, which includes the model's reasoning. Machine load is the fleet telemetry sampled every 5 s during the request: `cpu` is the fraction of 16 threads busy (reported here as cores), `gpu` the iGPU busy share. The probe (034) runs inside the worker before it serves: synthetic cache rows, real allocation, real kernels, one row decoded at the target position, medians of four timed calls. The prefill fit is least squares of $aN+bN^2$ through the seven single-stream means; the effective GFLOPS figure divides $N^2/2$ key visits of 64×128×4 flops by the fitted quadratic time.
 
 ## Custom engine attribution and numerical identities
 

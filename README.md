@@ -44,6 +44,23 @@ Decode throughput counts tokens over intervals when every request in a cohort is
 
 The [full curve](reproduction/results/concurrency.csv) and [raw-event reconstruction](reproduction/results/survey_audit.json) accompany the paper. The complete survey comprises **33 measured phases, 1,592 requests and 203,776 output tokens**, with two additional pilot records preserved separately. Earlier windowed-admission measurements support the configuration analysis.
 
+## Context length
+
+The serving configuration holds 1,024 sequence positions per stream. With the budget raised to $2^{20}$, a probe on every machine measured the memory and per-token cost of contexts from 4k to 1M, and real prompts of 1k to 64k tokens with a code sentence near the start and a question about it at the end were served one at a time (three repeats up to 16k, two to 64k; 96 output tokens). The code was found in all 19 answers.
+
+| Context (tokens) | First token | Prefill tokens/s | Decode tokens/s | Busy CPU cores per machine | iGPU busy |
+|---:|---:|---:|---:|---:|---:|
+| 1,041 | 22 s | 46.4 | 4.73 | 0.97 | 56 % |
+| 3,991 | 75 s | 52.9 | 3.91 | 1.00 | 44 % |
+| 15,897 | 7.8 min | 33.8 | 2.71 | 1.02 | 26 % |
+| 31,614 | 27.2 min | 19.3 | 1.51 | 1.00 | 16 % |
+| 64,292 | 109.7 min | 9.8 | 0.82 | 1.00 | 9 % |
+| 131,072 | not within the 6 h request cap | — | — | | |
+
+First-token time fits $N/202 + 1.51\times10^{-6}N^2$ seconds; the quadratic part is the CPU attention over the growing context during prefill, executed at about 11 GFLOPS per machine, and the decode cost grows by 2.8 ms per thousand positions per machine for the same reason. Both are the throughput of one core: every machine had one CPU core busy during every request. Memory holds 512k positions per stream on every machine; 1M needs 8.0 GB per machine against 9.2–9.7 GB free on ten of them. The [context table](reproduction/results/context.csv), the [probe](reproduction/results/context_probe.csv) and the source records ([034](reproduction/evidence/source/autolab/experiments/034_context_scan/verdict.md), [047](reproduction/evidence/source/autolab/experiments/047_context_stress/verdict.md)) accompany the paper.
+
+![Context length](figures/context.png)
+
 ## Build and data
 
 The included evidence supports offline reconstruction of the reported measurements:
@@ -55,7 +72,7 @@ make            # Build the PDF with Tectonic or pdfLaTeX + BibTeX
 make verify     # Check evidence, metrics, citations and report links
 ```
 
-The [evidence snapshot](reproduction/evidence/manifest.json) covers 50 source experiment directories, 160 phase records, 35 fleet telemetry archives, 36 request/stat archives and 421 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
+The [evidence snapshot](reproduction/evidence/manifest.json) covers 52 source experiment directories, 160 phase records, 35 fleet telemetry archives, 36 request/stat archives and 440 hashed evidence files. [Measurement documentation](reproduction/README.md) describes the reconstruction; [CLAIMS.md](reproduction/CLAIMS.md) connects each paper contribution to its records. The preserved source archive supplies provenance independently of the paper's contribution-based organization.
 
 ## Supporting material
 

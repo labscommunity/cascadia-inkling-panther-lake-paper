@@ -72,8 +72,19 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 | Deployment-grid family agreement: code 0.746331, arithmetic 0.748428, story 0.482180 | [mtp_families.csv](results/mtp_families.csv) | R; three sequences per family |
 | Expected accepted drafts across eight modules 2.128 true-token/2.007 self-fed | [fleet rescore record](evidence/source/autolab/experiments/039_mtp_fleet_rescore/verdict.md) and protocol summary data | J/R; descriptive offline chain result, not runtime speed |
 
+## C4. Context length on the deployment
+
+| Claim | Source and selector | Evidence / interpretation |
+|---|---|---|
+| Serving default of 1,024 sequence positions; API prompt cap 32 KiB | [fleet defaults](evidence/source/deploy/inkling-fleet/fleet.env), `MAX_SEQ`; [context scan record](evidence/source/autolab/experiments/034_context_scan/verdict.md) | C/J |
+| Probe: one token per machine 45–67 ms at 4k, 211–223 ms at 64k, 1,484–1,512 ms at 512k, 2,990 ms at 1M on the one machine that fits it; 1M needs 8,234 MB against 9,449–9,880 MB free on ten machines | [probe records](evidence/source/autolab/experiments/034_context_scan/probe_cx.json), fields `ctx`, `fits`, `need_mb`, `avail_mb`, `decode_ms`, `attn_ms`; [context_probe.csv](results/context_probe.csv) | R; synthetic cache contents, real bytes and real kernels |
+| Real prompts 1k–64k: first token 22 s to 109.7 min, decode 4.73 to 0.82 tokens/s, code found 19/19, one CPU core busy per machine | [stress records](evidence/source/autolab/experiments/047_context_stress/context_stress.json), one entry per request with per-box samples; [context.csv](results/context.csv) | R; one stream at a time, 96 output tokens |
+| 128k prompt did not produce a first token within the 6 h request cap | Same records, the entry with `error` | R |
+| Prefill fit $N/202 + 1.51\times10^{-6}N^2$ s; quadratic part 11 GFLOPS per machine; decode slope 2.8 ms per 1k positions per machine | [generated/context.tex](../generated/context.tex) from [analyze_context.py](scripts/analyze_context.py) | D; least squares over the seven single-stream sizes; flops per key 64×128×4 |
+| Engine additions for the test: progress chunks per prompt window, prompt-window shapes compiled at load | [test description](evidence/source/autolab/experiments/047_context_stress/hypothesis.md); Cascadia commit `eb7fb638` (`Chunk::progress`, `CASCADIA_INKLING_OV_WARM_ROWS`) | C; the serving binary of the survey is unchanged |
+
 ## Artifact and related work
 
-The [manifest](evidence/manifest.json) records 421 evidence-file hashes. The reconstruction enumerates 160 phase records in 50 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. Three in-document diagrams show the fleet pipeline, the custom engine/OpenVINO boundary and speculative decoding scenarios. A supporting `counter` chart accompanies the data audit.
+The [manifest](evidence/manifest.json) records 440 evidence-file hashes. The reconstruction enumerates 160 phase records in 52 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. Three in-document diagrams show the fleet pipeline, the custom engine/OpenVINO boundary and speculative decoding scenarios. A supporting `counter` chart accompanies the data audit.
 
 The [contribution assessment](../research/NOVELTY.md) maps the three contributions to the closest primary literature. The bibliography ledger contains 36 sources; the manuscript selects the sources relevant to its stated contributions.
