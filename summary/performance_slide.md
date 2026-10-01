@@ -32,16 +32,15 @@
 | 32k | 27.2min | 1.51 |
 | 64k | 109.7min | 0.82 |
 
-- Speculative decoding (phrase/model hybrid proposer) boosts single-stream decode **up to 3.28×** (tips family: 3.55 → 11.66 tok/s)
+- Speculative decoding (phrase/model hybrid proposer) boosts single-stream decode **up to 3.28×** 
 
 ---
 
 ## Context Window Scaling
-- Supports up to **1M tokens** (reliable to 512k; 1M ran once, 64k+ degrades sharply)
-- First-token time fits: **T ≈ N/202 tok/s + 1.51×10⁻⁶·N²**
+- Supports up to 64k tokens
 - Practical interactive limit: **~4k tokens** (22–76s TTFT); 8–16k usable with 3–8 min wait
 
 ---
 
 ## Scaling Takeaway
-Cascadia achieves **resident, shared-memory serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput, with **88 streams as the throughput-optimal batch size**.
+Cascadia achieves **resident, shared-memory serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput
