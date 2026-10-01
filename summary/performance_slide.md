@@ -42,5 +42,5 @@
 
 ---
 
-## Scaling Takeaway
-Cascadia achieves **resident, shared-memory serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput
+## Summary
+Cascadia achieves **resident, shared-memory pipeline-parallel serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput
