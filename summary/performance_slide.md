@@ -4,15 +4,15 @@
 ---
 
 ## Batch Size (Concurrent Streams) → Throughput
-| Streams | Decode tok/s | Whole-phase tok/s | Per-stream (Q/C) |
-|---:|---:|---:|---:|
-| 1   | 7.96  | 6.98  | 7.96 |
-| 15  | 24.60 | 22.12 | 1.64 |
-| 32  | 38.31 | 32.48 | 1.20 |
-| 64  | 53.60 | 42.41 | 0.84 |
-| **88** | **60.29** | **46.87** | 0.69 |
-| 128 | 50.10 | 41.61 | 0.39 |
-| 176 | 57.72 | 45.24 | 0.33 |
+| Streams | Aggregate tok/s | Per-stream tok/s |
+|---:|---:|---:|
+| 1   | 7.96  | 7.96 |
+| 15  | 24.60 | 1.64 |
+| 32  | 38.31 | 1.20 |
+| 64  | 53.60 | 0.84 |
+| **88** | **60.29** | 0.69 |
+| 128 | 50.10 | 0.39 |
+| 176 | 57.72 | 0.33 |
 
 **Peak aggregate throughput at 88 concurrent streams**; per-stream efficiency drops monotonically with batch size.
 
@@ -44,4 +44,4 @@
 ---
 
 ## Scaling Takeaway
-Cascadia achieves **resident, shared-memory serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput, with **88 streams as the throughput sweet spot** and **context length as the dominant lever** on both TTFT and decode speed.
+Cascadia achieves **resident, shared-memory serving of a ~975B-parameter MoE model on consumer-grade AI PCs** — trading per-request latency for fleet-wide throughput, with **88 streams as the throughput-optimal batch size**.
