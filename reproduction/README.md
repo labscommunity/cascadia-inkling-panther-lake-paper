@@ -1,6 +1,6 @@
 # Reconstructing the paper's measurements
 
-The artifact freezes Cascadia source commit **3189a189fe3428f5a6315a7eb67b13148ec314e2** and retained operator telemetry through **2026-09-21**. Its scripts reconstruct the paper's tables and figures offline from the included evidence.
+The artifact freezes Cascadia source commit **eb7fb6381e62c1a33ec7038422bf6e8c52c77416** and retained operator telemetry through **2026-09-30**. Its scripts reconstruct the paper's tables and figures offline from the included evidence.
 
 ## Build
 
@@ -24,6 +24,7 @@ These commands reconstruct measurements rather than execute inference. The suppo
 | Custom resident engine and dense/sparse operator unification | `results/hardware.json`, `results/dense.csv`, relevant `results/profiles.csv` rows, `figures/dense.pdf` |
 | Streaming service across resident shards | `results/concurrency.csv`, `results/survey_phases.csv`, `results/prefill.csv`, `figures/concurrency.pdf`, `figures/prefill.pdf` |
 | Speculative decoding scenarios and GPU gains | `results/speculation_gpu.csv`, `results/speculation_phrase_transfer.csv`, `results/speculation_families.csv`, `results/speculation_audit.json`, `generated/speculation.tex`; earlier CPU checks in `results/speculation_toggle.csv` |
+| Context length and per-machine probe | `results/context.csv`, `results/context_probe.csv`, `generated/context.tex`, `figures/context.pdf` |
 | Draft evaluation on deployed states | `results/mtp_families.csv`, `results/derived.json`, `figures/mtp.pdf` |
 | Independent token-accounting check | `results/survey_audit.json`; historical `results/server_counter_audit.json` and supporting `figures/counter.pdf` |
 
@@ -33,7 +34,7 @@ Figure paths are relative to the repository root. Each chart is generated as bot
 
 | Path | Contents |
 |---|---|
-| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 421 evidence files |
+| `evidence/manifest.json` | Original/stored SHA-256, byte sizes, source paths and transformations for 440 evidence files |
 | `evidence/source/autolab/` | Recorded measurements, configuration files, research summaries, harness and scoring code |
 | `evidence/source/tools/`, `evidence/source/crates/` | Four pinned exporter, gate, layer-runtime and C++ bridge files supporting the engine description |
 | `evidence/source/docs/` | Inkling architecture and execution context |

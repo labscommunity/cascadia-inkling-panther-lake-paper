@@ -11,8 +11,8 @@ authors:
   - family-names: Venkatachalam
     given-names: Muthaiah
     affiliation: Intel Corporation
-version: 0.5.2
-date-released: 2026-09-25
+version: 0.6.0
+date-released: 2026-10-05
 repository-code: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
 keywords:
@@ -32,6 +32,6 @@ preferred-citation:
     - family-names: Venkatachalam
       given-names: Muthaiah
   year: 2026
-  month: 9
+  month: 10
   url: https://github.com/labscommunity/cascadia-inkling-panther-lake-paper
-  notes: "Private author-review draft, version 0.5.2; not an accepted publication."
+  notes: "Private author-review draft, version 0.6.0; not an accepted publication."

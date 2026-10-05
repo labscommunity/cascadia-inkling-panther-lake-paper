@@ -14,7 +14,7 @@
 | 128 | 50.10 | 0.39 |
 | 176 | 57.72 | 0.33 |
 
-**Peak aggregate throughput at 88 concurrent streams**; per-stream efficiency drops monotonically with batch size.
+**Peak aggregate throughput at 88 concurrent streams**; per-stream decode rate generally decreases as concurrency rises.
 
 ---
 
@@ -32,7 +32,7 @@
 | 32k | 27.2min | 1.51 |
 | 64k | 109.7min | 0.82 |
 
-- Speculative decoding (phrase/model hybrid proposer) boosts single-stream decode **up to 3.28×** 
+- Fused-iGPU first/repeated-prompt decode rates improve **up to 3.28×**, with speculation enabled in both passes; the comparison includes accumulated history and differing capture settings.
 
 ---
 

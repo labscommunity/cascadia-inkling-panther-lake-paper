@@ -1,6 +1,6 @@
 # Contribution and quantitative claim map
 
-This map follows the manuscript's contribution-based organization. Experiment identifiers are source selectors, not the paper's narrative structure. The supporting evidence is frozen at Cascadia commit `3189a189fe3428f5a6315a7eb67b13148ec314e2`.
+This map follows the manuscript's contribution-based organization. Experiment identifiers are source selectors, not the paper's narrative structure. The supporting evidence is frozen at Cascadia commit `eb7fb6381e62c1a33ec7038422bf6e8c52c77416`.
 
 Evidence types: **R** — retained structured/raw measurement; **J** — retained load-check or research summary; **C** — inspected implementation/configuration; **V** — model/vendor primary source; **D** — arithmetic derived from those inputs. These types describe provenance, not statistical confidence. [AUDIT.md](AUDIT.md) defines the metrics and reconstruction rules.
 
@@ -85,6 +85,6 @@ Evidence types: **R** — retained structured/raw measurement; **J** — retaine
 
 ## Artifact and related work
 
-The [manifest](evidence/manifest.json) records 440 evidence-file hashes. The reconstruction enumerates 160 phase records in 52 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the four paper charts are `concurrency`, `dense`, `prefill` and `mtp`. Three in-document diagrams show the fleet pipeline, the custom engine/OpenVINO boundary and speculative decoding scenarios. A supporting `counter` chart accompanies the data audit.
+The [manifest](evidence/manifest.json) records 440 evidence-file hashes. The reconstruction enumerates 160 phase records in 52 source directories, 35 fleet telemetry archives and 36 request/stat archives. Figures are generated from the derived CSV files by `scripts/plot.py`; the five paper charts are `concurrency`, `dense`, `prefill`, `mtp` and `context`. Three in-document diagrams show the fleet pipeline, the custom engine/OpenVINO boundary and speculative decoding scenarios. A supporting `counter` chart accompanies the data audit.
 
 The [contribution assessment](../research/NOVELTY.md) maps the three contributions to the closest primary literature. The bibliography ledger contains 36 sources; the manuscript selects the sources relevant to its stated contributions.

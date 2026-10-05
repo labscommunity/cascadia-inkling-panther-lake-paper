@@ -72,6 +72,6 @@ Short serial/concurrent prefixes and twelve known-answer questions support funct
 
 ## Evidence integrity
 
-The snapshot contains **421 hashed evidence files**, **160 phase records** across **50 source directories**, **35 fleet telemetry archives** and **36 request/stat archives**. The [claim map](CLAIMS.md) selects the measurements supporting each contribution.
+The snapshot contains **440 hashed evidence files**, **160 phase records** across **52 source directories**, **35 fleet telemetry archives** and **36 request/stat archives**. The [claim map](CLAIMS.md) selects the measurements supporting each contribution.
 
 Import scrubs device/network identities and home paths, normalizes nonfinite JSON numbers to `null`, and retains original/stored hashes. `null` is distinct from measured zero. `make data` reconstructs the tables; `make verify` checks the frozen artifact and derived results.

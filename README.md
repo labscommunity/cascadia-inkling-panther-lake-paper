@@ -1,6 +1,6 @@
 # Cascadia: Resident 975B MoE Inference on Eleven AI PCs
 
-Research manuscript by **Tate Berenbaum**, **Matias Parij** (Not Community Labs Inc.), and **Muthaiah Venkatachalam** (Intel Corporation). Private author-review draft, September 2026.
+Research manuscript by **Tate Berenbaum**, **Matias Parij** (Not Community Labs Inc.), and **Muthaiah Venkatachalam** (Intel Corporation). Private author-review draft, October 2026.
 
 [Read the paper (PDF)](main.pdf) · [LaTeX source](main.tex) · [Contributions and prior work](research/NOVELTY.md) · [Claim map](reproduction/CLAIMS.md)
 
@@ -57,7 +57,7 @@ The serving configuration holds 1,024 sequence positions per stream. With the bu
 | 64,292 | 109.7 min | 9.8 | 0.82 | 1.00 | 9 % |
 | 131,072 | not within the 6 h request cap | — | — | | |
 
-First-token time fits $N/202 + 1.51\times10^{-6}N^2$ seconds; the quadratic part is the CPU attention over the growing context during prefill, executed at about 11 GFLOPS per machine, and the decode cost grows by 2.8 ms per thousand positions per machine for the same reason. Both are the throughput of one core: every machine had one CPU core busy during every request. Memory holds 512k positions per stream on every machine; 1M needs 8.0 GB per machine against 9.2–9.7 GB free on ten of them. The [context table](reproduction/results/context.csv), the [probe](reproduction/results/context_probe.csv) and the source records ([034](reproduction/evidence/source/autolab/experiments/034_context_scan/verdict.md), [047](reproduction/evidence/source/autolab/experiments/047_context_stress/verdict.md)) accompany the paper.
+First-token time fits $N/202 + 1.51\times10^{-6}N^2$ seconds; the quadratic part is the CPU attention over the growing context during prefill, executed at about 11 GFLOPS per machine, and the decode cost grows by 2.8 ms per thousand positions per machine for the same reason. Both are the throughput of one core: every machine had one CPU core busy during every request. The probe admits 512k positions per stream on every machine with its 3 GiB reserve. At 1M, the cache needs 8.0 GiB per machine and only rank 0 satisfies that reserve. The [context table](reproduction/results/context.csv), the [probe](reproduction/results/context_probe.csv) and the source records ([034](reproduction/evidence/source/autolab/experiments/034_context_scan/verdict.md), [047](reproduction/evidence/source/autolab/experiments/047_context_stress/verdict.md)) accompany the paper.
 
 ![Context length](figures/context.png)
 
