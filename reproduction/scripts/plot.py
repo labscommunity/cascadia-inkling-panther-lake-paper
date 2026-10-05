@@ -93,7 +93,36 @@ def main():
     ax.set_xlabel('Seconds from client phase start'); ax.set_ylabel('Generated tokens/s'); ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=8, loc='lower center'); ax.grid(alpha=.2)
     save(fig, 'counter')
-    print('Generated four paper charts and one supporting counter chart, each as PDF/PNG.')
+    context = read('context.csv')
+    probe = read('context_probe.csv')
+    single = [r for r in context if r['streams'] == '1']
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.0))
+    ns = [int(r['prompt_tokens']) for r in single]
+    ttft = [float(r['ttft_s']) for r in single]
+    axes[0].errorbar(ns, ttft, yerr=[float(r['ttft_sd']) for r in single], fmt='o-', color=BLUE, markersize=3, label='Time to first token')
+    # the fitted a N + b N^2 (recomputed here from the same rows, so the figure and the text agree)
+    s11 = sum(n * n for n in ns); s12 = sum(n ** 3 for n in ns); s22 = sum(n ** 4 for n in ns)
+    r1 = sum(n * t for n, t in zip(ns, ttft)); r2 = sum(n * n * t for n, t in zip(ns, ttft))
+    det = s11 * s22 - s12 * s12; a = (r1 * s22 - r2 * s12) / det; b = (s11 * r2 - s12 * r1) / det
+    grid = [2 ** k for k in range(10, 19)]
+    axes[0].plot(grid, [a * n + b * n * n for n in grid], '--', color=GRAY, label='Fit $aN+bN^2$')
+    axes[0].plot(grid, [a * n for n in grid], ':', color=GRAY, label='Linear part only')
+    axes[0].set_yscale('log'); axes[0].set_ylabel('Time to first token (s)')
+    axes[0].legend(frameon=False, fontsize=6.6, loc='upper left')
+    fit = [r for r in probe if r['decode_ms_median']]
+    px = [int(r['context']) for r in fit]
+    axes[1].plot(px, [float(r['decode_ms_median']) for r in fit], 'o-', color=BLUE, markersize=3, label='One token, per machine (median of 11)')
+    axes[1].plot(px, [float(r['attn_ms_median']) for r in fit], 's--', color=ORANGE, markersize=3, label='Of which CPU attention')
+    axes[1].plot(ns, [1000 / float(r['decode_tok_s']) / 11 for r in single], '^:', color=GRAY, markersize=3,
+                 label='Measured decode, per machine share')
+    axes[1].set_yscale('log'); axes[1].set_ylabel('Milliseconds per token')
+    axes[1].legend(frameon=False, fontsize=6.6, loc='upper left')
+    for ax in axes:
+        ax.set_xscale('log', base=2); ax.set_xticks([1024, 4096, 16384, 65536, 262144, 1048576])
+        ax.set_xticklabels(['1k', '4k', '16k', '64k', '256k', '1M']); ax.tick_params(axis='x', labelsize=8)
+        ax.set_xlabel('Context (tokens)'); ax.grid(alpha=.2, which='both')
+    fig.tight_layout(); save(fig, 'context')
+    print('Generated five paper charts and one supporting counter chart, each as PDF/PNG.')
 
 
 if __name__ == '__main__':

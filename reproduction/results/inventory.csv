@@ -36,6 +36,7 @@ experiment,phase_rows,result_files,has_verdict,telemetry
 031_single_stream_check,7,phases.json;phases_before_swap.json,False,True
 032_role_swap,2,phases.json,True,True
 033_mtp_offline_study,0,,True,False
+034_context_scan,0,context_scan.json;probe_cx.json,True,False
 034_inflight10,8,analysis-baseline.json;analysis.json;gate-baseline.json;gate.json;phases-baseline.json;phases.json,True,True
 035_chain_readiness,2,phases.json,True,True
 036_telemetry_roles,0,,True,False
@@ -49,3 +50,4 @@ experiment,phase_rows,result_files,has_verdict,telemetry
 044_cpu_overlap,0,,False,False
 045_expert_parallel_serving,0,,False,False
 046_final_performance,35,capture-budget-event.json;collection-environment.json;competing-traffic-event.json;concurrency-limit.json;family-plan.json;measurements.json;owner-crash-hold.json;pause-history.json;paused.json;refinement.json;single-stream-comparison.json;stress-attempts.json;summary.json,False,True
+047_context_stress,0,context_stress.json,True,False

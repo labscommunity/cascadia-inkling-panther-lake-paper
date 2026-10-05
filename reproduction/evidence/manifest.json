@@ -1,7 +1,7 @@
 {
   "source_repository": "https://github.com/labscommunity/cascadia",
-  "source_commit": "3189a189fe3428f5a6315a7eb67b13148ec314e2",
-  "evidence_cutoff": "2026-09-21",
+  "source_commit": "eb7fb6381e62c1a33ec7038422bf6e8c52c77416",
+  "evidence_cutoff": "2026-09-30",
   "transformations": [
     "Drop host/IP/MAC/serial identity fields; replace private addresses and home paths.",
     "Replace observed telemetry host names and MAC-derived interface names.",
@@ -38,20 +38,20 @@
       "path": "reproduction/evidence/source/autolab/JOURNAL.md",
       "source": "autolab/JOURNAL.md",
       "kind": "git-blob",
-      "original_sha256": "23d91ce4b3dc05b094648147ae2a23bf6f0d11b85f285c4e05ea52002cab0f1e",
-      "sha256": "23d91ce4b3dc05b094648147ae2a23bf6f0d11b85f285c4e05ea52002cab0f1e",
-      "original_bytes": 30465,
-      "bytes": 30465,
+      "original_sha256": "a367b16f2a76b750c3ecdf323b2955623a8f90758929c311359aaee0eff8316c",
+      "sha256": "a367b16f2a76b750c3ecdf323b2955623a8f90758929c311359aaee0eff8316c",
+      "original_bytes": 31758,
+      "bytes": 31758,
       "transformed": false
     },
     {
       "path": "reproduction/evidence/source/autolab/LEADERBOARD.md",
       "source": "autolab/LEADERBOARD.md",
       "kind": "git-blob",
-      "original_sha256": "294c1c602b2e03f6c12a9c643cf9ab9fc3984bca876c483816c86e282a9b4d1b",
-      "sha256": "294c1c602b2e03f6c12a9c643cf9ab9fc3984bca876c483816c86e282a9b4d1b",
-      "original_bytes": 7815,
-      "bytes": 7815,
+      "original_sha256": "aa6b211fda6d21e764581c9f6db28147d330972eb8f75fedbc36726ac3bf7b6b",
+      "sha256": "aa6b211fda6d21e764581c9f6db28147d330972eb8f75fedbc36726ac3bf7b6b",
+      "original_bytes": 8446,
+      "bytes": 8446,
       "transformed": false
     },
     {
@@ -98,20 +98,20 @@
       "path": "reproduction/evidence/source/autolab/QUEUE.md",
       "source": "autolab/QUEUE.md",
       "kind": "git-blob",
-      "original_sha256": "7a52d46c4c513097cba633de51cd78050602a693c77c74a6665c48b5bea73539",
-      "sha256": "7a52d46c4c513097cba633de51cd78050602a693c77c74a6665c48b5bea73539",
-      "original_bytes": 16513,
-      "bytes": 16513,
+      "original_sha256": "e1642643c444b0e823987d30984a656e8a0fd968894ac051247dd8a5c3566174",
+      "sha256": "e1642643c444b0e823987d30984a656e8a0fd968894ac051247dd8a5c3566174",
+      "original_bytes": 18613,
+      "bytes": 18613,
       "transformed": false
     },
     {
       "path": "reproduction/evidence/source/autolab/README.md",
       "source": "autolab/README.md",
       "kind": "git-blob",
-      "original_sha256": "e5d5ff647581b83162b2711c9cd33908165101370aea23f61cb49c179d859dcc",
-      "sha256": "e5d5ff647581b83162b2711c9cd33908165101370aea23f61cb49c179d859dcc",
-      "original_bytes": 6426,
-      "bytes": 6426,
+      "original_sha256": "939ac5866071ebfa86fb01da37ab8f5e4593b181ed652dc01066590764675cb3",
+      "sha256": "939ac5866071ebfa86fb01da37ab8f5e4593b181ed652dc01066590764675cb3",
+      "original_bytes": 7112,
+      "bytes": 7112,
       "transformed": false
     },
     {
@@ -255,6 +255,26 @@
       "transformed": false
     },
     {
+      "path": "reproduction/evidence/source/autolab/bench/context_scan.py",
+      "source": "autolab/bench/context_scan.py",
+      "kind": "git-blob",
+      "original_sha256": "2e74450d868557d3915a9d8cc6ea73475686b8c1fdd8327b031cf319c0c84adb",
+      "sha256": "2e74450d868557d3915a9d8cc6ea73475686b8c1fdd8327b031cf319c0c84adb",
+      "original_bytes": 10137,
+      "bytes": 10137,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/context_stress.py",
+      "source": "autolab/bench/context_stress.py",
+      "kind": "git-blob",
+      "original_sha256": "2f25d95a4849de0c8f808ae6aefe0787b48884467720d617de03b762c48ead8c",
+      "sha256": "2f25d95a4849de0c8f808ae6aefe0787b48884467720d617de03b762c48ead8c",
+      "original_bytes": 14053,
+      "bytes": 14053,
+      "transformed": false
+    },
+    {
       "path": "reproduction/evidence/source/autolab/bench/drafter_study.py",
       "source": "autolab/bench/drafter_study.py",
       "kind": "git-blob",
@@ -352,6 +372,16 @@
       "sha256": "f5f0edbf42e4d16b904236a51b2697b50bfd2011ab062a08e8be0b0b98ed16ee",
       "original_bytes": 4023,
       "bytes": 4023,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/bench/plot_context_stress.py",
+      "source": "autolab/bench/plot_context_stress.py",
+      "kind": "git-blob",
+      "original_sha256": "3ecd113c156bddee0d15fc68c06f475d8d13bcc2ba3b95ec1b0b15c07cae7068",
+      "sha256": "3ecd113c156bddee0d15fc68c06f475d8d13bcc2ba3b95ec1b0b15c07cae7068",
+      "original_bytes": 8231,
+      "bytes": 8231,
       "transformed": false
     },
     {
@@ -2065,6 +2095,56 @@
       "transformed": false
     },
     {
+      "path": "reproduction/evidence/source/autolab/experiments/034_context_scan/context_scan.json",
+      "source": "autolab/experiments/034_context_scan/context_scan.json",
+      "kind": "git-blob",
+      "original_sha256": "cbfa0ebbe2bf567dfc1a7d86904d4e579e7361c224405523f6a20e13ab40786e",
+      "sha256": "7c6d2a95c324bd7bb6649b3498d60607f571867dd3ac0d5169fc5c9ded7ae6d3",
+      "original_bytes": 892,
+      "bytes": 992,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_context_scan/fleet-overrides.env",
+      "source": "autolab/experiments/034_context_scan/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "cbd3a26da8bc3657313fea74e2d544f45654e97bbfca9c16832a8e26a725d1fe",
+      "sha256": "cbd3a26da8bc3657313fea74e2d544f45654e97bbfca9c16832a8e26a725d1fe",
+      "original_bytes": 30046,
+      "bytes": 30046,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_context_scan/hypothesis.md",
+      "source": "autolab/experiments/034_context_scan/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "674fcca9cb8692195f2018cb90746cc869202bf126bfcbfafe9fdec839b8a0cc",
+      "sha256": "674fcca9cb8692195f2018cb90746cc869202bf126bfcbfafe9fdec839b8a0cc",
+      "original_bytes": 5594,
+      "bytes": 5594,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_context_scan/probe_cx.json",
+      "source": "autolab/experiments/034_context_scan/probe_cx.json",
+      "kind": "git-blob",
+      "original_sha256": "127ad86950d2985b3209c461f155346c2f4f591c6dcaf43404f50524cb228cb3",
+      "sha256": "26030f4951381fc13b0918563099a28e2e4d8ca7d77b27e5385fbdfe1acd0dee",
+      "original_bytes": 21505,
+      "bytes": 24026,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/034_context_scan/verdict.md",
+      "source": "autolab/experiments/034_context_scan/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "2915fea0e1641f3a8e502330faf4c8db88ac402aa66d20dfef5446b885841a7c",
+      "sha256": "2915fea0e1641f3a8e502330faf4c8db88ac402aa66d20dfef5446b885841a7c",
+      "original_bytes": 2124,
+      "bytes": 2124,
+      "transformed": false
+    },
+    {
       "path": "reproduction/evidence/source/autolab/experiments/034_inflight10/analysis-baseline.json",
       "source": "autolab/experiments/034_inflight10/analysis-baseline.json",
       "kind": "git-blob",
@@ -2595,6 +2675,66 @@
       "transformed": false
     },
     {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/context-summary.csv",
+      "source": "autolab/experiments/047_context_stress/context-summary.csv",
+      "kind": "git-blob",
+      "original_sha256": "9efc6d8ffdd99bca8a840bdbdaad93e9b43356559d16b9c6d0f230f7bae484fd",
+      "sha256": "9efc6d8ffdd99bca8a840bdbdaad93e9b43356559d16b9c6d0f230f7bae484fd",
+      "original_bytes": 763,
+      "bytes": 763,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/context_stress.csv",
+      "source": "autolab/experiments/047_context_stress/context_stress.csv",
+      "kind": "git-blob",
+      "original_sha256": "7c65abe10e94add86dee10f6ea469769097526d1d7cd5ea827655732d9f0b0cc",
+      "sha256": "7c65abe10e94add86dee10f6ea469769097526d1d7cd5ea827655732d9f0b0cc",
+      "original_bytes": 1408,
+      "bytes": 1408,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/context_stress.json",
+      "source": "autolab/experiments/047_context_stress/context_stress.json",
+      "kind": "git-blob",
+      "original_sha256": "c4c915bfa5fc47b32d438c790b58377d57d94779f6ce6581494b043abba3ea22",
+      "sha256": "51db78053de7c39d53917887a0ef2425bdc0d5a11353260051d1f54ee81f8f44",
+      "original_bytes": 2155458,
+      "bytes": 2856799,
+      "transformed": true
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/fleet-overrides.env",
+      "source": "autolab/experiments/047_context_stress/fleet-overrides.env",
+      "kind": "git-blob",
+      "original_sha256": "5d5382d4bc4b8ec56a42140282e20123c192f0262461289b5f8b7c4563df4895",
+      "sha256": "5d5382d4bc4b8ec56a42140282e20123c192f0262461289b5f8b7c4563df4895",
+      "original_bytes": 29355,
+      "bytes": 29355,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/hypothesis.md",
+      "source": "autolab/experiments/047_context_stress/hypothesis.md",
+      "kind": "git-blob",
+      "original_sha256": "e7c02d8b90d7b1d5107d037ebab77056bbccb523178df949d5d235a26a3fb419",
+      "sha256": "e7c02d8b90d7b1d5107d037ebab77056bbccb523178df949d5d235a26a3fb419",
+      "original_bytes": 3240,
+      "bytes": 3240,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/experiments/047_context_stress/verdict.md",
+      "source": "autolab/experiments/047_context_stress/verdict.md",
+      "kind": "git-blob",
+      "original_sha256": "374451f42f80034b083a763a6e3bde57203eea1e1d0a93e88187b52096167a73",
+      "sha256": "374451f42f80034b083a763a6e3bde57203eea1e1d0a93e88187b52096167a73",
+      "original_bytes": 6984,
+      "bytes": 6984,
+      "transformed": false
+    },
+    {
       "path": "reproduction/evidence/source/autolab/queue/README.md",
       "source": "autolab/queue/README.md",
       "kind": "git-blob",
@@ -2955,6 +3095,16 @@
       "transformed": false
     },
     {
+      "path": "reproduction/evidence/source/autolab/queue/items/attention-on-the-igpu-openvino-kv-cache-in-f16-on-the-device.md",
+      "source": "autolab/queue/items/attention-on-the-igpu-openvino-kv-cache-in-f16-on-the-device.md",
+      "kind": "git-blob",
+      "original_sha256": "1cd3068d69067d79f8bc1da8ed5c5f99b82f0072fad91de15fa412c2a3fa1186",
+      "sha256": "1cd3068d69067d79f8bc1da8ed5c5f99b82f0072fad91de15fa412c2a3fa1186",
+      "original_bytes": 490,
+      "bytes": 490,
+      "transformed": false
+    },
+    {
       "path": "reproduction/evidence/source/autolab/queue/items/carry-the-memorised-phrase-table-spec-ngrams-bin-from-the-en.md",
       "source": "autolab/queue/items/carry-the-memorised-phrase-table-spec-ngrams-bin-from-the-en.md",
       "kind": "git-blob",
@@ -2972,6 +3122,46 @@
       "sha256": "2a0718d9866d16203d2bf1c89bafec78b716bfc6ea30c9ea07ff43563eedef1d",
       "original_bytes": 543,
       "bytes": 543,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/context-scan-what-context-length-this-deployment-can-serve-a.md",
+      "source": "autolab/queue/items/context-scan-what-context-length-this-deployment-can-serve-a.md",
+      "kind": "git-blob",
+      "original_sha256": "67b7bcbbc9176d693f5a1dce134897321dda8812d487eaa8ec11cb7edf981317",
+      "sha256": "67b7bcbbc9176d693f5a1dce134897321dda8812d487eaa8ec11cb7edf981317",
+      "original_bytes": 717,
+      "bytes": 717,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/context-stress-part-2-the-4-stream-pass-1k-32k-and-128k-with.md",
+      "source": "autolab/queue/items/context-stress-part-2-the-4-stream-pass-1k-32k-and-128k-with.md",
+      "kind": "git-blob",
+      "original_sha256": "4f1a226c4831c43731e8258908d452eab19bc2e2f56a99229dca4872430dba85",
+      "sha256": "4f1a226c4831c43731e8258908d452eab19bc2e2f56a99229dca4872430dba85",
+      "original_bytes": 471,
+      "bytes": 471,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/context-stress-test-047-1k-64k-measured-with-repeats-prefill.md",
+      "source": "autolab/queue/items/context-stress-test-047-1k-64k-measured-with-repeats-prefill.md",
+      "kind": "git-blob",
+      "original_sha256": "cfa2b12b323fad475a14307323514c130f4ed76ebc26fc9d6f62f625c4ed61c0",
+      "sha256": "cfa2b12b323fad475a14307323514c130f4ed76ebc26fc9d6f62f625c4ed61c0",
+      "original_bytes": 541,
+      "bytes": 541,
+      "transformed": false
+    },
+    {
+      "path": "reproduction/evidence/source/autolab/queue/items/cpu-attention-over-heads-and-keys-in-parallel-attend-state-r.md",
+      "source": "autolab/queue/items/cpu-attention-over-heads-and-keys-in-parallel-attend-state-r.md",
+      "kind": "git-blob",
+      "original_sha256": "e55355f6476b92d98e3f1e1d2e77d3800888e5aa5aaaa25da005de88488e9ef7",
+      "sha256": "e55355f6476b92d98e3f1e1d2e77d3800888e5aa5aaaa25da005de88488e9ef7",
+      "original_bytes": 1484,
+      "bytes": 1484,
       "transformed": false
     },
     {
@@ -3398,10 +3588,10 @@
       "path": "reproduction/evidence/source/crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs",
       "source": "crates/cascadia-engine-sparse-moe/src/inkling/ov_moe.rs",
       "kind": "git-blob",
-      "original_sha256": "52cc0c7a55056a04389f12092d3303637e155efe6d126c70be0b399dd2353967",
-      "sha256": "52cc0c7a55056a04389f12092d3303637e155efe6d126c70be0b399dd2353967",
-      "original_bytes": 37845,
-      "bytes": 37845,
+      "original_sha256": "495d1b8e8dab4dee06264498aef4997d58acb56d6dd13a7b98b319516b562413",
+      "sha256": "495d1b8e8dab4dee06264498aef4997d58acb56d6dd13a7b98b319516b562413",
+      "original_bytes": 38586,
+      "bytes": 38586,
       "transformed": false
     },
     {

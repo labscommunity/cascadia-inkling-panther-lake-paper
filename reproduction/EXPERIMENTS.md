@@ -1,6 +1,6 @@
 # Source-record index
 
-This index locates all 50 source directories in the frozen archive. Directory and phase counts describe recorded artifacts; contribution-specific selections are in [CLAIMS.md](CLAIMS.md). Machine-readable records are [inventory.csv](results/inventory.csv), [historical phases](results/phases.csv) and [finalized survey phases](results/survey_phases.csv).
+This index locates all 52 source directories in the frozen archive. Directory and phase counts describe recorded artifacts; contribution-specific selections are in [CLAIMS.md](CLAIMS.md). Machine-readable records are [inventory.csv](results/inventory.csv), [historical phases](results/phases.csv) and [finalized survey phases](results/survey_phases.csv).
 
 | Source directory | Phase records | Telemetry archive |
 |---|---:|---|
@@ -42,6 +42,7 @@ This index locates all 50 source directories in the frozen archive. Directory an
 | [032_role_swap](evidence/source/autolab/experiments/032_role_swap/) | 2 | yes |
 | [033_mtp_offline_study](evidence/source/autolab/experiments/033_mtp_offline_study/) | 0 | — |
 | [034_inflight10](evidence/source/autolab/experiments/034_inflight10/) | 8 | yes |
+| [034_context_scan](evidence/source/autolab/experiments/034_context_scan/) | 0 | — |
 | [035_chain_readiness](evidence/source/autolab/experiments/035_chain_readiness/) | 2 | yes |
 | [036_telemetry_roles](evidence/source/autolab/experiments/036_telemetry_roles/) | 0 | — |
 | [037_fleet_state_capture](evidence/source/autolab/experiments/037_fleet_state_capture/) | 4 | yes |
@@ -54,3 +55,4 @@ This index locates all 50 source directories in the frozen archive. Directory an
 | [044_cpu_overlap](evidence/source/autolab/experiments/044_cpu_overlap/) | 0 | — |
 | [045_expert_parallel_serving](evidence/source/autolab/experiments/045_expert_parallel_serving/) | 0 | — |
 | [046_final_performance](evidence/source/autolab/experiments/046_final_performance/) | 35 | yes |
+| [047_context_stress](evidence/source/autolab/experiments/047_context_stress/) | 0 | — |

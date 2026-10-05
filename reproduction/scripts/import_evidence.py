@@ -61,6 +61,7 @@ def main():
     ap.add_argument('--telemetry', type=Path, required=True)
     ap.add_argument('--output', type=Path, default=ROOT,
                     help='Artifact root; permits staging a new snapshot before replacing the checked-in evidence.')
+    ap.add_argument('--cutoff', default='2026-09-30', help='Evidence cutoff date recorded in the manifest.')
     args = ap.parse_args()
     output = args.output
     def git(*argv):
@@ -88,6 +89,7 @@ def main():
         selected = (
             (path.startswith('autolab/') and p.suffix in {'.md', '.json', '.env', '.py', '.txt'})
             or (path.startswith('autolab/experiments/046_final_performance/') and p.suffix == '.csv')
+            or (path.startswith('autolab/experiments/047_context_stress/') and p.suffix == '.csv')
             or (path.startswith('docs/perf/INKLING') and p.suffix == '.md')
             or path in {'docs/architectures/inkling.md', 'deploy/inkling-fleet/fleet.env'}
             or path in ENGINE_SOURCES
@@ -127,7 +129,7 @@ def main():
                   gzip.compress(cleaned, compresslevel=9, mtime=0), 'scrubbed-gzip-request-jsonl',
                   'operator-telemetry/046_final_performance/' + name)
     manifest = dict(source_repository='https://github.com/labscommunity/cascadia', source_commit=commit,
-                    evidence_cutoff='2026-09-21',
+                    evidence_cutoff=args.cutoff,
                     transformations=['Drop host/IP/MAC/serial identity fields; replace private addresses and home paths.',
                                      'Replace observed telemetry host names and MAC-derived interface names.',
                                      'Normalize nonfinite JSON numbers to null; preserve scientific values otherwise.',

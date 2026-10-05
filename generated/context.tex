@@ -1,0 +1,50 @@
+% Generated from the frozen evidence by reproduction/scripts/analyze_context.py.
+\newcommand{\CtxSizes}{7}
+\newcommand{\CtxRequests}{19}
+\newcommand{\CtxNeedle}{19}
+\newcommand{\CtxFirstTokenOneK}{22}
+\newcommand{\CtxDecodeOneK}{4.73}
+\newcommand{\CtxFirstTokenThirtyTwoK}{27}
+\newcommand{\CtxDecodeThirtyTwoK}{1.51}
+\newcommand{\CtxFirstTokenSixtyFourKMin}{110}
+\newcommand{\CtxDecodeSixtyFourK}{0.82}
+\newcommand{\CtxPrefillRateSmall}{54}
+\newcommand{\CtxPrefillRateSixtyFourK}{9.8}
+\newcommand{\CtxLinearRate}{202}
+\newcommand{\CtxQuadraticCoeff}{1.51}
+\newcommand{\CtxQuadraticGflops}{11}
+\newcommand{\CtxPredictHoursOneTwoEightK}{7.4}
+\newcommand{\CtxPredictHoursTwoFiveSixK}{29}
+\newcommand{\CtxPredictHoursOneM}{464}
+\newcommand{\CtxCoresBusy}{1.00}
+\newcommand{\CtxGpuBusyOneK}{56}
+\newcommand{\CtxGpuBusySixtyFourK}{9}
+\newcommand{\CtxFreeOneK}{6.98}
+\newcommand{\CtxFreeSixtyFourK}{6.56}
+\newcommand{\ProbeAttnSlope}{2.8}
+\newcommand{\ProbeDecodeFourK}{54}
+\newcommand{\ProbeDecodeSixtyFourK}{216}
+\newcommand{\ProbeAttnSixtyFourK}{194}
+\newcommand{\ProbeDecodeFiveTwelveK}{1496}
+\newcommand{\ProbeDecodeOneM}{2990}
+\newcommand{\ProbeOneMNeedGB}{8.0}
+\newcommand{\ProbeOneMFit}{1}
+\newcommand{\ProbeOneMAvailMin}{9.2}
+\newcommand{\ProbeOneMAvailMax}{22.1}
+\newcommand{\ProbeAttnGflopsSixtyFourK}{11}
+\newcommand{\CtxFailedSize}{131072}
+\newcommand{\ContextRows}{1,041 & 3 & 22\,s & 46.4 & 4.73 (4.18--5.22) & 3/3 & 0.97 & 56\% & 6.98\\
+2,011 & 3 & 37\,s & 53.7 & 5.82 (5.29--6.62) & 3/3 & 1.02 & 53\% & 6.93\\
+3,991 & 3 & 75\,s & 52.9 & 3.91 (3.60--4.42) & 3/3 & 1.00 & 44\% & 6.99\\
+7,889 & 3 & 2.9\,min & 45.7 & 3.32 (2.97--3.73) & 3/3 & 1.02 & 35\% & 6.95\\
+15,897 & 3 & 7.8\,min & 33.8 & 2.71 (2.29--3.40) & 3/3 & 1.02 & 26\% & 6.90\\
+31,614 & 2 & 27.2\,min & 19.3 & 1.51 (1.35--1.68) & 2/2 & 1.00 & 16\% & 6.76\\
+64,292 & 2 & 109.7\,min & 9.8 & 0.82 (0.60--1.04) & 2/2 & 1.00 & 9\% & 6.56\\}
+\newcommand{\ProbeRows}{4k & 11/11 & 54 & 43--67 & 28\\
+16k & 11/11 & 75 & 69--79 & 50\\
+64k & 11/11 & 216 & 211--223 & 194\\
+100k & 11/11 & 325 & 312--334 & 301\\
+128k & 11/11 & 404 & 386--414 & 380\\
+256k & 11/11 & 767 & 751--782 & 740\\
+512k & 11/11 & 1496 & 1484--1512 & 1472\\
+1M & 1/11 & 2990 & -- & 2964\\}

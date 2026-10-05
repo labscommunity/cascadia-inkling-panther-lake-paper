@@ -13,6 +13,7 @@
 \input{generated/survey}
 \input{generated/concurrency_rows}
 \input{generated/speculation}
+\input{generated/context}
 \title{Cascadia: Resident 975B MoE Inference\\on Eleven AI PCs}
 \author{
   \begin{tabular}{@{}c@{\hspace{3em}}c@{}}
@@ -22,12 +23,12 @@
     \multicolumn{2}{c}{Intel Corporation}
   \end{tabular}
 }
-\date{September 2026}
+\date{October 2026}
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. We contribute a custom resident MoE engine that preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, and coordinates FP16 expert computation with FP32 output restoration. The engine fits six consecutive decoder layers per machine and represents dense feed-forward blocks as all-active expert slices, reducing measured dense-layer call time from approximately 8.1 to 4.5\,ms. A streaming pipeline coordinates concurrent generation, while captured-state draft evaluation measures agreement with the deployed numerical path. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach \SurveyDecode{} aggregate decode tokens/s at \SurveyPeakStreams{} streams, with \SurveyPhase{} tokens/s over the complete serving phases. At fifteen streams, median first-token latency is \SurveyTTFT{}\,s. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
+Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64\,GB of memory, Arc B390 integrated graphics and gigabit Ethernet. We contribute a custom resident MoE engine that preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, and coordinates FP16 expert computation with FP32 output restoration. The engine fits six consecutive decoder layers per machine and represents dense feed-forward blocks as all-active expert slices, reducing measured dense-layer call time from approximately 8.1 to 4.5\,ms. A streaming pipeline coordinates concurrent generation, while captured-state draft evaluation measures agreement with the deployed numerical path. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach \SurveyDecode{} aggregate decode tokens/s at \SurveyPeakStreams{} streams, with \SurveyPhase{} tokens/s over the complete serving phases. At fifteen streams, median first-token latency is \SurveyTTFT{}\,s. Raising the context budget from the 1,024-position default, real prompts of 1k to 64k tokens recover the embedded code in all 19 measured answers, with first-token time growing as $aN+bN^2$ and decode latency growing approximately linearly, both bounded by a single-threaded CPU attention loop rather than by memory, which holds 512k positions per stream. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU--GPU memory.
 \end{abstract}
 
 \section{Introduction}
@@ -308,6 +309,40 @@ The reference fifteen-request burst configuration records median TTFTs of 31.52 
 
 This supporting configuration comparison uses distinct prompt tags and precedes the finalized fixed-binary survey. It characterizes the admission design; Table~\ref{tab:service} characterizes the resulting deployment across concurrency levels. With one-second arrival spacing, the windowed configuration also records 2.48\,s median TTFT for fifteen requests capped at 96 output tokens.
 
+\subsection{Context length}
+\label{sec:context}
+The serving configuration above holds 1,024 sequence positions per stream, the fleet default (Section~\ref{sec:architecture}). Inkling supports up to a million positions, so we measured what the deployment does when the budget is raised. Two things were measured. A \emph{probe} on every machine, run at worker start with the position budget set to $2^{20}$, filled one stream slot's caches to $N$ positions with synthetic rows (every byte a real sequence writes), decoded one row at that position several times, reported memory and time, and freed the pages; sizes that would not fit in the machine's free memory with a 3\,GiB margin were reported and not attempted. Then \emph{real prompts}, natural text of about $N$ tokens with a sentence naming a code near the start and a question asking for it at the end, were served one stream at a time through the API with 96 output tokens, with three repeats up to 16k tokens, two up to 64k and one above, while every machine's load was sampled every five seconds. The test used the deployed engine with two additions it required: a prompt travels down the pipeline one window per engine step, and a step that only sends a window used to return nothing, so the runner's watchdog closed any prompt longer than about twenty-two windows; the feed now reports progress per window. The prompt window's device shapes are compiled at load rather than on the first long prompt. Prompts traveled as 64-row windows; the production 8-row window prefills at the same rate.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{rrrrrrrrr}
+\toprule
+Context & $n$ & First token & Prefill tok/s & Decode tok/s (range) & Code & Cores & iGPU & Free\\
+\midrule
+\ContextRows
+\bottomrule
+\end{tabular}
+\caption{One stream at increasing context. Context is the API's prompt token count; $n$ repeats; first token is the mean (repeats agree to the second); decode is the mean and range over repeats; Code counts answers that contain the code stated near the start of the prompt; Cores is the mean number of busy CPU cores per machine during the request; iGPU its mean busy share; Free the least free memory of any machine in GiB. The 128k prompt did not produce its first token within the six-hour request cap.}
+\label{tab:context}
+\end{table}
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\linewidth]{figures/context.pdf}
+\caption{Left: time to first token against context for one stream, with the fitted $aN+bN^2$ and its linear part. Right: the per-machine cost of one decode token from the probe (median of the eleven machines; 1M on the one machine that fits it) and the CPU attention within it, next to the measured single-stream decode divided by eleven; the measured points sit below the probe at small contexts because a lone stream's accepted draft guesses add tokens without a full pass.}
+\label{fig:context}
+\end{figure}
+
+Table~\ref{tab:context} and Figure~\ref{fig:context} report the results. The code was found in \CtxNeedle{} of \CtxRequests{} answers: the global layers' attention over the whole context works at 64k, well beyond the 1,024 positions of the relative-position bias. Memory was not the limit at these sizes: the 64k context cost 0.5\,GiB per machine (8\,KiB per position on the one global layer per shard, FP32), from \CtxFreeOneK{} to \CtxFreeSixtyFourK{}\,GiB free. The probe admits 512k positions on every machine while retaining its 3\,GiB free-memory margin. At 1M positions, the cache requires \ProbeOneMNeedGB{}\,GiB per machine; only the machine serving rank 0 satisfies the margin, and it runs the probe at \ProbeDecodeOneM{}\,ms per token. These are memory-capacity and synthetic decode observations, distinct from end-to-end prompt serving.
+
+Time is the limit. The first-token time fits
+\begin{equation}
+ T_{\rm prefill}(N)=\frac{N}{\CtxLinearRate{}\ \text{tokens/s}}+\CtxQuadraticCoeff{}\times10^{-6}\,\text{s}\times N^{2},
+ \label{eq:prefill}
+\end{equation}
+which predicts \CtxPredictHoursOneTwoEightK{}\,h at 128k, consistent with the request that did not finish, and \CtxPredictHoursTwoFiveSixK{}\,h at 256k. The quadratic term is each window's rows attending over everything before them on the global layer of every shard: $16.4\text{k}\times N^{2}$ flops per machine, 67\,TFLOP for the 64k prompt, executed at \CtxQuadraticGflops{}\,GFLOPS per machine. The decode term is linear in the context: the probe measures \ProbeAttnSlope{}\,ms per thousand positions per machine, all of it the CPU attention over the cached keys (the iGPU work does not depend on the context), which at 64k is 2.1\,GFLOP in \ProbeAttnSixtyFourK{}\,ms, again \ProbeAttnGflopsSixtyFourK{}\,GFLOPS. Both rates are the throughput of one core, and the telemetry agrees: during every request each machine had \CtxCoresBusy{} CPU cores busy while its iGPU was \CtxGpuBusySixtyFourK{}--\CtxGpuBusyOneK{}\% busy. The attention routine computes one row's 64 query heads sequentially; rows of a frame run in parallel (Section~\ref{sec:streaming}), but a lone stream's frame has one row, and a prompt window's rows are few next to the keys they attend over. The loop leaves most of each machine's sixteen cores unused. This identifies head- and key-block parallelism, followed by iGPU attention, as engineering directions; their speedups are not measured here. Larger prefill windows did not help: 64-row windows prefill at the same \CtxPrefillRateSmall{} tokens/s as 8-row ones at small contexts, so the fused-expert prefill path is bound by reading each window's distinct experts, not by fixed cost per window.
+
+For a user, the deployment as measured serves contexts up to about 4k tokens interactively after a 22--76\,s wait for the first token, 8--16k with a 3--8\,min wait and 2.7--3.3 decode tokens/s, and 32k--64k only as batch work (27\,min and 1\,h\,50\,min to the first token, \CtxDecodeThirtyTwoK{} and \CtxDecodeSixtyFourK{} tokens/s). Longer contexts fit in memory up to 512k but are not served at useful speed with the attention kernel as it stands.
+
 \section{Draft evaluation on deployed states}
 \label{sec:drafts}
 
@@ -362,10 +397,10 @@ EdgeMoE and PowerInfer exploit sparsity and memory placement on resource-constra
 Orca and SARATHI/Sarathi-Serve establish iteration-level scheduling and chunked prefill~\cite{orca,sarathi,sarathiserve}. We integrate those principles with a gigabit sparse-model pipeline, short-convolution state and a direct sampled-token return path. The draft evaluation contributes captured-state measurements of the deployed model, complementing speculative decoding, MTP and MoE-specific verification research~\cite{specdecode,mtp,moesd}. The evidence supports these architectural, implementation and empirical contributions without requiring a priority claim for the underlying algebra or scheduling primitives.
 
 \section{Conclusion}
-Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. Its custom engine preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, manages numerical range across FP16 and FP32, and unifies dense and sparse blocks within resident layer shards. Stream-oriented coordination connects those shards across machines. Its paired concurrency curve reaches \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s at 88 streams, with \SurveyTTFT{}\,s median first-token latency at fifteen streams. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
+Cascadia demonstrates resident inference of Inkling's 975B MoE decoder on eleven Panther Lake AI PCs. Its custom engine preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, manages numerical range across FP16 and FP32, and unifies dense and sparse blocks within resident layer shards. Stream-oriented coordination connects those shards across machines. Its paired concurrency curve reaches \SurveyDecode{} aggregate decode tokens/s and \SurveyPhase{} whole-phase tokens/s at 88 streams, with \SurveyTTFT{}\,s median first-token latency at fifteen streams. Measured to 64k tokens of context, the deployment recovers the embedded code in all 19 measured answers while its prefill and decode costs follow one CPU core's attention throughput, which identifies the next engineering step. Captured-state draft evaluation further separates vocabulary and weight-format effects using labels emitted by the deployed model. These results provide an implemented architecture and measured techniques for serving large sparse models on distributed client hardware.
 
 \paragraph{Artifact.}
-The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{3189a189fe3428f5a6315a7eb67b13148ec314e2}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.
+The paper source, figures, derived tables and supporting evidence are available to reviewers in the private repository \url{https://github.com/labscommunity/cascadia-inkling-panther-lake-paper}. The evidence is pinned to Cascadia commit \path{eb7fb6381e62c1a33ec7038422bf6e8c52c77416}. \path{reproduction/CLAIMS.md} maps the paper's contributions and numerical statements to source records; the analysis scripts regenerate the reported tables and figures.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

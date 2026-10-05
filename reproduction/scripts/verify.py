@@ -37,13 +37,13 @@ def close(a, b, tolerance=1e-9):
 
 def main():
     manifest = load(EVIDENCE / 'manifest.json')
-    assert manifest['source_commit'] == '3189a189fe3428f5a6315a7eb67b13148ec314e2'
-    assert len(manifest['files']) == 421
+    assert manifest['source_commit'] == 'eb7fb6381e62c1a33ec7038422bf6e8c52c77416'
+    assert len(manifest['files']) == 440
     for entry in manifest['files']:
         data = (ROOT / entry['path']).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry['sha256'], entry['path']
         assert len(data) == entry['bytes'], entry['path']
-    print('PASS: 421 evidence files match frozen hashes and byte sizes.')
+    print('PASS: 440 evidence files match frozen hashes and byte sizes.')
 
     all_phases = []
     for path in sorted(EXPS.glob('*/phases*.json')):
@@ -55,7 +55,7 @@ def main():
             all_phases.append(p)
     assert len(all_phases) == 125
     assert sum(p['completed'] != p['streams'] or bool(p['errors']) for p in all_phases) == 5
-    assert len([d for d in EXPS.iterdir() if d.is_dir()]) == 50
+    assert len([d for d in EXPS.iterdir() if d.is_dir()]) == 52
     assert len(list((EVIDENCE / 'telemetry').glob('*.jsonl.gz'))) == 35
     assert len(list((EVIDENCE / 'requests/046_final_performance').glob('*.jsonl.gz'))) == 36
     print('PASS: all 125 historical aggregate rates recompute; source records retained.')
@@ -209,6 +209,13 @@ def main():
     assert r'\newcommand{\SpecGPUExplainMedian}{11.27}' in spec_macros
     assert r'\newcommand{\SpecGPUExplainMax}{15.04}' in spec_macros
     assert len((ROOT / 'generated/concurrency_rows.tex').read_text().splitlines()) == 18
+    context_macros = (ROOT / 'generated/context.tex').read_text()
+    assert r'\newcommand{\CtxNeedle}{19}' in context_macros
+    assert r'\newcommand{\CtxQuadraticCoeff}{1.51}' in context_macros
+    assert r'\newcommand{\ProbeOneMFit}{1}' in context_macros
+    context_rows = list(csv.DictReader((ROOT / 'reproduction/results/context.csv').open()))
+    assert [int(r['size']) for r in context_rows] == [1024, 2048, 4096, 8192, 16384, 32768, 65536]
+    assert all(r['needle_found'] == r['repeats'] for r in context_rows)
     print(f'PASS: {len(cited)} cited sources resolve within the 36-source ledger; figures and PDF exist.')
 
     documents = [ROOT / 'README.md', ROOT / 'NOTICE.md', *ROOT.glob('research/*.md'), *ROOT.glob('reproduction/*.md')]

@@ -15,7 +15,7 @@
   "phase_rows": 160,
   "historical_phase_rows": 125,
   "survey_phase_rows": 35,
-  "experiment_directories": 50,
+  "experiment_directories": 52,
   "telemetry_archives": 35,
-  "evidence_files": 421
+  "evidence_files": 440
 }
