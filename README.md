@@ -4,6 +4,16 @@ Research manuscript by **Tate Berenbaum**, **Matias Parij** (Not Community Labs 
 
 [Read the paper (PDF)](main.pdf) · [LaTeX source](main.tex) · [Contributions and prior work](research/NOVELTY.md) · [Claim map](reproduction/CLAIMS.md)
 
+## Abstract
+
+Copy the text below into arXiv's Abstract field. It matches the manuscript abstract with generated values expanded and TeX spacing removed (1,866 characters).
+
+```text
+Mixture-of-experts models make nearly trillion-parameter capacity accessible with sparse per-token computation, provided that the serving system can distribute the weights and coordinate their execution. We present Cascadia's resident execution of Inkling, a 975B-total/41B-active-parameter model, on eleven Intel Core Ultra X7 358H AI PCs, each with 64 GB of memory, Arc B390 integrated graphics and gigabit Ethernet. We contribute a custom resident MoE engine that preserves Inkling's routing rules, constructs compressed graphs for OpenVINO's fused iGPU primitives, and coordinates FP16 expert computation with FP32 output restoration. The engine fits six consecutive decoder layers per machine and represents dense feed-forward blocks as all-active expert slices, reducing measured dense-layer call time from approximately 8.1 to 4.5 ms. A streaming pipeline coordinates concurrent generation, while captured-state draft evaluation measures agreement with the deployed numerical path. Paired measurements at fifteen concurrency levels from 1 to 176 streams reach 60.29 aggregate decode tokens/s at 88 streams, with 46.87 tokens/s over the complete serving phases. At fifteen streams, median first-token latency is 6.05 s. Raising the context budget from the 1,024-position default, real prompts of 1k to 64k tokens recover the embedded code in all 19 measured answers, with first-token time growing as $aN+bN^2$ and decode latency growing approximately linearly, both bounded by a single-threaded CPU attention loop rather than by memory, which holds 512k positions per stream. Evaluation on captured fleet states separates the effects of vocabulary selection and weight quantization on draft agreement. Together, these contributions establish an execution and evaluation approach for large sparse models on distributed client systems with shared CPU-GPU memory.
+```
+
+## Contributions
+
 The paper presents Cascadia's execution of Inkling's 975B text decoder on eleven Intel Core Ultra X7 358H machines, each with nominal 64 GB memory, Arc B390 integrated graphics and gigabit Ethernet. It develops three contributions:
 
 1. **A custom resident MoE engine for shared-memory accelerators.** Cascadia builds Inkling-specific compressed graphs, retains its routing rules in Rust, and manages FP16 expert computation with FP32 output restoration around OpenVINO's fused iGPU primitives. Layer residency and reusable inference requests fit this execution into each machine's shared memory. Dense layers use eight all-active expert slices, reducing measured calls from about **8.1 ms to 4.5 ms**.
@@ -87,3 +97,11 @@ The [evidence snapshot](reproduction/evidence/manifest.json) covers 52 source ex
 - Tate Berenbaum — Not Community Labs Inc.
 - Matias Parij — Not Community Labs Inc.
 - Muthaiah Venkatachalam — Intel Corporation
+
+For arXiv's Authors field, use full names in manuscript order with affiliations in parentheses:
+
+```text
+Tate Berenbaum (Not Community Labs Inc.), Matias Parij (Not Community Labs Inc.), Muthaiah Venkatachalam (Intel Corporation)
+```
+
+See [arXiv's metadata formatting instructions](https://info.arxiv.org/help/prep.html) for author and abstract requirements.
